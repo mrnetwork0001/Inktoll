@@ -1,0 +1,146 @@
+import { loadEmbeddingsIndex, generateMockEmbedding } from './tools/summarize.js';
+import { getOrCreateAgentWallet } from './tools/pay.js';
+import { OpenAI } from 'openai';
+import { ethers } from 'ethers';
+
+export interface CitationMatch {
+  articleId: string;
+  title: string;
+  slug: string;
+  similarity: number;
+  authorWallet: string;
+}
+
+// Compute dot product of two vectors
+function dotProduct(vecA: number[], vecB: number[]): number {
+  let product = 0;
+  for (let i = 0; i < vecA.length; i++) {
+    product += vecA[i] * vecB[i];
+  }
+  return product;
+}
+
+export async function detectCitations(
+  answerText: string,
+  openaiKey: string
+): Promise<CitationMatch[]> {
+  const isMock = !openaiKey || openaiKey === 'your_openai_api_key_here';
+  let answerEmbedding: number[] = [];
+
+  if (isMock) {
+    answerEmbedding = generateMockEmbedding(answerText);
+  } else {
+    try {
+      const openai = new OpenAI({ apiKey: openaiKey });
+      const response = await openai.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: answerText,
+      });
+      answerEmbedding = response.data[0].embedding;
+    } catch (error) {
+      console.warn('[Citations] Real embedding failed, using mock:', error);
+      answerEmbedding = generateMockEmbedding(answerText);
+    }
+  }
+
+  const index = loadEmbeddingsIndex();
+  const matches: CitationMatch[] = [];
+
+  for (const articleId of Object.keys(index)) {
+    const item = index[articleId];
+    let similarity = dotProduct(answerEmbedding, item.embedding);
+
+    if (isMock) {
+      // In mock mode, scale similarity so keyword hits cross the threshold
+      if (similarity > 0.01) {
+        similarity = 0.75 + (similarity * 0.2); // scale to 0.75 - 0.95 range
+      } else {
+        similarity = similarity * 5.0; // scale down
+      }
+      similarity = Math.min(similarity, 0.98);
+    }
+
+    // Threshold of 0.75
+    if (similarity >= 0.75) {
+      matches.push({
+        articleId: item.articleId,
+        title: item.title,
+        slug: item.slug,
+        similarity: parseFloat(similarity.toFixed(4)),
+        authorWallet: item.authorWallet,
+      });
+    }
+  }
+
+  return matches;
+}
+
+export async function triggerCitationTolls(
+  matches: CitationMatch[],
+  apiUrl: string
+): Promise<any[]> {
+  const agentWallet = getOrCreateAgentWallet();
+  const results: any[] = [];
+
+  for (const match of matches) {
+    const tollAmount = 0.0001; // $0.0001 USDC per citation
+    console.log(`[Citation Toll] Triggering citation toll for "${match.title}":
+      Recipient Wallet: ${match.authorWallet}
+      Amount: ${tollAmount} USDC
+      Similarity Score: ${match.similarity}`);
+
+    try {
+      // Sign citation toll authorization
+      const nonce = crypto.randomUUID();
+      const deadline = Math.floor(Date.now() / 1000) + 3600;
+      const value = ethers.parseUnits(tollAmount.toString(), 6);
+
+      const messageHash = ethers.solidityPackedKeccak256(
+        ['address', 'address', 'uint256', 'string', 'uint256'],
+        [agentWallet.address, match.authorWallet, value, nonce, deadline]
+      );
+
+      const signature = await agentWallet.signMessage(ethers.getBytes(messageHash));
+
+      // Post citation payment to server
+      const response = await fetch(`${apiUrl}/api/citations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          articleId: match.articleId,
+          readerAgentId: agentWallet.address,
+          similarityScore: match.similarity,
+          tollAmountUsdc: tollAmount.toString(),
+          fromWallet: agentWallet.address,
+          signature,
+          nonce,
+          deadline,
+        }),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Server responded with ${response.status}: ${errText}`);
+      }
+
+      const resData = (await response.json()) as any;
+      results.push({
+        success: true,
+        title: match.title,
+        amount: tollAmount,
+        txHash: resData.txHash,
+      });
+    } catch (err: any) {
+      console.error(`[Citation Toll] Failed to send toll for "${match.title}": ${err.message}`);
+      results.push({
+        success: false,
+        title: match.title,
+        error: err.message,
+      });
+    }
+  }
+
+  return results;
+}

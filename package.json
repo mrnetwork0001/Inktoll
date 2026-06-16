@@ -1,0 +1,19 @@
+{
+  "name": "inktoll-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "server",
+    "agent",
+    "dashboard"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev --workspace=server",
+    "dev:agent": "npm run dev --workspace=agent",
+    "dev:dashboard": "npm run dev --workspace=dashboard",
+    "build:server": "npm run build --workspace=server",
+    "build:agent": "npm run build --workspace=agent",
+    "build:dashboard": "npm run build --workspace=dashboard",
+    "install:all": "npm install"
+  }
+}

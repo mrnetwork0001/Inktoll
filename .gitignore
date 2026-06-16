@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+/node_modules
+/server/node_modules
+/agent/node_modules
+/dashboard/node_modules
+
+# Production / Builds
+dist/
+/server/dist
+/agent/dist
+.next/
+/dashboard/.next
+out/
+build/
+
+# Local databases & logs
+data/
+/server/data
+/agent/data
+*.db
+*.json-journal
+*.log
+
+# Env & sensitive details
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE / OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

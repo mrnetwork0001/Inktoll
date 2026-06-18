@@ -34,3 +34,6 @@ data/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Cloned companion repos
+circle-agent/

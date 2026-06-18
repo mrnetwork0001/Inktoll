@@ -2,14 +2,16 @@
   "name": "inktoll-server",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon --watch src -e ts --exec ts-node src/index.ts",
-    "test": "ts-node src/test.ts"
+    "dev": "nodemon --watch src -e ts --exec npx tsx src/index.ts",
+    "test": "npx tsx src/test.ts"
   },
   "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^10.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.1",

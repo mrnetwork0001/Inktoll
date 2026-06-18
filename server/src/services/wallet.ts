@@ -29,8 +29,9 @@ export async function createCircleWallet(userId: string, type: 'creator' | 'agen
 
   try {
     console.log(`[Wallet Service] [REAL] Provisioning wallet for user ${userId} via Circle API...`);
-    // Example Circle Developer-Controlled Wallet API call
-    const response = await fetch(`${config.circle.gatewayUrl.replace('/nanopayments', '')}/w3s/developer/wallets`, {
+    const isSandbox = config.circle.apiKey.startsWith('TEST_API_KEY');
+    const domain = isSandbox ? 'https://api-sandbox.circle.com' : 'https://api.circle.com';
+    const response = await fetch(`${domain}/v1/w3s/developer/wallets`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${config.circle.apiKey}`,

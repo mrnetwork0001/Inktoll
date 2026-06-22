@@ -3,6 +3,7 @@ import { generateEntitySecret, registerEntitySecretCiphertext } from '@circle-fi
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,8 +14,8 @@ async function runRegistration() {
     process.exit(1);
   }
 
-  console.log('Generating entity secret using Circle SDK...');
-  const entitySecret = generateEntitySecret();
+  console.log('Generating entity secret...');
+  const entitySecret = crypto.createHash('sha256').update(crypto.randomBytes(32)).digest('hex');
 
   console.log('Registering Entity Secret with Circle API...');
   try {

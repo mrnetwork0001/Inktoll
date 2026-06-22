@@ -11,11 +11,16 @@
     "test": "npx tsx src/test.ts"
   },
   "dependencies": {
+    "@circle-fin/app-kit": "^1.7.0",
     "@circle-fin/developer-controlled-wallets": "^10.6.0",
+    "@circle-fin/x402-batching": "^3.0.4",
+    "@x402/core": "^2.11.0",
+    "@x402/evm": "^2.11.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.1",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "viem": "^2.48.11"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

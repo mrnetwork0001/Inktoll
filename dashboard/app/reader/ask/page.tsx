@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '../../../components/Header';
+import CitationRadar from '../../../components/CitationRadar';
 
 interface Message {
   id: string;
@@ -124,37 +125,45 @@ export default function ReaderAsk() {
 
                   {/* CITATIONS & TOLL PAYMENTS DISPLAY */}
                   {msg.citations && msg.citations.length > 0 && (
-                    <div style={{ 
-                      marginTop: '0.5rem', 
-                      padding: '0.75rem', 
-                      background: 'rgba(245, 166, 35, 0.08)', 
-                      border: '1px solid rgba(245, 166, 35, 0.25)', 
-                      borderRadius: '8px',
-                      fontSize: '0.85rem' 
-                    }}>
-                      <div style={{ fontWeight: 700, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.5rem' }}>
-                        <span>⚜️</span> CITATION TOLLS TRIGGERED ({msg.citations.length})
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        {msg.citations.map((cit: any, index: number) => {
-                          const payment = msg.payments?.find(p => p.title === cit.title);
-                          return (
-                            <div key={index} style={{ borderBottom: index < msg.citations!.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: '0.25rem' }}>
-                              <div style={{ fontWeight: 600, color: '#fff' }}>
-                                Source: "{cit.title}"
-                              </div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                                <span>Similarity Score: {(cit.similarity * 100).toFixed(1)}%</span>
-                                <span style={{ color: 'var(--accent)', fontWeight: 600 }}>Toll Paid: +$0.0001 USDC</span>
-                              </div>
-                              {payment?.success && (
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '0.15rem' }}>
-                                  Arc Tx: {payment.txHash.substring(0, 24)}...
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem', width: '100%' }}>
+                      <CitationRadar 
+                        citations={msg.citations.map((c: any) => ({
+                          title: c.title,
+                          similarity: c.similarity,
+                          amount: 0.0001
+                        }))} 
+                      />
+                      <div style={{ 
+                        padding: '0.75rem', 
+                        background: 'rgba(245, 166, 35, 0.08)', 
+                        border: '1px solid rgba(245, 166, 35, 0.25)', 
+                        borderRadius: '8px',
+                        fontSize: '0.85rem' 
+                      }}>
+                        <div style={{ fontWeight: 700, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.5rem' }}>
+                          <span>⚜️</span> CITATION TOLLS TRANSACTION DETAILS
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          {msg.citations.map((cit: any, index: number) => {
+                            const payment = msg.payments?.find(p => p.title === cit.title);
+                            return (
+                              <div key={index} style={{ borderBottom: index < msg.citations!.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: '0.25rem' }}>
+                                <div style={{ fontWeight: 600, color: '#fff' }}>
+                                  Source: "{cit.title}"
                                 </div>
-                              )}
-                            </div>
-                          );
-                        })}
+                                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                                  <span>Similarity Score: {(cit.similarity * 100).toFixed(1)}%</span>
+                                  <span style={{ color: 'var(--accent)', fontWeight: 600 }}>Toll Paid: +$0.0001 USDC</span>
+                                </div>
+                                {payment?.success && (
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '0.15rem' }}>
+                                    Arc Tx: {payment.txHash.substring(0, 24)}...
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   )}

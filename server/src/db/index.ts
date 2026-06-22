@@ -8,6 +8,7 @@ export interface Creator {
   ghost_url: string;
   ghost_api_key: string;
   wallet_address: string;
+  wallet_id: string;
   default_price_usdc: number;
   created_at: string;
 }
@@ -420,12 +421,19 @@ class JSONDatabase {
 
         // 2. INSERT creators
         if (normalized.includes('insert into creators')) {
-          const [id, ghost_url, ghost_api_key, wallet_address, default_price_usdc] = params;
+          let id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc;
+          if (params.length === 6) {
+            [id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc] = params;
+          } else {
+            [id, ghost_url, ghost_api_key, wallet_address, default_price_usdc] = params;
+            wallet_id = id; // fallback
+          }
           self.data.creators.push({
             id,
             ghost_url,
             ghost_api_key,
             wallet_address,
+            wallet_id: wallet_id || '',
             default_price_usdc,
             created_at: new Date().toISOString(),
           });

@@ -102,6 +102,34 @@ export default function ReaderSetup() {
     }
   };
 
+  const [fauceting, setFauceting] = useState(false);
+  const [faucetSuccess, setFaucetSuccess] = useState('');
+
+  const handleFaucet = async () => {
+    if (!status?.address) return;
+    setFauceting(true);
+    setFaucetSuccess('');
+    setError('');
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    try {
+      const res = await fetch(`${API_URL}/api/faucet`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletAddress: status.address,
+          type: 'agent',
+        }),
+      });
+      if (!res.ok) throw new Error('Faucet request failed');
+      setFaucetSuccess('Success! 10.00 USDC has been added to your wallet.');
+      await fetchAgentStatus(true);
+    } catch (err: any) {
+      setError('Faucet failed: ' + err.message);
+    } finally {
+      setFauceting(false);
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -128,7 +156,7 @@ export default function ReaderSetup() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
             
             {/* Agent Status Card */}
-            <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '1.5rem' }}>
+            <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h3>🤖 AI Reader Agent</h3>
@@ -140,29 +168,79 @@ export default function ReaderSetup() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Agent Wallet Address</span>
-                    <div style={{ fontSize: '0.85rem', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>{status?.address}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+                      <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', wordBreak: 'break-all', background: 'rgba(0,0,0,0.3)', padding: '6px 10px', borderRadius: '6px', flexGrow: 1, border: '1px solid var(--border)' }}>
+                        {status?.address}
+                      </div>
+                      <button 
+                        className="btn btn-secondary" 
+                        style={{ padding: '6px 12px', fontSize: '0.8rem', minHeight: 'auto', marginBottom: 0 }}
+                        onClick={() => {
+                          navigator.clipboard.writeText(status?.address || '');
+                          alert('Address copied to clipboard!');
+                        }}
+                      >
+                        📋
+                      </button>
+                    </div>
                   </div>
-                  
-                  <div>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>USDC Faucet Balance</span>
-                    <div style={{ fontSize: '2rem', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>${status?.balanceUsdc?.toFixed(6) || '0.000000'}</div>
+
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    {status?.address && (
+                      <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', display: 'inline-flex', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+                        <img 
+                          src={`https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=${status.address}&chld=L|1&choe=UTF-8`}
+                          alt="Wallet QR Code"
+                          width={100}
+                          height={100}
+                          style={{ display: 'block' }}
+                        />
+                      </div>
+                    )}
+                    <div style={{ flexGrow: 1 }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>USDC Faucet Balance</span>
+                      <div style={{ fontSize: '2rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
+                        ${status?.balanceUsdc?.toFixed(6) || '0.000000'}
+                      </div>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        Arc Testnet / Sepolia
+                      </span>
+                    </div>
                   </div>
 
                   <div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Budget Spent Today</span>
-                    <div style={{ fontSize: '1.25rem', fontFamily: 'var(--font-mono)' }}>${status?.dailySpentUsdc?.toFixed(4)} / ${status?.dailyBudgetUsdc?.toFixed(2)}</div>
+                    <div style={{ fontSize: '1.15rem', fontFamily: 'var(--font-mono)', color: 'var(--text-primary)', marginTop: '0.25rem' }}>
+                      ${status?.dailySpentUsdc?.toFixed(4)} <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>/ ${status?.dailyBudgetUsdc?.toFixed(2)} limit</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <button 
-                className="btn btn-accent" 
-                style={{ width: '100%' }}
-                onClick={handleRunAgent}
-                disabled={running}
-              >
-                {running ? 'Agent Running...' : '🚀 Trigger Autonomous Run Loop'}
-              </button>
+              {faucetSuccess && (
+                <div style={{ padding: '0.5rem 1rem', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.8rem' }}>
+                  🎉 {faucetSuccess}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto' }}>
+                <button 
+                  className="btn btn-secondary" 
+                  style={{ flexGrow: 1, marginBottom: 0 }}
+                  onClick={handleFaucet}
+                  disabled={fauceting}
+                >
+                  {fauceting ? 'Fauceting...' : '⛲ Faucet'}
+                </button>
+                <button 
+                  className="btn btn-accent" 
+                  style={{ flexGrow: 1.5, marginBottom: 0 }}
+                  onClick={handleRunAgent}
+                  disabled={running}
+                >
+                  {running ? 'Running...' : '🚀 Start Loop'}
+                </button>
+              </div>
             </div>
 
             {/* Profile Settings Form */}
@@ -215,43 +293,145 @@ export default function ReaderSetup() {
 
           </div>
 
-          {/* Running Console logs terminal */}
+          {/* Running Console logs timeline */}
           <div className="glass-card">
-            <h3>🤖 Real-Time Execution Console</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+            <h3 style={{ marginBottom: '0.5rem' }}>🤖 Live Execution Timeline</h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
               Observe the agent's decision logic and EIP-3009 nanopayment signature generations as it completes its loop.
             </p>
+            
             <div 
               ref={logTerminalRef}
               style={{ 
-                background: '#040711', 
-                border: '1px solid var(--border)', 
-                borderRadius: '8px', 
-                height: '300px', 
+                maxHeight: '400px', 
                 overflowY: 'auto',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem',
-                padding: '1rem',
-                color: '#22c55e',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '0.5rem',
-                boxShadow: 'inset 0 4px 10px rgba(0,0,0,0.8)'
+                gap: '1rem',
+                padding: '0.5rem 1rem',
+                borderLeft: '2px solid rgba(255,255,255,0.05)',
+                marginLeft: '10px'
               }}
             >
               {runLogs.length > 0 ? (
-                runLogs.map((logStr, i) => (
-                  <div key={i} style={{ 
-                    color: logStr.startsWith('[ERROR]') ? 'var(--error)' : 
-                           logStr.includes('Decision: BUY') ? 'var(--accent)' : 
-                           logStr.includes('Payment Succeeded!') ? '#fff' : '#22c55e' 
-                  }}>
-                    {logStr}
-                  </div>
-                ))
+                runLogs.map((logStr, idx) => {
+                  let type = 'info';
+                  let icon = 'ℹ️';
+                  let color = 'var(--text-secondary)';
+                  let text = logStr;
+
+                  if (logStr.startsWith('[Client]')) {
+                    type = 'client';
+                    icon = '💻';
+                    color = 'var(--primary-light)';
+                    text = logStr.replace('[Client]', '').trim();
+                  } else if (logStr.startsWith('[ERROR]')) {
+                    type = 'error';
+                    icon = '❌';
+                    color = 'var(--error)';
+                    text = logStr.replace('[ERROR]', '').trim();
+                  } else if (logStr.includes('Evaluating article:')) {
+                    type = 'eval';
+                    icon = '🔍';
+                    color = '#a5b4fc';
+                    text = logStr.replace('[Agent Run]', '').trim();
+                  } else if (logStr.includes('Decision: BUY')) {
+                    type = 'buy';
+                    icon = '🪙';
+                    color = 'var(--accent)';
+                    text = logStr.replace('[Agent Run]', '').trim();
+                  } else if (logStr.includes('Decision: SKIP')) {
+                    type = 'skip';
+                    icon = '⏩';
+                    color = 'var(--text-muted)';
+                    text = logStr.replace('[Agent Run]', '').trim();
+                  } else if (logStr.includes('Payment Succeeded!')) {
+                    type = 'success';
+                    icon = '✅';
+                    color = 'var(--success)';
+                    text = logStr.replace('[Agent Run]', '').trim();
+                  } else if (logStr.includes('Summary compiled:')) {
+                    type = 'summary';
+                    icon = '📝';
+                    color = '#34d399';
+                    text = logStr.replace('[Agent Run]', '').trim();
+                  } else if (logStr.startsWith('[Agent Run]')) {
+                    type = 'agent';
+                    icon = '🤖';
+                    color = 'var(--primary-light)';
+                    text = logStr.replace('[Agent Run]', '').trim();
+                  }
+
+                  const isTech = logStr.includes('nonce') || logStr.includes('signature') || logStr.includes('EIP-3009') || logStr.includes('Tx Hash:') || logStr.includes('Recipient');
+
+                  return (
+                    <div 
+                      key={idx} 
+                      style={{ 
+                        display: 'flex', 
+                        gap: '1rem', 
+                        position: 'relative',
+                        alignItems: 'start'
+                      }}
+                    >
+                      {/* Circle Node on line */}
+                      <div 
+                        style={{
+                          width: '28px',
+                          height: '28px',
+                          borderRadius: '50%',
+                          background: 'rgba(17, 24, 39, 0.9)',
+                          border: `2px solid ${color}`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.9rem',
+                          zIndex: 2,
+                          flexShrink: 0,
+                          boxShadow: idx === runLogs.length - 1 ? `0 0 10px ${color}` : 'none'
+                        }}
+                      >
+                        {icon}
+                      </div>
+
+                      {/* Step Card Content */}
+                      <div 
+                        className="glass-card" 
+                        style={{ 
+                          flexGrow: 1, 
+                          padding: '0.75rem 1rem', 
+                          margin: 0,
+                          background: idx === runLogs.length - 1 ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.01)',
+                          border: idx === runLogs.length - 1 ? '1px solid rgba(255,255,255,0.15)' : '1px solid var(--border)'
+                        }}
+                      >
+                        <div style={{ color: color, fontSize: '0.9rem', fontWeight: 500 }}>
+                          {text}
+                        </div>
+                        
+                        {isTech && (
+                          <pre 
+                            style={{ 
+                              marginTop: '0.5rem', 
+                              fontSize: '0.75rem', 
+                              background: '#040711', 
+                              padding: '0.5rem', 
+                              borderRadius: '4px', 
+                              overflowX: 'auto',
+                              fontFamily: 'var(--font-mono)',
+                              color: 'var(--text-muted)'
+                            }}
+                          >
+                            {logStr}
+                          </pre>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
               ) : (
-                <div style={{ color: 'var(--text-muted)', fontStyle: 'italic', textAlign: 'center', margin: 'auto' }}>
-                  Terminal Idle. Click "Trigger Autonomous Run Loop" to boot the reader loop.
+                <div style={{ color: 'var(--text-muted)', fontStyle: 'italic', textAlign: 'center', margin: '3rem auto' }}>
+                  Timeline Idle. Click "Start Loop" above to run the AI Reader agent.
                 </div>
               )}
             </div>

@@ -28,13 +28,14 @@ router.post('/', async (req, res) => {
 
       // Insert creator
       db.prepare(`
-        INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, default_price_usdc)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc)
+        VALUES (?, ?, ?, ?, ?, ?)
       `).run(
         creatorId,
         ghostUrl,
         ghostApiKey || '',
         wallet.address,
+        wallet.id,
         parseFloat(defaultPriceUsdc || '0.005')
       );
 
@@ -43,6 +44,7 @@ router.post('/', async (req, res) => {
         ghost_url: ghostUrl,
         ghost_api_key: ghostApiKey || '',
         wallet_address: wallet.address,
+        wallet_id: wallet.id,
         default_price_usdc: parseFloat(defaultPriceUsdc || '0.005'),
       };
     }

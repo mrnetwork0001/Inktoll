@@ -15,6 +15,7 @@ export const config = {
     apiKey: process.env.CIRCLE_API_KEY || '',
     gatewayUrl: process.env.CIRCLE_GATEWAY_URL || 'https://api.circle.com/v1/nanopayments',
     walletSetId: process.env.CIRCLE_WALLET_SET_ID || '',
+    entitySecret: process.env.CIRCLE_ENTITY_SECRET || '',
   },
   arc: {
     rpcUrl: process.env.ARC_RPC_URL || 'https://arc-node.thecanteenapp.com',

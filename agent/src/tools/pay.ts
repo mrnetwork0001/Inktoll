@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { ethers } from 'ethers';
 import { recordPurchase } from '../budget.js';
+import { GatewayClient } from '@circle-fin/x402-batching/client';
 
 export interface PayResult {
   success: boolean;
@@ -47,9 +48,45 @@ export async function payAndFetchArticle(
   apiUrl: string
 ): Promise<PayResult> {
   const agentWallet = getOrCreateAgentWallet();
+  const isMock = !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here';
+
+  if (!isMock) {
+    try {
+      console.log(`[Pay Tool] Initiating real x402 flow using @circle-fin/x402-batching GatewayClient...`);
+      const client = new GatewayClient({
+        chain: 'arcTestnet',
+        privateKey: agentWallet.privateKey as `0x${string}`,
+      });
+
+      const articleUrl = `${apiUrl}/api/articles/${slug}`;
+      console.log(`[Pay Tool] Paying for article: ${articleUrl}`);
+      const { status, data } = await client.pay(articleUrl);
+      console.log(`[Pay Tool] GatewayClient response status: ${status}`);
+
+      let parsedData = data;
+      if (typeof data === 'string') {
+        try {
+          parsedData = JSON.parse(data);
+        } catch {
+          // ignore
+        }
+      }
+
+      if ((status === 200 || status === 201) && parsedData && parsedData.paid && parsedData.article) {
+        recordPurchase(slug, price);
+        return {
+          success: true,
+          article: parsedData.article,
+        };
+      }
+      console.warn(`[Pay Tool] SDK payment returned status ${status}. Falling back to custom signature...`);
+    } catch (err: any) {
+      console.error(`[Pay Tool] Real payment failed: ${err.message}. Falling back to custom signature...`);
+    }
+  }
 
   try {
-    console.log(`[Pay Tool] Initiating x402 payment flow for slug: "${slug}"`);
+    console.log(`[Pay Tool] Initiating custom x402 payment flow for slug: "${slug}"`);
     console.log(`[Pay Tool] Sender: ${agentWallet.address} -> Recipient: ${recipientWallet}. Amount: ${price} USDC`);
 
     // 1. Prepare payment details
@@ -57,7 +94,6 @@ export async function payAndFetchArticle(
     const deadline = Math.floor(Date.now() / 1000) + 3600; // 1 hour deadline
 
     // 2. Hash message and sign cryptographically
-    // Solidity equivalents: keccak256(abi.encodePacked(from, to, value, nonce, deadline))
     const value = ethers.parseUnits(price.toString(), 6); // USDC uses 6 decimals
     const messageHash = ethers.solidityPackedKeccak256(
       ['address', 'address', 'uint256', 'string', 'uint256'],

@@ -118,6 +118,33 @@ function CreatorDashboardInner() {
     }
   };
 
+  const [fauceting, setFauceting] = useState(false);
+  const [faucetSuccess, setFaucetSuccess] = useState('');
+
+  const handleFaucet = async () => {
+    if (!stats?.walletAddress) return;
+    setFauceting(true);
+    setFaucetSuccess('');
+    setError('');
+    try {
+      const res = await fetch(`${API_URL}/api/faucet`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletAddress: stats.walletAddress,
+          type: 'creator',
+        }),
+      });
+      if (!res.ok) throw new Error('Faucet request failed');
+      setFaucetSuccess('Success! 5.00 USDC testnet funds requested.');
+      await fetchStats();
+    } catch (err: any) {
+      setError('Faucet failed: ' + err.message);
+    } finally {
+      setFauceting(false);
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -193,14 +220,29 @@ function CreatorDashboardInner() {
                     {withdrawSuccess}
                   </div>
                 )}
-                <button 
-                  className="btn btn-secondary" 
-                  style={{ width: '100%' }}
-                  onClick={handleWithdraw}
-                  disabled={withdrawing || !stats?.balanceUsdc || stats.balanceUsdc <= 0}
-                >
-                  {withdrawing ? 'Withdrawing...' : 'Withdraw USDC via App Kit'}
-                </button>
+                {faucetSuccess && (
+                  <div style={{ padding: '0.5rem', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.8rem', marginBottom: '0.75rem' }}>
+                    {faucetSuccess}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <button 
+                    className="btn btn-secondary" 
+                    style={{ flexGrow: 1, marginBottom: 0 }}
+                    onClick={handleFaucet}
+                    disabled={fauceting}
+                  >
+                    {fauceting ? 'Fauceting...' : '⛲ Faucet'}
+                  </button>
+                  <button 
+                    className="btn btn-primary" 
+                    style={{ flexGrow: 2, marginBottom: 0 }}
+                    onClick={handleWithdraw}
+                    disabled={withdrawing || !stats?.balanceUsdc || stats.balanceUsdc <= 0}
+                  >
+                    {withdrawing ? 'Withdrawing...' : 'Withdraw'}
+                  </button>
+                </div>
               </div>
             </div>
 

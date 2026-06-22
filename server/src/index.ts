@@ -7,6 +7,7 @@ import articlesRouter from './routes/articles.js';
 import feedRouter from './routes/feed.js';
 import paymentsRouter from './routes/payments.js';
 import citationsRouter from './routes/citations.js';
+import faucetRouter from './routes/faucet.js';
 
 // Validate config
 validateConfig();
@@ -25,6 +26,7 @@ app.use('/api/articles', articlesRouter);
 app.use('/api/feed', feedRouter);
 app.use('/api/payments', paymentsRouter);
 app.use('/api/citations', citationsRouter);
+app.use('/api/faucet', faucetRouter);
 
 // Health check
 app.get('/health', (req, res) => {

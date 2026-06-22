@@ -22,7 +22,7 @@ async function runCreateWallet() {
     console.log(`Provisioning a new Developer-Controlled Wallet in set: ${config.circle.walletSetId}...`);
     const response = await client.createWallets({
       accountType: 'EOA',
-      blockchains: ['ETH-SEPOLIA'], // Default Sepolia testnet blockchain for Developer Controlled Wallets
+      blockchains: ['ARC-TESTNET'], // Create wallet on the Arc Testnet L1 blockchain
       count: 1,
       walletSetId: config.circle.walletSetId,
     });

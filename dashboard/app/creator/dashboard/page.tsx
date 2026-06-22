@@ -69,14 +69,21 @@ function CreatorDashboardInner() {
     try {
       const res = await fetch(`${API_URL}/api/payments?creatorId=${creatorId}`);
       if (!res.ok) {
-        throw new Error('Failed to load stats');
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server responded with status ${res.status}`);
       }
       const data = await res.json();
       setStats(data);
       setError('');
     } catch (err: any) {
       console.error(err);
-      if (!silent) setError('Could not connect to the backend server. Make sure the server is running.');
+      if (!silent) {
+        if (err.message.includes('Failed to fetch') || err.message.includes('fetch failed')) {
+          setError('Could not connect to the backend server. Make sure the server is running on port 3001.');
+        } else {
+          setError(err.message);
+        }
+      }
     } finally {
       if (!silent) setLoading(false);
     }

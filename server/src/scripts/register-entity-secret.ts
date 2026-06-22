@@ -1,5 +1,5 @@
 import { config } from '../config.js';
-import { generateEntitySecret, registerEntitySecretCiphertext } from '@circle-fin/developer-controlled-wallets';
+import { generateEntitySecret, registerEntitySecretCiphertext, initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -19,8 +19,7 @@ async function runRegistration() {
 
   console.log('Registering Entity Secret with Circle API...');
   try {
-    const isSandbox = config.circle.apiKey.startsWith('TEST_API_KEY');
-    const baseUrl = isSandbox ? 'https://api-sandbox.circle.com' : 'https://api.circle.com';
+    const baseUrl = 'https://api.circle.com';
     const response = await registerEntitySecretCiphertext({
       apiKey: config.circle.apiKey,
       entitySecret: entitySecret,
@@ -30,21 +29,39 @@ async function runRegistration() {
     console.log('\n=============================================');
     console.log('🎉 SUCCESS: ENTITY SECRET REGISTERED SUCCESSFULLY!');
     console.log('=============================================\n');
-    console.log('Circle Response Data:', JSON.stringify(response, null, 2));
 
-    // Save the plain entity secret to the .env file automatically
+    // Create wallet set programmatically
+    console.log('Creating a new Wallet Set programmatically on Circle...');
+    const client = initiateDeveloperControlledWalletsClient({
+      apiKey: config.circle.apiKey,
+      entitySecret: entitySecret,
+    });
+
+    const wsResponse = await client.createWalletSet({
+      name: 'Inktoll Wallet Set'
+    });
+
+    const walletSetId = wsResponse.data?.walletSet?.id;
+    if (walletSetId) {
+      console.log(`🎉 SUCCESS: WALLET SET CREATED: ${walletSetId}`);
+    } else {
+      throw new Error('Failed to retrieve Wallet Set ID from response');
+    }
+
+    // Save plain entity secret & wallet set ID to the .env file automatically
     const envPath = path.resolve(__dirname, '../../../.env');
     if (fs.existsSync(envPath)) {
       let envContent = fs.readFileSync(envPath, 'utf8');
       
-      // Remove any existing CIRCLE_ENTITY_SECRET lines
+      // Remove any existing CIRCLE_ENTITY_SECRET and CIRCLE_WALLET_SET_ID lines
       envContent = envContent.replace(/^CIRCLE_ENTITY_SECRET=.*$/m, '');
+      envContent = envContent.replace(/^CIRCLE_WALLET_SET_ID=.*$/m, '');
       
-      // Append the new one
-      envContent = envContent.trim() + `\n\n# Circle Entity Secret for Programmatic Signing\nCIRCLE_ENTITY_SECRET=${entitySecret}\n`;
+      // Append the new keys
+      envContent = envContent.trim() + `\n\n# Circle Developer Credentials\nCIRCLE_ENTITY_SECRET=${entitySecret}\nCIRCLE_WALLET_SET_ID=${walletSetId}\n`;
       
       fs.writeFileSync(envPath, envContent, 'utf8');
-      console.log('Saved CIRCLE_ENTITY_SECRET to your root .env file automatically.');
+      console.log('Saved CIRCLE_ENTITY_SECRET and CIRCLE_WALLET_SET_ID to your root .env file automatically.');
     }
   } catch (error: any) {
     console.error('Registration failed:', error);

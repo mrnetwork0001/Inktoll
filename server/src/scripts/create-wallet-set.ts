@@ -1,46 +1,61 @@
 import { config } from '../config.js';
-import crypto from 'crypto';
+import { initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-async function createWalletSet() {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+async function runCreateWalletSet() {
   if (!config.circle.apiKey || config.circle.apiKey.startsWith('your_')) {
     console.error('Error: CIRCLE_API_KEY is not set to a real key in .env');
     process.exit(1);
   }
 
-  const isSandbox = config.circle.apiKey.startsWith('TEST_API_KEY');
-  const domain = isSandbox ? 'https://api-sandbox.circle.com' : 'https://api.circle.com';
-  const url = `${domain}/v1/w3s/developer/walletSets`;
-  
-  console.log(`Creating Wallet Set via Circle API: ${url}...`);
+  if (!config.circle.entitySecret) {
+    console.error('Error: CIRCLE_ENTITY_SECRET is not set in .env');
+    process.exit(1);
+  }
+
+  console.log('Initiating Circle Developer Controlled Wallets client...');
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.circle.apiKey}`
-      },
-      body: JSON.stringify({
-        idempotencyKey: crypto.randomUUID(),
-        name: 'Inktoll Wallet Set'
-      })
+    const client = initiateDeveloperControlledWalletsClient({
+      apiKey: config.circle.apiKey,
+      entitySecret: config.circle.entitySecret,
     });
 
-    if (!res.ok) {
-      const err = await res.text();
-      console.error(`Failed to create Wallet Set: ${res.status} - ${err}`);
-      process.exit(1);
+    console.log('Creating a new Wallet Set programmatically on Circle...');
+    const wsResponse = await client.createWalletSet({
+      name: 'Inktoll Wallet Set'
+    });
+
+    const walletSetId = wsResponse.data?.walletSet?.id;
+    if (walletSetId) {
+      console.log(`\n=============================================`);
+      console.log(`🎉 SUCCESS: WALLET SET CREATED: ${walletSetId}`);
+      console.log(`=============================================\n`);
+    } else {
+      throw new Error('Failed to retrieve Wallet Set ID from response');
     }
 
-    const json = await res.json() as any;
-    console.log('\n=============================================');
-    console.log('🎉 SUCCESS: WALLET SET CREATED!');
-    console.log(`Wallet Set ID: ${json.data.walletSet.id}`);
-    console.log('=============================================\n');
-    console.log('Please copy the Wallet Set ID above and add it to your root .env file as:');
-    console.log(`CIRCLE_WALLET_SET_ID=${json.data.walletSet.id}`);
+    // Save wallet set ID to the .env file automatically
+    const envPath = path.resolve(__dirname, '../../../.env');
+    if (fs.existsSync(envPath)) {
+      let envContent = fs.readFileSync(envPath, 'utf8');
+      
+      // Remove any existing CIRCLE_WALLET_SET_ID lines
+      envContent = envContent.replace(/^CIRCLE_WALLET_SET_ID=.*$/m, '');
+      
+      // Append the key
+      envContent = envContent.trim() + `\nCIRCLE_WALLET_SET_ID=${walletSetId}\n`;
+      
+      fs.writeFileSync(envPath, envContent, 'utf8');
+      console.log('Saved CIRCLE_WALLET_SET_ID to your root .env file automatically.');
+    }
   } catch (error: any) {
-    console.error('Network error:', error.message);
+    console.error('Wallet Set creation failed:', error.message || error);
   }
 }
 
-createWalletSet();
+runCreateWalletSet();

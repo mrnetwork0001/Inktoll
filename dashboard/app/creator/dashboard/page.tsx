@@ -123,7 +123,10 @@ function CreatorDashboardInner() {
     setError('');
 
     try {
-      const dest = connectedAddress || ('0xWithdrawTarget' + Math.floor(Math.random() * 100000));
+      if (!connectedAddress) {
+        throw new Error('Please connect your payout wallet (MetaMask) at the top right before initiating a withdrawal.');
+      }
+      const dest = connectedAddress;
       const res = await fetch(`${API_URL}/api/creators/withdraw`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -260,8 +263,8 @@ function CreatorDashboardInner() {
                         {connectedAddress.substring(0, 8)}...{connectedAddress.substring(connectedAddress.length - 6)} ({connectedType === 'metamask' ? 'EVM EOA' : 'Circle Passkey'})
                       </code>
                     ) : (
-                      <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>
-                        No destination wallet connected. Defaults to mock target.
+                      <span style={{ color: 'var(--error)', fontStyle: 'italic', fontWeight: 500 }}>
+                        No destination wallet connected. Connect your MetaMask wallet to enable withdrawals.
                       </span>
                     )}
                   </div>
@@ -292,7 +295,8 @@ function CreatorDashboardInner() {
                     className="btn btn-primary" 
                     style={{ flexGrow: 2, marginBottom: 0 }}
                     onClick={handleWithdraw}
-                    disabled={withdrawing || !stats?.balanceUsdc || stats.balanceUsdc <= 0}
+                    disabled={withdrawing || !stats?.balanceUsdc || stats.balanceUsdc <= 0 || !connectedAddress}
+                    title={!connectedAddress ? "Please connect MetaMask to withdraw" : ""}
                   >
                     {withdrawing ? 'Withdrawing...' : 'Withdraw'}
                   </button>

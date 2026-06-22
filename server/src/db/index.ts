@@ -244,6 +244,17 @@ class JSONDatabase {
           return { count: matches.length, volume };
         }
 
+        // 12. Check if reader has paid for article
+        if (normalized.includes('select id from payments') && normalized.includes('article_id =') && normalized.includes('reader_agent_id =')) {
+          const [articleId, readerAgentId] = params;
+          const found = self.data.payments.find(p => 
+            p.article_id === articleId && 
+            p.reader_agent_id === readerAgentId && 
+            (p.status === 'settled' || p.status === 'pending')
+          );
+          return found ? { id: found?.id } : undefined;
+        }
+
         return undefined;
       },
 

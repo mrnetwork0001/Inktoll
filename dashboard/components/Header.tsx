@@ -57,14 +57,7 @@ export default function Header() {
         console.error('Wallet connection failed:', err);
       }
     } else {
-      // Mock Fallback connection if metamask is missing
-      const mockAddr = '0xDemoEVM' + Math.floor(Math.random() * 1000000).toString(16).padStart(6, '0');
-      setWalletAddress(mockAddr);
-      setWalletType('metamask');
-      localStorage.setItem('inktoll_connected_address', mockAddr);
-      localStorage.setItem('inktoll_wallet_type', 'metamask');
-      window.dispatchEvent(new Event('wallet-changed'));
-      alert('MetaMask extension not found. A demo EVM wallet has been simulated for testing.');
+      alert('MetaMask extension not found. Please install MetaMask to connect your wallet.');
     }
   };
 

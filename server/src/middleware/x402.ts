@@ -46,6 +46,18 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
         };
       }
 
+      // Check if reader has already paid for this article in the database to avoid double-payments
+      const existingPayment = db.prepare(`
+        SELECT id FROM payments 
+        WHERE article_id = ? AND reader_agent_id = ? AND (status = 'settled' OR status = 'pending')
+      `).get(article.id, authData.fromAddress);
+
+      if (existingPayment) {
+        console.log(`[x402 Middleware] Reader ${authData.fromAddress} already purchased article "${article.title}". Bypassing transaction.`);
+        req.paid = true;
+        return next();
+      }
+
       // Verify the signature
       const isMock = authData.signature.startsWith('mock-');
       let signerAddress = authData.fromAddress;

@@ -235,14 +235,12 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
                 pointerEvents: 'none',
                 zIndex: 9,
                 // Pass target coordinates as CSS variables for animation
-                style: {
-                  '--target-x': `${dot.x}px`,
-                  '--target-y': `${dot.y}px`
-                } as React.CSSProperties,
+                ['--target-x' as any]: `${dot.x}px`,
+                ['--target-y' as any]: `${dot.y}px`,
                 animation: 'money-float 2.5s ease-in-out infinite',
                 // stagger start times
                 animationDelay: `${idx * 0.8}s`
-              }}
+              } as React.CSSProperties}
             >
               +0.0001 USDC
             </div>

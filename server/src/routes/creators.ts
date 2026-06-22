@@ -100,6 +100,30 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.post('/withdraw', async (req, res) => {
+  const { creatorId, destinationAddress, amount } = req.body;
+  if (!creatorId || !amount) {
+    return res.status(400).json({ error: 'creatorId and amount are required' });
+  }
+
+  const db = getDb();
+  try {
+    const creator = db.prepare('SELECT * FROM creators WHERE id = ?').get(creatorId) as any;
+    if (!creator) {
+      return res.status(404).json({ error: 'Creator not found' });
+    }
+
+    const { processWithdrawal } = await import('../services/wallet.js');
+    const dest = destinationAddress || '0xWithdrawTarget' + Math.floor(Math.random() * 100000);
+    const txHash = await processWithdrawal(creator.wallet_address, dest, parseFloat(amount));
+
+    return res.json({ success: true, txHash, destinationAddress: dest });
+  } catch (error: any) {
+    console.error(`[Creators Withdraw] Error: ${error.message}`);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/', (req, res) => {
   const db = getDb();
   const creators = db.prepare('SELECT id, ghost_url, wallet_address, default_price_usdc FROM creators').all();

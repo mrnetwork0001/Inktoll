@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '../../../components/Header';
+import PasskeyConnector from '../../../components/PasskeyConnector';
 
 export default function ReaderSetup() {
   const [status, setStatus] = useState<any>(null);
@@ -12,6 +13,39 @@ export default function ReaderSetup() {
   const [interests, setInterests] = useState('');
   const [maxPrice, setMaxPrice] = useState('0.05');
   const [dailyBudget, setDailyBudget] = useState('1.00');
+  
+  // Wallet custody model states
+  const [custodyType, setCustodyType] = useState<string>('managed');
+  const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Sync storage values
+    const storedType = localStorage.getItem('inktoll_wallet_type') || 'managed';
+    const storedAddr = localStorage.getItem('inktoll_connected_address');
+    setCustodyType(storedType);
+    setConnectedAddress(storedAddr);
+
+    const handleWalletChange = () => {
+      const t = localStorage.getItem('inktoll_wallet_type') || 'managed';
+      const a = localStorage.getItem('inktoll_connected_address');
+      setCustodyType(t);
+      setConnectedAddress(a);
+    };
+
+    window.addEventListener('wallet-changed', handleWalletChange);
+    return () => window.removeEventListener('wallet-changed', handleWalletChange);
+  }, []);
+
+  const handleCustodyChange = (type: string, optAddress?: string) => {
+    setCustodyType(type);
+    localStorage.setItem('inktoll_wallet_type', type);
+    if (type === 'managed') {
+      localStorage.removeItem('inktoll_connected_address');
+    } else if (optAddress) {
+      localStorage.setItem('inktoll_connected_address', optAddress);
+    }
+    window.dispatchEvent(new Event('wallet-changed'));
+  };
   
   // Running loop state
   const [running, setRunning] = useState(false);
@@ -289,6 +323,109 @@ export default function ReaderSetup() {
                   Save Preferences
                 </button>
               </form>
+            </div>
+
+            {/* Wallet Custody Card */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <h3>⚜️ Wallet Custody Model</h3>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  Choose how your autonomous reader agent signs and pays article tolls.
+                </p>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.75rem', 
+                    padding: '0.75rem', 
+                    borderRadius: '8px', 
+                    border: '1px solid var(--border)', 
+                    cursor: 'pointer',
+                    background: custodyType === 'managed' ? 'rgba(0,115,195,0.05)' : 'transparent',
+                    borderColor: custodyType === 'managed' ? 'var(--primary)' : 'var(--border)'
+                  }}>
+                    <input 
+                      type="radio" 
+                      name="custody" 
+                      value="managed" 
+                      checked={custodyType === 'managed'}
+                      onChange={() => handleCustodyChange('managed')}
+                    />
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>🤖 Inktoll Managed (Circle DCW)</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Background payments without prompts. Ideal for run loops.</div>
+                    </div>
+                  </label>
+
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.75rem', 
+                    padding: '0.75rem', 
+                    borderRadius: '8px', 
+                    border: '1px solid var(--border)', 
+                    cursor: 'pointer',
+                    background: custodyType === 'metamask' ? 'rgba(245,166,35,0.05)' : 'transparent',
+                    borderColor: custodyType === 'metamask' ? 'var(--accent)' : 'var(--border)'
+                  }}>
+                    <input 
+                      type="radio" 
+                      name="custody" 
+                      value="metamask" 
+                      checked={custodyType === 'metamask'}
+                      onChange={() => handleCustodyChange('metamask')}
+                    />
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>🦊 Browser Wallet (MetaMask)</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Direct signature verification from your browser extension.</div>
+                    </div>
+                  </label>
+
+                  <label style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.75rem', 
+                    padding: '0.75rem', 
+                    borderRadius: '8px', 
+                    border: '1px solid var(--border)', 
+                    cursor: 'pointer',
+                    background: custodyType === 'passkey' ? 'rgba(16,185,129,0.05)' : 'transparent',
+                    borderColor: custodyType === 'passkey' ? 'var(--success)' : 'var(--border)'
+                  }}>
+                    <input 
+                      type="radio" 
+                      name="custody" 
+                      value="passkey" 
+                      checked={custodyType === 'passkey'}
+                      onChange={() => handleCustodyChange('passkey')}
+                    />
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>⚜️ Device Passkey (Smart Account)</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Non-custodial biometrics. Gas-abstracted smart wallet.</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Show Passkey Connector registration if passkey selected */}
+              {custodyType === 'passkey' && (
+                <PasskeyConnector 
+                  onSuccess={(addr) => {
+                    handleCustodyChange('passkey', addr);
+                  }}
+                />
+              )}
+
+              {/* Show MetaMask Connect helper if browser wallet selected but none connected */}
+              {custodyType === 'metamask' && !connectedAddress && (
+                <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', border: '1px solid var(--accent)' }}>
+                  <h4 style={{ margin: 0 }}>🦊 MetaMask Required</h4>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    Please click "Connect Wallet" at the top right header to link your MetaMask or EVM account.
+                  </p>
+                </div>
+              )}
             </div>
 
           </div>

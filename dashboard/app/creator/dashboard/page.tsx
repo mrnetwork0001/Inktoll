@@ -54,6 +54,8 @@ function CreatorDashboardInner() {
   const [error, setError] = useState('');
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState('');
+  const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
+  const [connectedType, setConnectedType] = useState<string>('managed');
 
   // Animate Earnings Counter
   const totalEarnings = stats?.totalEarningsUsdc || 0;
@@ -88,28 +90,57 @@ function CreatorDashboardInner() {
 
     fetchStats();
 
+    // Load wallet connection states
+    const addr = localStorage.getItem('inktoll_connected_address');
+    const type = localStorage.getItem('inktoll_wallet_type') || 'managed';
+    setConnectedAddress(addr);
+    setConnectedType(type);
+
+    const handleWalletChange = () => {
+      const a = localStorage.getItem('inktoll_connected_address');
+      const t = localStorage.getItem('inktoll_wallet_type') || 'managed';
+      setConnectedAddress(a);
+      setConnectedType(t);
+    };
+
+    window.addEventListener('wallet-changed', handleWalletChange);
+
     // Live update polling
     const interval = setInterval(() => {
       fetchStats(true);
     }, 3000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('wallet-changed', handleWalletChange);
+    };
   }, [creatorId]);
 
   const handleWithdraw = async () => {
     if (!stats?.walletAddress || stats.balanceUsdc <= 0) return;
     setWithdrawing(true);
     setWithdrawSuccess('');
+    setError('');
 
     try {
-      // Send withdrawal mock/real request to server
-      const mockPersonalWallet = '0xWithdrawTarget' + Math.floor(Math.random() * 100000);
-      const res = await fetch(`${API_URL}/api/creators`, { method: 'GET' }); // query list to check connectivity
+      const dest = connectedAddress || ('0xWithdrawTarget' + Math.floor(Math.random() * 100000));
+      const res = await fetch(`${API_URL}/api/creators/withdraw`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          creatorId,
+          destinationAddress: dest,
+          amount: stats.balanceUsdc
+        })
+      });
       
-      // Update balance mockingly
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to withdraw');
+      }
       
-      setWithdrawSuccess(`Success! Withdrew ${stats.balanceUsdc} USDC to personal wallet.`);
+      const data = await res.json();
+      setWithdrawSuccess(`Success! Withdrew ${stats.balanceUsdc} USDC to ${dest.substring(0, 10)}... (Tx: ${data.txHash.substring(0, 16)}...)`);
       await fetchStats();
     } catch (err: any) {
       setError('Withdrawal failed: ' + err.message);
@@ -211,6 +242,29 @@ function CreatorDashboardInner() {
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                   Blockchain: Arc Testnet (gasless stablecoin native L1)
+                </div>
+                
+                {/* Connected Wallet Payout Destination Info */}
+                <div style={{ 
+                  marginTop: '0.75rem', 
+                  padding: '0.5rem 0.75rem', 
+                  background: 'rgba(255,255,255,0.02)', 
+                  border: '1px solid var(--border)', 
+                  borderRadius: '8px', 
+                  fontSize: '0.8rem' 
+                }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>Payout Destination:</span>
+                  <div style={{ marginTop: '0.25rem' }}>
+                    {connectedAddress ? (
+                      <code style={{ color: 'var(--accent)', fontWeight: 'bold' }}>
+                        {connectedAddress.substring(0, 8)}...{connectedAddress.substring(connectedAddress.length - 6)} ({connectedType === 'metamask' ? 'EVM EOA' : 'Circle Passkey'})
+                      </code>
+                    ) : (
+                      <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                        No destination wallet connected. Defaults to mock target.
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 

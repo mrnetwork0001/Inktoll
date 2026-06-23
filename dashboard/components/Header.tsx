@@ -14,6 +14,18 @@ import {
   toModularTransport,
   toWebAuthnCredential,
 } from '@circle-fin/modular-wallets-core';
+import { W3SSdk } from '@circle-fin/w3s-pw-web-sdk';
+
+interface LoginResult {
+  userToken: string;
+  encryptionKey: string;
+}
+
+interface OtpTokens {
+  deviceToken: string;
+  deviceEncryptionKey: string;
+  otpToken: string;
+}
 
 export default function Header() {
   const pathname = usePathname();
@@ -21,6 +33,18 @@ export default function Header() {
   const [walletType, setWalletType] = useState<string>('managed'); // 'managed' | 'metamask' | 'passkey'
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  
+  // Email OTP States
+  const sdkRef = React.useRef<W3SSdk | null>(null);
+  const [authStep, setAuthStep] = useState<'options' | 'email_input' | 'otp_input' | 'creating'>('options');
+  const [email, setEmail] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [deviceId, setDeviceId] = useState('');
+  const [otpTokens, setOtpTokens] = useState<OtpTokens | null>(null);
+  const [loginResult, setLoginResult] = useState<LoginResult | null>(null);
+  const [challengeId, setChallengeId] = useState<string | null>(null);
+  const [emailStatus, setEmailStatus] = useState('');
 
   useEffect(() => {
     // Client-side initialization
@@ -41,6 +65,50 @@ export default function Header() {
 
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('wallet-changed', handleStorageChange);
+
+    // Initialize W3S SDK for Email OTP
+    const initSdk = async () => {
+      try {
+        const appId = process.env.NEXT_PUBLIC_CIRCLE_APP_ID;
+        if (!appId || appId === 'PLACEHOLDER_APP_ID') return;
+
+        const onLoginComplete = (error: unknown, result: unknown) => {
+          if (error) {
+            setEmailStatus('Login failed: ' + ((error as Error).message || 'Unknown error'));
+            return;
+          }
+          const loginRes = result as LoginResult;
+          setLoginResult(loginRes);
+          localStorage.setItem('inktoll_userToken', loginRes.userToken);
+          localStorage.setItem('inktoll_encryptionKey', loginRes.encryptionKey);
+          setEmailStatus('Email verified! Initializing wallet...');
+          // Trigger the next step automatically
+          handleInitializeUser(loginRes.userToken);
+        };
+
+        const sdk = new W3SSdk({ appSettings: { appId } }, onLoginComplete);
+        sdkRef.current = sdk;
+
+        const storedDeviceId = localStorage.getItem('inktoll_deviceId');
+        if (storedDeviceId) {
+          setDeviceId(storedDeviceId);
+        } else {
+          const id = await sdk.getDeviceId();
+          setDeviceId(id);
+          localStorage.setItem('inktoll_deviceId', id);
+        }
+
+        const storedUserToken = localStorage.getItem('inktoll_userToken');
+        const storedEncryptionKey = localStorage.getItem('inktoll_encryptionKey');
+        if (storedUserToken && storedEncryptionKey) {
+          setLoginResult({ userToken: storedUserToken, encryptionKey: storedEncryptionKey });
+        }
+      } catch (err) {
+        console.error('Failed to init W3S Web SDK:', err);
+      }
+    };
+    initSdk();
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('wallet-changed', handleStorageChange);
@@ -130,6 +198,105 @@ export default function Header() {
     }
   };
 
+  // -------------------------------------------------------------
+  // EMAIL OTP FLOW
+  // -------------------------------------------------------------
+  const handleRequestOtp = async () => {
+    if (!email || !email.includes('@')) {
+      setEmailStatus('Please enter a valid email.');
+      return;
+    }
+    setEmailStatus('Sending OTP...');
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/wallet/request-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId, email }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to request OTP');
+
+      setOtpTokens({
+        deviceToken: data.deviceToken,
+        deviceEncryptionKey: data.deviceEncryptionKey,
+        otpToken: data.otpToken,
+      });
+
+      sdkRef.current?.updateConfigs({
+        appSettings: { appId: process.env.NEXT_PUBLIC_CIRCLE_APP_ID as string },
+        loginConfigs: {
+          deviceToken: data.deviceToken,
+          deviceEncryptionKey: data.deviceEncryptionKey,
+          otpToken: data.otpToken,
+        },
+      });
+      setAuthStep('otp_input');
+      setEmailStatus('');
+    } catch (err: any) {
+      setEmailStatus(err.message);
+    }
+  };
+
+  const handleVerifyOtp = () => {
+    if (!sdkRef.current || !otpTokens) return;
+    setAuthStep('creating');
+    setEmailStatus('Awaiting OTP verification in the Circle window...');
+    sdkRef.current.verifyOtp();
+  };
+
+  const handleInitializeUser = async (uToken: string) => {
+    try {
+      setEmailStatus('Initializing user...');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/wallet/initialize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userToken: uToken }),
+      });
+      const data = await response.json();
+
+      if (data.code === 155106) {
+        // User already initialized, we just need their wallet
+        setEmailStatus('Welcome back! Wallet loaded.');
+        setWalletAddress('Email-Wallet-Loaded'); // TODO: call listWallets
+        setWalletType('managed');
+        localStorage.setItem('inktoll_wallet_type', 'managed');
+        setShowAuthModal(false);
+        setAuthStep('options');
+        return;
+      }
+
+      if (!response.ok) throw new Error(data.error || 'Failed to initialize user');
+      
+      handleCreateWallet(data.challengeId, uToken);
+    } catch (err: any) {
+      setEmailStatus(err.message);
+    }
+  };
+
+  const handleCreateWallet = (cId: string, uToken: string) => {
+    const sdk = sdkRef.current;
+    if (!sdk || !cId) return;
+
+    setEmailStatus('Creating wallet...');
+    sdk.setAuthentication({
+      userToken: uToken,
+      encryptionKey: localStorage.getItem('inktoll_encryptionKey') as string,
+    });
+
+    sdk.execute(cId, (error) => {
+      if (error) {
+        setEmailStatus('Failed: ' + ((error as Error).message || 'Unknown error'));
+        return;
+      }
+      setEmailStatus('Wallet Created Successfully!');
+      setWalletAddress('New-Email-Wallet'); // TODO: call listWallets
+      setWalletType('managed');
+      localStorage.setItem('inktoll_wallet_type', 'managed');
+      setShowAuthModal(false);
+      setAuthStep('options');
+    });
+  };
+
   const disconnectWallet = () => {
     setWalletAddress(null);
     setWalletType('managed');
@@ -141,7 +308,8 @@ export default function Header() {
 
   const switchWalletType = (type: string) => {
     if (type === 'passkey') {
-      connectPasskey();
+      setShowAuthModal(true);
+      setDropdownOpen(false);
       return;
     }
     setWalletType(type);
@@ -283,7 +451,7 @@ export default function Header() {
                     }}
                     onClick={() => switchWalletType('passkey')}
                   >
-                    ⚜️ Circle Passkey (SCA)
+                    ⚜️ Circle Wallet
                   </button>
                   <button 
                     style={{ 
@@ -323,6 +491,227 @@ export default function Header() {
 
         </div>
       </div>
+
+      {/* CIRCLE AUTH MODAL */}
+      {showAuthModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+          }}
+          onClick={() => setShowAuthModal(false)}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              width: '90%',
+              maxWidth: '400px',
+              padding: '2rem 1.5rem',
+              position: 'relative',
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+              color: '#1a1a1a',
+              fontFamily: 'system-ui, -apple-system, sans-serif'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button 
+              onClick={() => setShowAuthModal(false)}
+              style={{
+                position: 'absolute',
+                top: '1rem',
+                right: '1rem',
+                background: 'transparent',
+                border: 'none',
+                fontSize: '1.2rem',
+                color: '#6b7280',
+                cursor: 'pointer'
+              }}
+            >
+              ✕
+            </button>
+
+            {/* Icon */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 0L26.5 18.5L48 24L26.5 29.5L24 48L21.5 29.5L0 24L21.5 18.5L24 0Z" fill="currentColor" style={{color: '#2563eb'}} />
+                <circle cx="24" cy="24" r="3" fill="#ffffff" />
+              </svg>
+            </div>
+
+            {/* Headers */}
+            <h2 style={{ textAlign: 'center', margin: '0 0 0.5rem 0', fontSize: '1.5rem', fontWeight: '700' }}>
+              Log in to Inktoll
+            </h2>
+            <p style={{ textAlign: 'center', color: '#6b7280', margin: '0 0 2rem 0', fontSize: '0.95rem' }}>
+              Connect a wallet to hire agents and settle in USDC.
+            </p>
+
+            {/* Options List */}
+            {authStep === 'options' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {/* Email Option */}
+                <button 
+                  onClick={() => {
+                    const appId = process.env.NEXT_PUBLIC_CIRCLE_APP_ID;
+                    if (!appId || appId === 'PLACEHOLDER_APP_ID') {
+                      alert('You must add your Circle App ID to .env.local first!');
+                      return;
+                    }
+                    setAuthStep('email_input');
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%',
+                    padding: '1rem',
+                    background: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.borderColor = '#3b82f6'}
+                  onMouseOut={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                >
+                  <div style={{ marginRight: '1rem', color: '#3b82f6', background: '#eff6ff', padding: '0.6rem', borderRadius: '8px' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                      <path d="M2 4l10 8 10-8"></path>
+                    </svg>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '600', fontSize: '1rem', color: '#1f2937' }}>Email</div>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>One-time code to your inbox. Gasless, no ...</div>
+                  </div>
+                  <div style={{ color: '#9ca3af' }}>›</div>
+                </button>
+
+                {/* Passkey Option */}
+                <button 
+                  onClick={() => {
+                    setShowAuthModal(false);
+                    connectPasskey();
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%',
+                    padding: '1rem',
+                    background: '#ffffff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.borderColor = '#3b82f6'}
+                  onMouseOut={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                >
+                  <div style={{ marginRight: '1rem', color: '#3b82f6', background: '#eff6ff', padding: '0.6rem', borderRadius: '8px' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '600', fontSize: '1rem', color: '#1f2937' }}>Passkey</div>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Face ID or fingerprint on this device. Gasl...</div>
+                  </div>
+                  <div style={{ color: '#9ca3af' }}>›</div>
+                </button>
+              </div>
+            )}
+
+            {/* Email Input Step */}
+            {authStep === 'email_input' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <input 
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={{
+                    padding: '0.75rem',
+                    borderRadius: '8px',
+                    border: '1px solid #e5e7eb',
+                    fontSize: '1rem',
+                    width: '100%',
+                    boxSizing: 'border-box'
+                  }}
+                />
+                {emailStatus && <div style={{ fontSize: '0.8rem', color: '#ef4444' }}>{emailStatus}</div>}
+                <button 
+                  onClick={handleRequestOtp}
+                  style={{
+                    padding: '0.75rem',
+                    background: '#3b82f6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  Send One-Time Passcode
+                </button>
+                <button onClick={() => setAuthStep('options')} style={{ background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: '0.85rem' }}>
+                  ← Back
+                </button>
+              </div>
+            )}
+
+            {/* OTP Verify Step */}
+            {authStep === 'otp_input' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'center' }}>
+                <p style={{ fontSize: '0.9rem', color: '#4b5563' }}>We sent an email to <b>{email}</b>. Please click Verify to enter the code.</p>
+                {emailStatus && <div style={{ fontSize: '0.8rem', color: '#ef4444' }}>{emailStatus}</div>}
+                <button 
+                  onClick={handleVerifyOtp}
+                  style={{
+                    padding: '0.75rem',
+                    background: '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  Verify Code
+                </button>
+              </div>
+            )}
+
+            {/* Creating Step */}
+            {authStep === 'creating' && (
+              <div style={{ textAlign: 'center', padding: '2rem 0', color: '#3b82f6' }}>
+                <p>{emailStatus}</p>
+                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+                  <svg className="animate-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeDasharray="30 30" strokeLinecap="round" opacity="0.3"></circle>
+                    <path d="M12 2A10 10 0 0 1 22 12" stroke="currentColor" strokeWidth="4" strokeLinecap="round"></path>
+                  </svg>
+                </div>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div style={{ marginTop: '2rem', textAlign: 'center', borderTop: '1px solid #f3f4f6', paddingTop: '1rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: '600', letterSpacing: '0.05em', color: '#9ca3af', fontFamily: 'monospace' }}>
+                GASLESS ON ARC • SECURED BY CIRCLE
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

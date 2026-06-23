@@ -4,11 +4,23 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { createPublicClient } from 'viem';
+import { arcTestnet } from 'viem/chains';
+import { toWebAuthnAccount, type WebAuthnAccount } from 'viem/account-abstraction';
+import {
+  WebAuthnMode,
+  toCircleSmartAccount,
+  toPasskeyTransport,
+  toModularTransport,
+  toWebAuthnCredential,
+} from '@circle-fin/modular-wallets-core';
+
 export default function Header() {
   const pathname = usePathname();
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [walletType, setWalletType] = useState<string>('managed'); // 'managed' | 'metamask' | 'passkey'
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   useEffect(() => {
     // Client-side initialization
@@ -61,6 +73,63 @@ export default function Header() {
     }
   };
 
+  const connectPasskey = async () => {
+    try {
+      setIsAuthenticating(true);
+      const clientKey = process.env.NEXT_PUBLIC_CIRCLE_CLIENT_KEY as string;
+      const clientUrl = process.env.NEXT_PUBLIC_CIRCLE_CLIENT_URL as string;
+      
+      if (!clientKey || !clientUrl) {
+        throw new Error(`Missing Env vars! Key: ${!!clientKey}, URL: ${!!clientUrl}`);
+      }
+
+      const passkeyTransport = toPasskeyTransport(clientUrl, clientKey);
+      const modularTransport = toModularTransport(`${clientUrl}/arcTestnet`, clientKey);
+      
+      const client = createPublicClient({
+        chain: arcTestnet,
+        transport: modularTransport,
+      });
+
+      // Try login first, fallback to register if it fails
+      let credential;
+      try {
+        credential = await toWebAuthnCredential({
+          transport: passkeyTransport,
+          mode: WebAuthnMode.Login,
+        });
+      } catch (err: any) {
+        if (err.name === 'NotAllowedError' || err.message.includes('not found')) {
+          credential = await toWebAuthnCredential({
+            transport: passkeyTransport,
+            mode: WebAuthnMode.Register,
+            username: 'InktollCreator_' + Math.floor(Math.random() * 10000),
+          });
+        } else {
+          throw err;
+        }
+      }
+
+      const account = await toCircleSmartAccount({
+        client,
+        owner: toWebAuthnAccount({ credential }) as WebAuthnAccount,
+      });
+
+      const addr = account.address;
+      setWalletAddress(addr);
+      setWalletType('passkey');
+      localStorage.setItem('inktoll_connected_address', addr);
+      localStorage.setItem('inktoll_wallet_type', 'passkey');
+      window.dispatchEvent(new Event('wallet-changed'));
+    } catch (err: any) {
+      console.error('Passkey authentication failed:', err);
+      alert('Passkey authentication failed: ' + err.message);
+    } finally {
+      setIsAuthenticating(false);
+      setDropdownOpen(false);
+    }
+  };
+
   const disconnectWallet = () => {
     setWalletAddress(null);
     setWalletType('managed');
@@ -71,6 +140,10 @@ export default function Header() {
   };
 
   const switchWalletType = (type: string) => {
+    if (type === 'passkey') {
+      connectPasskey();
+      return;
+    }
     setWalletType(type);
     localStorage.setItem('inktoll_wallet_type', type);
     window.dispatchEvent(new Event('wallet-changed'));

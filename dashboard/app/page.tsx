@@ -145,7 +145,7 @@ export default function LandingPage() {
           <section style={{ maxWidth: '800px', margin: '4rem auto 0 auto', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
             <h2 style={{ textAlign: 'center', fontSize: '2.5rem', marginBottom: '2rem' }}>Frequently Asked Questions</h2>
             
-            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
               <summary className="faq-summary">
                 <span>What exactly is Inktoll?</span>
                 <span className="faq-icon">+</span>
@@ -155,7 +155,7 @@ export default function LandingPage() {
               </div>
             </details>
 
-            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
               <summary className="faq-summary">
                 <span>How do "gasless" nanopayments work?</span>
                 <span className="faq-icon">+</span>
@@ -165,7 +165,7 @@ export default function LandingPage() {
               </div>
             </details>
 
-            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
               <summary className="faq-summary">
                 <span>What is a Citation Toll?</span>
                 <span className="faq-icon">+</span>
@@ -175,7 +175,7 @@ export default function LandingPage() {
               </div>
             </details>
 
-            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
               <summary className="faq-summary">
                 <span>Do I need to be a crypto expert to use this?</span>
                 <span className="faq-icon">+</span>
@@ -185,7 +185,7 @@ export default function LandingPage() {
               </div>
             </details>
 
-            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
               <summary className="faq-summary">
                 <span>How do agents avoid spending all my money?</span>
                 <span className="faq-icon">+</span>

@@ -175,9 +175,7 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 100px;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  min-height: 80px;
 }
 
 .logo-section {

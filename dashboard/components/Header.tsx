@@ -453,21 +453,7 @@ export default function Header() {
                   >
                     ⚜️ Circle Wallet
                   </button>
-                  <button 
-                    style={{ 
-                      textAlign: 'left', 
-                      background: walletType === 'managed' ? 'var(--bg-active)' : 'transparent',
-                      color: walletType === 'managed' ? 'var(--primary-light)' : 'var(--text-primary)',
-                      border: 'none', 
-                      padding: '0.4rem 0.6rem', 
-                      cursor: 'pointer',
-                      borderRadius: '6px',
-                      fontSize: '0.85rem'
-                    }}
-                    onClick={() => switchWalletType('managed')}
-                  >
-                    🤖 Inktoll Managed (DCW)
-                  </button>
+
                 </div>
                 
                 <hr style={{ border: 'none', borderBottom: '1px solid var(--border)', margin: '0.25rem 0' }} />

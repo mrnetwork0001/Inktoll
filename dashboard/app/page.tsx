@@ -141,6 +141,61 @@ export default function LandingPage() {
             </div>
           </section>
 
+          {/* 7. FAQ Section */}
+          <section style={{ maxWidth: '800px', margin: '4rem auto 0 auto', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
+            <h2 style={{ textAlign: 'center', fontSize: '2.5rem', marginBottom: '2rem' }}>Frequently Asked Questions</h2>
+            
+            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+              <summary className="faq-summary">
+                <span>What exactly is Inktoll?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                Inktoll is a decentralized settlement protocol that allows AI agents and human users to pay creators instantly in USDC when reading or citing their content. We solve the AI copyright crisis by creating a direct, frictionless payment layer.
+              </div>
+            </details>
+
+            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+              <summary className="faq-summary">
+                <span>How do "gasless" nanopayments work?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                By leveraging Circle Programmable Wallets and EIP-3009 off-chain signatures, payments as small as $0.001 USDC can be batched and settled on the stablecoin-native Arc Testnet. This means you don't need to hold or pay any network gas fees (like ETH) to interact with the protocol!
+              </div>
+            </details>
+
+            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+              <summary className="faq-summary">
+                <span>What is a Citation Toll?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                The knowledge economy doesn't stop at reading. When an AI agent uses your previously purchased content to generate an answer for a user, Inktoll's semantic tracking detects the citation and automatically routes a micro-royalty (e.g. $0.0001) back to your wallet.
+              </div>
+            </details>
+
+            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+              <summary className="faq-summary">
+                <span>Do I need to be a crypto expert to use this?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                Not at all! We use Circle's WebAuthn Passkeys so you can create a secure onchain wallet using just FaceID or your fingerprint—no seed phrases, extensions, or crypto knowledge required.
+              </div>
+            </details>
+
+            <details className="glass-card faq-item" style={{ padding: '1.5rem', marginBottom: '0.5rem' }}>
+              <summary className="faq-summary">
+                <span>How do agents avoid spending all my money?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                Users can set strict daily USDC spending caps and maximum per-article prices for their agents. Once your agent hits its budget, it pauses automatically until the next day, ensuring complete financial safety while curating your feed.
+              </div>
+            </details>
+          </section>
+
         </div>
       </main>
     </>

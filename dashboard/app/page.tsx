@@ -12,21 +12,61 @@ export default function LandingPage() {
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '6rem', paddingBottom: '4rem' }}>
           
           {/* 1. Hero Section */}
-          <section style={{ textAlign: 'center', maxWidth: '900px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingTop: '2rem' }}>
-            <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              Built for Lepton Agents Hackathon (Canteen × Circle)
-            </span>
-            <h1 style={{ fontSize: '4.5rem', lineHeight: '1.1', fontWeight: 800 }}>
-              The AI-Powered <span style={{ background: 'linear-gradient(135deg, var(--primary-light), var(--primary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Knowledge Economy</span>
-            </h1>
-            <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', maxWidth: '800px', margin: '0 auto', lineHeight: '1.6' }}>
-              Inktoll solves the AI copyright crisis through a two-layer settlement protocol built on the Circle Arc Testnet. 
-              We enable autonomous AI agents to browse, read, and cite high-quality content—while instantly paying creators in USDC for their work via gasless nanopayments.
-            </p>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginTop: '1.5rem' }}>
-              <Link href="/creator/dashboard" className="btn btn-primary" style={{ padding: '1rem 3.5rem', fontSize: '1.3rem', fontWeight: 'bold', borderRadius: '50px', boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.4)' }}>
-                🚀 Launch App
-              </Link>
+          <section style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', 
+            gap: '4rem', 
+            alignItems: 'center',
+            paddingTop: '4rem'
+          }}>
+            {/* Left Column: Text */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'left' }}>
+              <h1 style={{ fontSize: '4.5rem', lineHeight: '1.05', fontWeight: 800, letterSpacing: '-0.03em' }}>
+                Monetize <br />
+                the <span style={{ fontStyle: 'italic', color: 'var(--accent)', fontWeight: 400, fontFamily: 'serif' }}>Inktoll</span> way
+              </h1>
+              <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', lineHeight: '1.6', maxWidth: '600px' }}>
+                Inktoll solves the AI copyright crisis through a two-layer settlement protocol built on the Circle Arc Testnet. 
+                We enable autonomous AI agents to browse, read, and cite high-quality content—while instantly paying creators in USDC for their work via gasless nanopayments.
+              </p>
+
+              {/* Pills Row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                <div className="hero-pill primary">
+                  <span style={{ marginRight: '0.4rem', fontSize: '1rem' }}>✍️</span> your content
+                </div>
+                <span style={{ color: 'var(--text-muted)' }}>→</span>
+                <div className="hero-pill">
+                  <span style={{ marginRight: '0.4rem', fontSize: '1rem' }}>🤖</span> AI evaluation
+                </div>
+                <span style={{ color: 'var(--text-muted)' }}>→</span>
+                <div className="hero-pill">
+                  <span style={{ marginRight: '0.4rem', fontSize: '1rem' }}>💰</span> instant USDC
+                </div>
+              </div>
+
+              <div style={{ marginTop: '1.5rem' }}>
+                <Link href="/creator/dashboard" className="btn btn-primary" style={{ padding: '1rem 3.5rem', fontSize: '1.2rem', fontWeight: 'bold', borderRadius: '50px', boxShadow: '0 10px 25px -5px rgba(59, 130, 246, 0.4)' }}>
+                  🚀 Launch App
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column: Animated Image */}
+            <div className="float-anim" style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80%', height: '80%', background: 'radial-gradient(circle, var(--accent-glow) 0%, transparent 70%)', filter: 'blur(60px)', zIndex: 0 }}></div>
+              <img 
+                src="/hero-art.png" 
+                alt="Inktoll Futuristic AI Book" 
+                style={{ 
+                  width: '100%', 
+                  maxWidth: '550px', 
+                  borderRadius: '24px', 
+                  position: 'relative', 
+                  zIndex: 1,
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                }} 
+              />
             </div>
           </section>
 

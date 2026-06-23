@@ -500,3 +500,28 @@ a:hover {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Hero Section Styles */
+@keyframes float-image {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-15px); }
+}
+.float-anim {
+  animation: float-image 3.5s ease-in-out infinite alternate;
+}
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-active);
+}
+.hero-pill.primary {
+  background: rgba(245, 166, 35, 0.1);
+  color: var(--accent);
+  border-color: rgba(245, 166, 35, 0.3);
+}

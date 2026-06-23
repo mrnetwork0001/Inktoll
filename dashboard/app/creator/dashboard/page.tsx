@@ -271,7 +271,7 @@ function CreatorDashboardInner() {
                       </code>
                     ) : (
                       <span style={{ color: 'var(--error)', fontStyle: 'italic', fontWeight: 500 }}>
-                        No destination wallet connected. Connect your MetaMask wallet to enable withdrawals.
+                        No destination wallet connected. Connect your Web3 payout wallet at the top right to enable withdrawals.
                       </span>
                     )}
                   </div>
@@ -303,7 +303,7 @@ function CreatorDashboardInner() {
                     style={{ flexGrow: 2, marginBottom: 0 }}
                     onClick={handleWithdraw}
                     disabled={withdrawing || !stats?.balanceUsdc || stats.balanceUsdc <= 0 || !connectedAddress}
-                    title={!connectedAddress ? "Please connect MetaMask to withdraw" : ""}
+                    title={!connectedAddress ? "Please connect a payout wallet to withdraw" : ""}
                   >
                     {withdrawing ? 'Withdrawing...' : 'Withdraw'}
                   </button>

@@ -61,7 +61,7 @@ export async function payAndFetchArticle(
     const { status, data } = await client.pay(articleUrl);
     console.log(`[Pay Tool] GatewayClient response status: ${status}`);
 
-    let parsedData = data;
+    let parsedData: any = data;
     if (typeof data === 'string') {
       try {
         parsedData = JSON.parse(data);

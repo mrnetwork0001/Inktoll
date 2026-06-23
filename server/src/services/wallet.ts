@@ -66,24 +66,21 @@ export async function getWalletBalance(address: string): Promise<number> {
   }
   
   if (!walletId) {
-    // Check if the address belongs to a reader agent
-    const agent = db.prepare('SELECT id FROM reader_agents WHERE wallet_address = ?').get(address) as any;
-    if (agent) {
-      // In Inktoll, reader agents might store their wallet ID or use their address.
-      // If we don't store reader wallet IDs in SQLite, we look them up via listWallets.
-      const walletsResponse = await client.listWallets({
-        address: address,
-        blockchain: 'ARC-TESTNET',
-      });
-      const wallet = walletsResponse.data?.wallets?.[0];
-      if (wallet) {
-        walletId = wallet.id;
-      }
+    // In Inktoll, reader agents might store their wallet ID or use their address.
+    // If we don't store reader wallet IDs in SQLite, we look them up via listWallets.
+    const walletsResponse = await client.listWallets({
+      address: address,
+      blockchain: 'ARC-TESTNET',
+    });
+    const wallet = walletsResponse.data?.wallets?.[0];
+    if (wallet) {
+      walletId = wallet.id;
     }
   }
 
   if (!walletId) {
-    throw new Error(`Wallet ID not found in database or Circle for address ${address}`);
+    console.warn(`[Wallet Service] Wallet ID not found in database or Circle for address ${address}. Assuming EOA, returning 0.00`);
+    return 0.00;
   }
 
   const balanceResponse = await client.getWalletTokenBalance({

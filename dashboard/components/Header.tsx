@@ -156,13 +156,13 @@ export default function Header() {
                   minHeight: '38px',
                   marginBottom: 0
                 }}
-                onClick={connectWallet}
+                onClick={() => setDropdownOpen(!dropdownOpen)}
               >
                 🦊 Connect Wallet
               </button>
             )}
 
-            {dropdownOpen && walletAddress && (
+            {dropdownOpen && (
               <div 
                 className="glass-card" 
                 style={{ 
@@ -193,7 +193,7 @@ export default function Header() {
                       borderRadius: '6px',
                       fontSize: '0.85rem'
                     }}
-                    onClick={() => switchWalletType('metamask')}
+                    onClick={connectWallet}
                   >
                     🦊 MetaMask (EVM EOA)
                   </button>

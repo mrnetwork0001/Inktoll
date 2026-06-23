@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon --watch src -e ts --exec npx tsx src/index.ts",
+    "dev": "nodemon --watch src -e ts --exec npx -y tsx src/index.ts",
     "test": "npx tsx src/test.ts"
   },
   "dependencies": {

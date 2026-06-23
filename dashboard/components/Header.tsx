@@ -322,7 +322,7 @@ export default function Header() {
     <header className="header">
       <div className="container header-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/" className="logo-section" style={{ textDecoration: 'none' }}>
-          <span>🔖</span> Inktoll
+          <img src="/logo.png" alt="Inktoll Logo" style={{ height: '80px', objectFit: 'contain' }} />
         </Link>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>

@@ -326,154 +326,158 @@ export default function Header() {
         </Link>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <nav>
-            <ul className="nav-links" style={{ marginBottom: 0 }}>
-              <li>
-                <Link 
-                  href="/creator/dashboard" 
-                  className={`nav-link ${isActive('/creator') ? 'active' : ''}`}
-                >
-                  Creator Panel
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/reader/feed" 
-                  className={`nav-link ${isActive('/reader/feed') ? 'active' : ''}`}
-                >
-                  Reader Feed
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/reader/ask" 
-                  className={`nav-link ${isActive('/reader/ask') ? 'active' : ''}`}
-                >
-                  Ask Agent Q&A
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  href="/reader/setup" 
-                  className={`nav-link ${isActive('/reader/setup') ? 'active' : ''}`}
-                >
-                  🤖 Agent Settings
-                </Link>
-              </li>
-            </ul>
-          </nav>
+          {pathname !== '/' && (
+            <nav>
+              <ul className="nav-links" style={{ marginBottom: 0 }}>
+                <li>
+                  <Link 
+                    href="/creator/dashboard" 
+                    className={`nav-link ${isActive('/creator') ? 'active' : ''}`}
+                  >
+                    Creator Panel
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/reader/feed" 
+                    className={`nav-link ${isActive('/reader/feed') ? 'active' : ''}`}
+                  >
+                    Reader Feed
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/reader/ask" 
+                    className={`nav-link ${isActive('/reader/ask') ? 'active' : ''}`}
+                  >
+                    Ask Agent Q&A
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/reader/setup" 
+                    className={`nav-link ${isActive('/reader/setup') ? 'active' : ''}`}
+                  >
+                    🤖 Agent Settings
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          )}
 
           {/* WALLET BUTTON & DROPDOWN */}
-          <div style={{ position: 'relative' }}>
-            {walletAddress ? (
-              <button 
-                className="btn btn-secondary" 
-                style={{ 
-                  fontSize: '0.85rem', 
-                  padding: '0.5rem 1rem', 
-                  minHeight: '38px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  marginBottom: 0
-                }}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                <span style={{ 
-                  width: '8px', 
-                  height: '8px', 
-                  borderRadius: '50%', 
-                  background: walletType === 'metamask' ? '#f5a623' : '#10b981'
-                }}></span>
-                {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
-                <span style={{ fontSize: '0.7rem' }}>▼</span>
-              </button>
-            ) : (
-              <button 
-                className="btn btn-primary" 
-                style={{ 
-                  fontSize: '0.85rem', 
-                  padding: '0.5rem 1rem', 
-                  minHeight: '38px',
-                  marginBottom: 0
-                }}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              >
-                🦊 Connect Wallet
-              </button>
-            )}
-
-            {dropdownOpen && (
-              <div 
-                className="glass-card" 
-                style={{ 
-                  position: 'absolute', 
-                  top: '45px', 
-                  right: '0', 
-                  width: '240px', 
-                  padding: '1rem', 
-                  zIndex: 200, 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '0.75rem',
-                  border: '1px solid var(--border-hover)'
-                }}
-              >
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  Wallet Model:
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                  <button 
-                    style={{ 
-                      textAlign: 'left', 
-                      background: walletType === 'metamask' ? 'var(--bg-active)' : 'transparent',
-                      color: walletType === 'metamask' ? 'var(--accent)' : 'var(--text-primary)',
-                      border: 'none', 
-                      padding: '0.4rem 0.6rem', 
-                      cursor: 'pointer',
-                      borderRadius: '6px',
-                      fontSize: '0.85rem'
-                    }}
-                    onClick={connectWallet}
-                  >
-                    🦊 MetaMask (EVM EOA)
-                  </button>
-                  <button 
-                    style={{ 
-                      textAlign: 'left', 
-                      background: walletType === 'passkey' ? 'var(--bg-active)' : 'transparent',
-                      color: walletType === 'passkey' ? 'var(--success)' : 'var(--text-primary)',
-                      border: 'none', 
-                      padding: '0.4rem 0.6rem', 
-                      cursor: 'pointer',
-                      borderRadius: '6px',
-                      fontSize: '0.85rem'
-                    }}
-                    onClick={() => switchWalletType('passkey')}
-                  >
-                    ⚜️ Circle Wallet
-                  </button>
-
-                </div>
-                
-                <hr style={{ border: 'none', borderBottom: '1px solid var(--border)', margin: '0.25rem 0' }} />
-                
+          {pathname !== '/' && (
+            <div style={{ position: 'relative' }}>
+              {walletAddress ? (
                 <button 
                   className="btn btn-secondary" 
                   style={{ 
-                    padding: '0.4rem', 
-                    fontSize: '0.8rem', 
-                    minHeight: 'auto',
-                    width: '100%',
+                    fontSize: '0.85rem', 
+                    padding: '0.5rem 1rem', 
+                    minHeight: '38px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
                     marginBottom: 0
                   }}
-                  onClick={disconnectWallet}
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
-                  Disconnect Wallet
+                  <span style={{ 
+                    width: '8px', 
+                    height: '8px', 
+                    borderRadius: '50%', 
+                    background: walletType === 'metamask' ? '#f5a623' : '#10b981'
+                  }}></span>
+                  {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
+                  <span style={{ fontSize: '0.7rem' }}>▼</span>
                 </button>
-              </div>
-            )}
-          </div>
+              ) : (
+                <button 
+                  className="btn btn-primary" 
+                  style={{ 
+                    fontSize: '0.85rem', 
+                    padding: '0.5rem 1rem', 
+                    minHeight: '38px',
+                    marginBottom: 0
+                  }}
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                >
+                  🦊 Connect Wallet
+                </button>
+              )}
+
+              {dropdownOpen && (
+                <div 
+                  className="glass-card" 
+                  style={{ 
+                    position: 'absolute', 
+                    top: '45px', 
+                    right: '0', 
+                    width: '240px', 
+                    padding: '1rem', 
+                    zIndex: 200, 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '0.75rem',
+                    border: '1px solid var(--border-hover)'
+                  }}
+                >
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    Wallet Model:
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    <button 
+                      style={{ 
+                        textAlign: 'left', 
+                        background: walletType === 'metamask' ? 'var(--bg-active)' : 'transparent',
+                        color: walletType === 'metamask' ? 'var(--accent)' : 'var(--text-primary)',
+                        border: 'none', 
+                        padding: '0.4rem 0.6rem', 
+                        cursor: 'pointer',
+                        borderRadius: '6px',
+                        fontSize: '0.85rem'
+                      }}
+                      onClick={connectWallet}
+                    >
+                      🦊 MetaMask (EVM EOA)
+                    </button>
+                    <button 
+                      style={{ 
+                        textAlign: 'left', 
+                        background: walletType === 'passkey' ? 'var(--bg-active)' : 'transparent',
+                        color: walletType === 'passkey' ? 'var(--success)' : 'var(--text-primary)',
+                        border: 'none', 
+                        padding: '0.4rem 0.6rem', 
+                        cursor: 'pointer',
+                        borderRadius: '6px',
+                        fontSize: '0.85rem'
+                      }}
+                      onClick={() => switchWalletType('passkey')}
+                    >
+                      ⚜️ Circle Wallet
+                    </button>
+
+                  </div>
+                  
+                  <hr style={{ border: 'none', borderBottom: '1px solid var(--border)', margin: '0.25rem 0' }} />
+                  
+                  <button 
+                    className="btn btn-secondary" 
+                    style={{ 
+                      padding: '0.4rem', 
+                      fontSize: '0.8rem', 
+                      minHeight: 'auto',
+                      width: '100%',
+                      marginBottom: 0
+                    }}
+                    onClick={disconnectWallet}
+                  >
+                    Disconnect Wallet
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </div>

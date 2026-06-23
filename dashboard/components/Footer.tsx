@@ -6,7 +6,7 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <footer style={{ backgroundColor: '#000000', color: '#ffffff', padding: '4rem 0 2rem 0', marginTop: 'auto' }}>
-      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
+      <div className="container" style={{ margin: '0 auto', padding: '0 2rem' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: '3rem', marginBottom: '4rem' }}>
           
           {/* Column 1: Brand */}
@@ -15,7 +15,7 @@ export default function Footer() {
               <span style={{ fontSize: '1.5rem' }}>🔖</span> Inktoll
             </Link>
             <p style={{ color: '#9ca3af', fontSize: '0.85rem', lineHeight: '1.6', maxWidth: '300px', marginTop: '0.5rem' }}>
-              AI-shielded nanopayments and real-time citation billing on Circle Arc Testnet.
+              Monetizing AI data consumption through instant USDC nanopayments and citation royalties.
             </p>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
               <a href="#" style={{ color: '#9ca3af', textDecoration: 'none', transition: 'color 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.color='#ffffff'} onMouseOut={(e) => e.currentTarget.style.color='#9ca3af'}>
@@ -41,7 +41,6 @@ export default function Footer() {
             <a href="#" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.color='#ffffff'} onMouseOut={(e) => e.currentTarget.style.color='#9ca3af'}>Circle Explorer</a>
             <a href="#" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.color='#ffffff'} onMouseOut={(e) => e.currentTarget.style.color='#9ca3af'}>Arc Blockchain</a>
             <a href="#" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.color='#ffffff'} onMouseOut={(e) => e.currentTarget.style.color='#9ca3af'}>Circle Wallets</a>
-            <a href="#" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.color='#ffffff'} onMouseOut={(e) => e.currentTarget.style.color='#9ca3af'}>Inktoll Pass</a>
           </div>
 
           {/* Column 4: Resources */}

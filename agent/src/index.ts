@@ -10,6 +10,7 @@ import { runAutonomousAgent } from './agent.js';
 import { detectCitations, triggerCitationTolls } from './citation.js';
 import { ChatOpenAI } from '@langchain/openai';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
+import { ethers } from 'ethers';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,16 +32,17 @@ app.get('/api/agent/status', async (req, res) => {
     const profile = loadProfile();
     const history = loadHistory();
 
-    // Check balance on server
-    let balance = 10.00; // fallback default
+    // Fetch real USDC balance from Arc Testnet
+    let balance = 0.00; // fallback default
     try {
-      const balRes = await fetch(`${SERVER_URL}/api/payments?agentWallet=${wallet.address}`);
-      if (balRes.ok) {
-        const balData = await balRes.json() as any;
-        balance = balData.balanceUsdc;
-      }
+      const provider = new ethers.JsonRpcProvider('https://rpc.testnet.arc.network');
+      const usdcAbi = ["function balanceOf(address owner) view returns (uint256)"];
+      const usdcContract = new ethers.Contract('0x3600000000000000000000000000000000000000', usdcAbi, provider);
+      
+      const balStr = await usdcContract.balanceOf(wallet.address);
+      balance = Number(ethers.formatUnits(balStr, 6)); // USDC has 6 decimals
     } catch (err) {
-      console.warn('[Agent Status] Failed to fetch live wallet balance from server, using history.');
+      console.warn('[Agent Status] Failed to fetch live wallet balance from Arc Testnet, using default.');
     }
 
     return res.json({

@@ -54,12 +54,16 @@ export async function discoverNewArticles(apiUrl: string): Promise<DiscoverResul
         if (feed.items && Array.isArray(feed.items)) {
           for (const item of feed.items) {
             const anyItem = item as any;
-            const slug = anyItem.slug || '';
-            const price = parseFloat(anyItem.price || '0.005');
-            const wallet = anyItem.wallet || '';
-            const preview = anyItem.preview || '';
+            const slug = anyItem.slug || anyItem['inktoll:slug'] || '';
+            const priceStr = anyItem.price || anyItem['inktoll:price'] || '0.005';
+            const price = parseFloat(priceStr);
+            const wallet = anyItem.wallet || anyItem['inktoll:wallet'] || '';
+            const preview = anyItem.preview || anyItem['inktoll:preview'] || '';
 
-            if (!slug) continue;
+            if (!slug) {
+              console.warn(`[Discover Tool] Skipping article "${item.title}" - missing slug.`);
+              continue;
+            }
 
             // Skip if already purchased
             if (isPurchased(slug)) {

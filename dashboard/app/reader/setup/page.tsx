@@ -197,7 +197,7 @@ export default function ReaderSetup() {
                     {status?.address && (
                       <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', display: 'inline-flex', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
                         <img 
-                          src={`https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=${status.address}&chld=L|1&choe=UTF-8`}
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${status.address}`}
                           alt="Wallet QR Code"
                           width={100}
                           height={100}
@@ -211,7 +211,7 @@ export default function ReaderSetup() {
                         ${status?.balanceUsdc?.toFixed(6) || '0.000000'}
                       </div>
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                        Arc Testnet / Sepolia
+                        Arc Testnet
                       </span>
                     </div>
                   </div>

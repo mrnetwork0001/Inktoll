@@ -1,3 +1,21 @@
+// Spy on global fetch BEFORE imports load
+const originalFetch = global.fetch;
+global.fetch = async (input: any, init: any) => {
+  const url = typeof input === 'string' ? input : input.url;
+  console.log(`[Fetch Spy] Outgoing request to: ${url}`);
+  try {
+    const response = await originalFetch(input, init);
+    console.log(`[Fetch Spy] Response status: ${response.status} for ${url}`);
+    const clone = response.clone();
+    const text = await clone.text();
+    console.log(`[Fetch Spy] Response body preview (150 chars):`, text.substring(0, 150));
+    return response;
+  } catch (err: any) {
+    console.error(`[Fetch Spy] Request failed:`, err);
+    throw err;
+  }
+};
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';

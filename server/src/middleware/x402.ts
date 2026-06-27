@@ -116,6 +116,14 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
 
 function respondWith402(res: Response, article: any, creatorWallet: string, errorDetail?: string) {
   // Set standard x402 headers
+  res.setHeader('Payment-Required', 'true');
+  res.setHeader('Payment-Amount', article.price_usdc.toString());
+  res.setHeader('Payment-Token', 'USDC');
+  res.setHeader('Payment-Network', 'arc-testnet');
+  res.setHeader('Payment-Recipient', creatorWallet);
+  res.setHeader('Payment-Gateway', config.circle.gatewayUrl);
+  
+  // Legacy
   res.setHeader('X-Payment-Required', 'true');
   res.setHeader('X-Payment-Amount', article.price_usdc.toString());
   res.setHeader('X-Payment-Token', 'USDC');

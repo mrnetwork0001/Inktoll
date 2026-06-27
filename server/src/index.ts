@@ -18,7 +18,12 @@ initDatabase();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  exposedHeaders: [
+    'Payment-Required', 'Payment-Amount', 'Payment-Token', 'Payment-Network', 'Payment-Recipient', 'Payment-Gateway',
+    'X-Payment-Required', 'X-Payment-Amount', 'X-Payment-Token', 'X-Payment-Network', 'X-Payment-Recipient', 'X-Payment-Gateway'
+  ]
+}));
 app.use(express.json());
 
 // Routes

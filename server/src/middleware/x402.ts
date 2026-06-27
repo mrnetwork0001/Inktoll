@@ -115,8 +115,30 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
 }
 
 function respondWith402(res: Response, article: any, creatorWallet: string, errorDetail?: string) {
+  const value = Math.round(article.price_usdc * 1e6).toString();
+  const paymentRequiredObj = {
+    x402Version: 2,
+    resource: `http://localhost:3001/api/articles/${article.ghost_slug}`,
+    accepts: [
+      {
+        scheme: 'exact',
+        network: 'eip155:5042002', // Arc testnet
+        asset: '0x3600000000000000000000000000000000000000',
+        amount: value,
+        payTo: creatorWallet,
+        maxTimeoutSeconds: 3600,
+        extra: {
+          name: 'GatewayWalletBatched',
+          version: '1',
+          verifyingContract: '0x0077777d7EBA4688BDeF3E311b846F25870A19B9',
+        }
+      }
+    ]
+  };
+  const paymentRequiredBase64 = Buffer.from(JSON.stringify(paymentRequiredObj)).toString('base64');
+
   // Set standard x402 headers
-  res.setHeader('Payment-Required', 'true');
+  res.setHeader('Payment-Required', paymentRequiredBase64);
   res.setHeader('Payment-Amount', article.price_usdc.toString());
   res.setHeader('Payment-Token', 'USDC');
   res.setHeader('Payment-Network', 'arc-testnet');
@@ -124,7 +146,7 @@ function respondWith402(res: Response, article: any, creatorWallet: string, erro
   res.setHeader('Payment-Gateway', config.circle.gatewayUrl);
   
   // Legacy
-  res.setHeader('X-Payment-Required', 'true');
+  res.setHeader('X-Payment-Required', paymentRequiredBase64);
   res.setHeader('X-Payment-Amount', article.price_usdc.toString());
   res.setHeader('X-Payment-Token', 'USDC');
   res.setHeader('X-Payment-Network', 'arc-testnet');

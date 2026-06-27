@@ -12,9 +12,7 @@ router.get('/:creatorId', (req, res) => {
     if (!creator) {
       return res.status(404).json({ error: 'Creator not found' });
     }
-
-    const articles = db.prepare('SELECT * FROM articles WHERE creator_id = ? ORDER BY published_at DESC').all() as any[];
-
+    const articles = db.prepare('SELECT * FROM articles WHERE creator_id = ? ORDER BY published_at DESC').all(creatorId) as any[];
     // Generate valid RSS XML with custom namespaces for price & wallet
     let rss = `<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:inktoll="https://inktoll.org/rss/1.0">

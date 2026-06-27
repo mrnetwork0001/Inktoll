@@ -79,7 +79,7 @@ export async function payAndFetchArticle(
     }
     throw new Error(`Facilitator rejected request with status: ${status}`);
   } catch (err: any) {
-    console.error(`[Pay Tool] Real payment failed: ${err.message}`);
+    console.error(`[Pay Tool] Real payment failed:`, err.stack || err.message);
     return {
       success: false,
       error: err.message,

@@ -13,7 +13,7 @@ export const config = {
   databasePath: process.env.DATABASE_PATH || './data/inktoll.db',
   circle: {
     apiKey: process.env.CIRCLE_API_KEY || '',
-    gatewayUrl: process.env.CIRCLE_GATEWAY_URL || 'https://api-sandbox.circle.com/v1/nanopayments',
+    gatewayUrl: process.env.CIRCLE_GATEWAY_URL || 'https://gateway-api-testnet.circle.com',
     walletSetId: process.env.CIRCLE_WALLET_SET_ID || '',
     entitySecret: process.env.CIRCLE_ENTITY_SECRET || '',
   },

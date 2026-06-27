@@ -172,17 +172,30 @@ class JSONDatabase {
           return self.data.creators[0];
         }
 
-        // 4. SELECT * FROM articles WHERE a.ghost_slug = ? (with creator details)
-        if (normalized.includes('from articles a join creators c') && normalized.includes('where a.ghost_slug =')) {
-          const slug = params[0];
-          const article = self.data.articles.find(a => a.ghost_slug === slug);
-          if (!article) return undefined;
-          const creator = self.data.creators.find(c => c.id === article.creator_id);
-          return {
-            ...article,
-            ghost_url: creator?.ghost_url || '',
-            creator_wallet: creator?.wallet_address || '',
-          };
+        // 4. SELECT * FROM articles WHERE a.ghost_slug = ? or a.id = ? (with creator details)
+        if (normalized.includes('from articles a join creators c')) {
+          if (normalized.includes('where a.ghost_slug =')) {
+            const slug = params[0];
+            const article = self.data.articles.find(a => a.ghost_slug === slug);
+            if (!article) return undefined;
+            const creator = self.data.creators.find(c => c.id === article.creator_id);
+            return {
+              ...article,
+              ghost_url: creator?.ghost_url || '',
+              creator_wallet: creator?.wallet_address || '',
+            };
+          }
+          if (normalized.includes('where a.id =')) {
+            const id = params[0];
+            const article = self.data.articles.find(a => a.id === id);
+            if (!article) return undefined;
+            const creator = self.data.creators.find(c => c.id === article.creator_id);
+            return {
+              ...article,
+              ghost_url: creator?.ghost_url || '',
+              creator_wallet: creator?.wallet_address || '',
+            };
+          }
         }
 
         // 5. SELECT wallet_address FROM creators WHERE id = ?

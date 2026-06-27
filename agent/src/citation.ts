@@ -2,6 +2,7 @@ import { loadEmbeddingsIndex, generateMockEmbedding } from './tools/summarize.js
 import { getOrCreateAgentWallet } from './tools/pay.js';
 import { OpenAI } from 'openai';
 import { ethers } from 'ethers';
+import crypto from 'crypto';
 
 export interface CitationMatch {
   articleId: string;

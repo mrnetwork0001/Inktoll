@@ -87,6 +87,10 @@ export async function submitGatewayPayment(
   const settleResult = await facilitator.settle(paymentPayload, paymentRequirements);
   console.log(`[Gateway Service] Real payment settlement response:`, settleResult);
 
+  if (settleResult.success === false || settleResult.errorReason) {
+    throw new Error(`Circle Gateway Facilitator settlement failed: ${settleResult.errorReason || 'Unknown error'}`);
+  }
+
   return {
     txHash: settleResult.transaction || settleResult.transactionId || settleResult.settlementId || crypto.randomUUID(),
     status: 'settled',

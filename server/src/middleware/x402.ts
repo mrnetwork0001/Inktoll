@@ -146,7 +146,11 @@ function respondWith402(res: Response, article: any, creatorWallet: string, erro
   const value = Math.round(article.price_usdc * 1e6).toString();
   const paymentRequiredObj = {
     x402Version: 2,
-    resource: `http://localhost:3001/api/articles/${article.ghost_slug}`,
+    resource: {
+      url: `http://localhost:3001/api/articles/${article.ghost_slug}`,
+      description: article.title || 'Inktoll premium article content',
+      mimeType: 'application/json',
+    },
     accepts: [
       {
         scheme: 'exact',

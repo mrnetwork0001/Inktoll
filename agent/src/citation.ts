@@ -60,8 +60,12 @@ export async function detectCitations(
       similarity = Math.min(similarity, 0.98);
     }
 
-    // Threshold of 0.75
-    if (similarity >= 0.75) {
+    // Log the similarity score for debugging/calibration
+    console.log(`[Citations Check] Article: "${item.title}" | Similarity: ${similarity.toFixed(4)}`);
+
+    // Threshold of 0.35 for OpenAI embeddings (0.75 for mock)
+    const requiredThreshold = isMock ? 0.75 : 0.35;
+    if (similarity >= requiredThreshold) {
       matches.push({
         articleId: item.articleId,
         title: item.title,

@@ -104,6 +104,7 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
       }
 
       // Submit payment to Gateway
+      const rawPayload = (typeof decodedAuthHeader === 'string' && decodedAuthHeader.trim().startsWith('{')) ? JSON.parse(decodedAuthHeader) : undefined;
       const settlement = await submitGatewayPayment({
         fromAddress: authData.fromAddress,
         toAddress: creatorWallet,
@@ -111,7 +112,7 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
         signature: authData.signature,
         nonce: authData.nonce,
         deadline: authData.deadline,
-      });
+      }, rawPayload);
 
       // Record payment in database
       const paymentId = crypto.randomUUID();

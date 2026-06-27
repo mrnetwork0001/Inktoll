@@ -16,6 +16,9 @@ let facilitatorClient: any = null;
 
 function getFacilitatorClient() {
   if (!facilitatorClient && config.circle.apiKey) {
+    console.log('[Gateway Service] Initializing BatchFacilitatorClient:');
+    console.log('  URL:', config.circle.gatewayUrl || 'https://gateway-api-testnet.circle.com');
+    console.log('  API Key (first 10 chars):', config.circle.apiKey.substring(0, 10) + '...');
     facilitatorClient = new BatchFacilitatorClient({
       url: config.circle.gatewayUrl || 'https://gateway-api-testnet.circle.com',
       apiKey: config.circle.apiKey,

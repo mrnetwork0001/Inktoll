@@ -18,6 +18,7 @@ function getFacilitatorClient() {
   if (!facilitatorClient && config.circle.apiKey) {
     facilitatorClient = new BatchFacilitatorClient({
       url: config.circle.gatewayUrl || 'https://gateway-api-testnet.circle.com',
+      apiKey: config.circle.apiKey,
     });
   }
   return facilitatorClient;

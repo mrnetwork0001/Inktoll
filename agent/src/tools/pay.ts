@@ -56,6 +56,28 @@ export async function payAndFetchArticle(
       privateKey: agentWallet.privateKey as `0x${string}`,
     });
 
+    // Spy on global fetch
+    const originalFetch = global.fetch;
+    global.fetch = async (input: any, init: any) => {
+      const url = typeof input === 'string' ? input : input.url;
+      console.log(`[Fetch Spy] Outgoing request to: ${url}`);
+      console.log(`[Fetch Spy] Headers:`, init?.headers);
+      try {
+        const response = await originalFetch(input, init);
+        console.log(`[Fetch Spy] Response status: ${response.status}`);
+        console.log(`[Fetch Spy] Response headers:`, Object.fromEntries(response.headers.entries()));
+        
+        // Clone response to read it without consuming it
+        const clone = response.clone();
+        const text = await clone.text();
+        console.log(`[Fetch Spy] Response body preview (100 chars):`, text.substring(0, 100));
+        return response;
+      } catch (err: any) {
+        console.error(`[Fetch Spy] Request failed:`, err);
+        throw err;
+      }
+    };
+
     const articleUrl = `${apiUrl}/api/articles/${slug}`;
     console.log(`[Pay Tool] Paying for article: ${articleUrl}`);
     const { status, data } = await client.pay(articleUrl);

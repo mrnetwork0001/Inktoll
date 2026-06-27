@@ -25,14 +25,38 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
   }
 
   const creatorWallet = creator.wallet_address;
-  const authHeader = req.headers['x-payment-authorization'];
+  const authHeader = req.headers['x-payment-authorization'] || req.headers['payment-signature'] || req.headers['x-payment-signature'] || req.headers['payment-authorization'];
 
   if (authHeader) {
     try {
+      let decodedAuthHeader = authHeader;
+      // Check if it's base64-encoded
+      if (typeof authHeader === 'string' && !authHeader.trim().startsWith('{')) {
+        try {
+          decodedAuthHeader = Buffer.from(authHeader, 'base64').toString('utf-8');
+        } catch (e) {
+          // ignore, might be the split format
+        }
+      }
+
       // Expect JSON string in header or formatted as "fromAddress:signature:nonce:deadline"
       let authData: any;
-      if (typeof authHeader === 'string' && authHeader.startsWith('{')) {
-        authData = JSON.parse(authHeader);
+      if (typeof decodedAuthHeader === 'string' && decodedAuthHeader.trim().startsWith('{')) {
+        const parsed = JSON.parse(decodedAuthHeader);
+        if (parsed.payload) {
+          const auth = parsed.payload.authorization || parsed.payload;
+          const sig = parsed.payload.signature || parsed.signature;
+          authData = {
+            fromAddress: auth.from || parsed.fromAddress,
+            toAddress: auth.to || parsed.toAddress,
+            amount: auth.value ? Number(auth.value) / 1e6 : parsed.amount, // USDC has 6 decimals
+            signature: sig,
+            nonce: auth.nonce || parsed.nonce,
+            deadline: parseInt(auth.validBefore || parsed.deadline || '0', 10),
+          };
+        } else {
+          authData = parsed;
+        }
       } else {
         // Fallback split format
         const [fromAddress, signature, nonce, deadlineStr] = (authHeader as string).split(':');

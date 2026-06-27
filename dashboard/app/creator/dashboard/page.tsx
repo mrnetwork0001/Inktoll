@@ -47,10 +47,25 @@ import { Suspense } from 'react';
 function CreatorDashboardInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const creatorId = searchParams.get('creatorId');
+  const paramCreatorId = searchParams.get('creatorId');
 
+  const [creatorId, setCreatorId] = useState<string | null>(null);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (paramCreatorId) {
+      setCreatorId(paramCreatorId);
+      localStorage.setItem('inktoll_creator_id', paramCreatorId);
+    } else {
+      const stored = localStorage.getItem('inktoll_creator_id');
+      if (stored) {
+        setCreatorId(stored);
+      } else {
+        setLoading(false);
+      }
+    }
+  }, [paramCreatorId]);
   const [error, setError] = useState('');
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState('');

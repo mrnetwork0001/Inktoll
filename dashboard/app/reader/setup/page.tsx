@@ -136,33 +136,7 @@ export default function ReaderSetup() {
     }
   };
 
-  const [fauceting, setFauceting] = useState(false);
-  const [faucetSuccess, setFaucetSuccess] = useState('');
 
-  const handleFaucet = async () => {
-    if (!status?.address) return;
-    setFauceting(true);
-    setFaucetSuccess('');
-    setError('');
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    try {
-      const res = await fetch(`${API_URL}/api/faucet`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          walletAddress: status.address,
-          type: 'agent',
-        }),
-      });
-      if (!res.ok) throw new Error('Faucet request failed');
-      setFaucetSuccess('Success! 10.00 USDC has been added to your wallet.');
-      await fetchAgentStatus(true);
-    } catch (err: any) {
-      setError('Faucet failed: ' + err.message);
-    } finally {
-      setFauceting(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -232,7 +206,7 @@ export default function ReaderSetup() {
                       </div>
                     )}
                     <div style={{ flexGrow: 1 }}>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>USDC Faucet Balance</span>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Agent Wallet USDC Balance</span>
                       <div style={{ fontSize: '2rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
                         ${status?.balanceUsdc?.toFixed(6) || '0.000000'}
                       </div>
@@ -251,24 +225,10 @@ export default function ReaderSetup() {
                 </div>
               </div>
 
-              {faucetSuccess && (
-                <div style={{ padding: '0.5rem 1rem', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.8rem' }}>
-                  🎉 {faucetSuccess}
-                </div>
-              )}
-
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto' }}>
                 <button 
-                  className="btn btn-secondary" 
-                  style={{ flexGrow: 1, marginBottom: 0 }}
-                  onClick={handleFaucet}
-                  disabled={fauceting}
-                >
-                  {fauceting ? 'Fauceting...' : '⛲ Faucet'}
-                </button>
-                <button 
                   className="btn btn-accent" 
-                  style={{ flexGrow: 1.5, marginBottom: 0 }}
+                  style={{ flexGrow: 1, marginBottom: 0 }}
                   onClick={handleRunAgent}
                   disabled={running}
                 >

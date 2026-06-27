@@ -38,6 +38,8 @@ export default function CreatorOnboard() {
       }
 
       const data = await response.json();
+      // Persist the creator ID in localStorage for state retention across tabs
+      localStorage.setItem('inktoll_creator_id', data.creatorId);
       // Onboard successful, redirect to dashboard with creator ID
       router.push(`/creator/dashboard?creatorId=${data.creatorId}`);
     } catch (err: any) {

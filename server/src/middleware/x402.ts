@@ -86,7 +86,10 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
       const isMock = authData.signature.startsWith('mock-');
       let signerAddress = authData.fromAddress;
 
-      if (!isMock) {
+      // Only run manual verification for custom (non-SDK) EIP-191 signatures
+      const isSdkPayload = typeof decodedAuthHeader === 'string' && decodedAuthHeader.trim().startsWith('{') && JSON.parse(decodedAuthHeader).payload;
+
+      if (!isMock && !isSdkPayload) {
         // Real ECDSA verification
         // Reconstruct the message that was signed
         const message = ethers.solidityPackedKeccak256(
@@ -96,7 +99,7 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
         signerAddress = ethers.verifyMessage(ethers.getBytes(message), authData.signature);
       }
 
-      if (signerAddress.toLowerCase() !== authData.fromAddress.toLowerCase()) {
+      if (!isSdkPayload && signerAddress.toLowerCase() !== authData.fromAddress.toLowerCase()) {
         throw new Error('Signature verification failed: Signer does not match fromAddress');
       }
 

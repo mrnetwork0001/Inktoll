@@ -86,6 +86,8 @@ export default function Header() {
           handleInitializeUser(loginRes.userToken);
         };
 
+        if (sdkRef.current) return;
+
         const sdk = new W3SSdk({ appSettings: { appId } }, onLoginComplete);
         sdkRef.current = sdk;
 

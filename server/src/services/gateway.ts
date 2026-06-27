@@ -21,7 +21,6 @@ function getFacilitatorClient() {
     console.log('  API Key (first 10 chars):', config.circle.apiKey.substring(0, 10) + '...');
     facilitatorClient = new BatchFacilitatorClient({
       url: config.circle.gatewayUrl || 'https://gateway-api-testnet.circle.com',
-      apiKey: config.circle.apiKey,
     });
   }
   return facilitatorClient;

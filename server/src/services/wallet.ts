@@ -102,9 +102,16 @@ export async function processWithdrawal(fromAddress: string, toAddress: string, 
     throw new Error('Circle DCW Client is not initialized');
   }
 
+  let withdrawAmount = amount;
   const currentBalance = await getWalletBalance(fromAddress);
-  if (currentBalance < amount) {
-    throw new Error(`Insufficient balance: wallet has ${currentBalance} USDC, requested ${amount} USDC`);
+  
+  if (withdrawAmount >= currentBalance) {
+    // If withdrawing max, leave a small 0.01 USDC gas buffer to cover the transaction fees
+    withdrawAmount = parseFloat((currentBalance - 0.01).toFixed(6));
+    if (withdrawAmount <= 0) {
+      throw new Error(`Insufficient balance: Wallet balance (${currentBalance} USDC) is too low to cover transaction gas fees.`);
+    }
+    console.log(`[Wallet Service] Adjusting withdrawal amount from ${amount} to ${withdrawAmount} USDC to leave a fee buffer`);
   }
 
   const db = getDb();
@@ -141,7 +148,7 @@ export async function processWithdrawal(fromAddress: string, toAddress: string, 
     tokenAddress: usdcToken.token.tokenAddress,
     blockchain: 'ARC-TESTNET',
     destinationAddress: toAddress,
-    amounts: [amount.toString()],
+    amounts: [withdrawAmount.toString()],
     fee: {
       type: 'level',
       config: { feeLevel: 'MEDIUM' },

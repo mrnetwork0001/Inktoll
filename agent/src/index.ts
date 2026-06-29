@@ -78,9 +78,24 @@ app.get('/api/agent/status', async (req, res) => {
       console.warn('[Agent Status] Failed to fetch live wallet balance from Arc Testnet, using default.');
     }
 
+    // Fetch Circle Gateway balance
+    let gatewayBalance = 0.00;
+    try {
+      const { GatewayClient } = await import('@circle-fin/x402-batching/client');
+      const client = new GatewayClient({
+        chain: (process.env.ARC_CHAIN_NAME as any) || 'arcTestnet',
+        privateKey: wallet.privateKey as `0x${string}`,
+      });
+      const balances = await client.getBalances();
+      gatewayBalance = Number(balances.gateway.formattedAvailable);
+    } catch (err) {
+      console.warn('[Agent Status] Failed to fetch gateway balance:', (err as any).message);
+    }
+
     return res.json({
       address: wallet.address,
       balanceUsdc: balance,
+      gatewayBalanceUsdc: gatewayBalance,
       interests: profile.interests,
       maxPricePerArticle: profile.maxPricePerArticle,
       dailyBudgetUsdc: profile.dailyBudgetUsdc,
@@ -89,6 +104,41 @@ app.get('/api/agent/status', async (req, res) => {
       purchasedSlugs: history.purchasedSlugs,
     });
   } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// Withdraw Endpoint
+app.post('/api/agent/withdraw', async (req, res) => {
+  const userId = (req as any).userId;
+  const { amount, recipient } = req.body;
+
+  if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+    return res.status(400).json({ error: 'Valid amount is required for withdrawal' });
+  }
+  if (!recipient) {
+    return res.status(400).json({ error: 'Recipient EOA address is required' });
+  }
+
+  try {
+    const wallet = await getOrCreateAgentWallet(userId);
+    const { GatewayClient } = await import('@circle-fin/x402-batching/client');
+    const client = new GatewayClient({
+      chain: (process.env.ARC_CHAIN_NAME as any) || 'arcTestnet',
+      privateKey: wallet.privateKey as `0x${string}`,
+    });
+
+    console.log(`[Agent Withdrawal] Withdrawing ${amount} USDC to ${recipient}...`);
+    const withdrawRes = await client.withdraw(amount, { recipient });
+    console.log(`[Agent Withdrawal] Withdrawal submitted: ${withdrawRes.mintTxHash}`);
+
+    return res.json({
+      success: true,
+      txHash: withdrawRes.mintTxHash,
+      formattedAmount: withdrawRes.formattedAmount
+    });
+  } catch (error: any) {
+    console.error(`[Agent Withdrawal] Error: ${error.message}`);
     return res.status(500).json({ error: error.message });
   }
 });

@@ -18,6 +18,55 @@ export default function ReaderSetup() {
   const [custodyType, setCustodyType] = useState<string>('managed');
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
 
+  // Withdrawal States
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [withdrawing, setWithdrawing] = useState(false);
+
+  const handleWithdraw = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!withdrawAmount || isNaN(parseFloat(withdrawAmount)) || parseFloat(withdrawAmount) <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+    
+    const destination = connectedAddress || prompt('Please enter the recipient EVM wallet address to withdraw to:');
+    if (!destination) {
+      alert('Destination address is required');
+      return;
+    }
+
+    setWithdrawing(true);
+    setError('');
+    
+    try {
+      const res = await fetch(`${AGENT_URL}/api/agent/withdraw`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-id': getUserId() 
+        },
+        body: JSON.stringify({
+          amount: withdrawAmount,
+          recipient: destination
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to withdraw funds');
+      }
+
+      const data = await res.json();
+      alert(`Withdrawal successful! Hash: ${data.txHash}`);
+      setWithdrawAmount('');
+      await fetchAgentStatus(true);
+    } catch (err: any) {
+      alert(`Withdrawal failed: ${err.message}`);
+    } finally {
+      setWithdrawing(false);
+    }
+  };
+
   useEffect(() => {
     // Sync storage values
     const storedType = localStorage.getItem('inktoll_wallet_type') || 'managed';
@@ -227,15 +276,49 @@ export default function ReaderSetup() {
                         />
                       </div>
                     )}
-                    <div style={{ flexGrow: 1 }}>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Agent Wallet USDC Balance</span>
-                      <div style={{ fontSize: '2rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
-                        ${status?.balanceUsdc?.toFixed(6) || '0.000000'}
+                    <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      <div>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Agent EOA Wallet Balance</span>
+                        <div style={{ fontSize: '1.25rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
+                          ${status?.balanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>USDC</span>
+                        </div>
                       </div>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                        Arc Testnet
-                      </span>
+                      
+                      <div>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Circle Gateway Balance (Wrapped)</span>
+                        <div style={{ fontSize: '1.5rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
+                          ${status?.gatewayBalanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '0.85rem', color: 'var(--accent-light)' }}>USDC</span>
+                        </div>
+                      </div>
                     </div>
+                  </div>
+
+                  <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Withdraw Gateway Balance</span>
+                    <form onSubmit={handleWithdraw} style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                      <input 
+                        type="number" 
+                        step="0.000001"
+                        className="form-input" 
+                        placeholder="Amount (USDC)"
+                        style={{ flexGrow: 1, padding: '6px 12px', fontSize: '0.85rem', minHeight: 'auto' }}
+                        value={withdrawAmount}
+                        onChange={(e) => setWithdrawAmount(e.target.value)}
+                        required
+                        disabled={withdrawing}
+                      />
+                      <button 
+                        type="submit" 
+                        className="btn btn-secondary" 
+                        style={{ padding: '6px 16px', fontSize: '0.85rem', minHeight: 'auto', marginBottom: 0 }}
+                        disabled={withdrawing}
+                      >
+                        {withdrawing ? '...' : 'Withdraw'}
+                      </button>
+                    </form>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                      Reclaims Gateway balance back to your EOA wallet.
+                    </span>
                   </div>
 
                   <div>

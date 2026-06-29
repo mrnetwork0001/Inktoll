@@ -59,26 +59,32 @@ export async function submitGatewayPayment(
     paymentRequirements = sdkPayload.accepted;
   } else {
     const value = Math.round(auth.amount * 1e6).toString(); // USDC uses 6 decimals
-    paymentPayload = {
-      signature: auth.signature,
-      nonce: auth.nonce,
-      validBefore: auth.deadline,
-      validAfter: 0,
-      value,
-      from: auth.fromAddress,
-      to: auth.toAddress,
-    };
-
     paymentRequirements = {
       scheme: 'exact',
       network: 'eip155:5042002', // Arc testnet
       asset: '0x3600000000000000000000000000000000000000', // USDC on Arc testnet
       amount: value,
       payTo: auth.toAddress,
+      maxTimeoutSeconds: 3600,
       extra: {
         name: 'GatewayWalletBatched',
         version: '1',
         verifyingContract: '0x0077777d7EBA4688BDeF3E311b846F25870A19B9', // GatewayWallet verifying contract
+      }
+    };
+
+    paymentPayload = {
+      x402Version: '1.0',
+      resource: 'urn:inktoll:citation',
+      accepted: paymentRequirements,
+      payload: {
+        signature: auth.signature,
+        nonce: auth.nonce,
+        validBefore: auth.deadline,
+        validAfter: 0,
+        value,
+        from: auth.fromAddress,
+        to: auth.toAddress,
       }
     };
   }

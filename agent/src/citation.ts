@@ -95,17 +95,39 @@ export async function triggerCitationTolls(
       Similarity Score: ${match.similarity}`);
 
     try {
-      // Sign citation toll authorization
       const nonce = crypto.randomUUID();
       const deadline = Math.floor(Date.now() / 1000) + 3600;
       const value = ethers.parseUnits(tollAmount.toString(), 6);
 
-      const messageHash = ethers.solidityPackedKeccak256(
-        ['address', 'address', 'uint256', 'string', 'uint256'],
-        [agentWallet.address, match.authorWallet, value, nonce, deadline]
-      );
+      // Sign citation toll authorization using EIP-712 typed data
+      const domain = {
+        name: 'GatewayWalletBatched',
+        version: '1',
+        chainId: 5042002,
+        verifyingContract: '0x0077777d7EBA4688BDeF3E311b846F25870A19B9'
+      };
 
-      const signature = await agentWallet.signMessage(ethers.getBytes(messageHash));
+      const types = {
+        Payment: [
+          { name: 'from', type: 'address' },
+          { name: 'to', type: 'address' },
+          { name: 'value', type: 'uint256' },
+          { name: 'nonce', type: 'string' },
+          { name: 'validBefore', type: 'uint256' },
+          { name: 'validAfter', type: 'uint256' }
+        ]
+      };
+
+      const typedValue = {
+        from: agentWallet.address,
+        to: match.authorWallet,
+        value: value.toString(),
+        nonce: nonce,
+        validBefore: deadline,
+        validAfter: 0
+      };
+
+      const signature = await agentWallet.signTypedData(domain, types, typedValue);
 
       // Post citation payment to server
       const response = await fetch(`${apiUrl}/api/citations`, {

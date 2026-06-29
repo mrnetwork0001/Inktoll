@@ -101,21 +101,20 @@ export async function triggerCitationTolls(
   // Auto-wrap any ERC-20 USDC balance into the Circle Gateway before paying citation tolls
   if (matches.length > 0) {
     try {
-      console.log(`[Citation Toll] Checking balances for auto-wrap: ${agentWallet.address}...`);
+      console.log(`[Citation Toll] Checking on-chain EOA balance for: ${agentWallet.address}...`);
       const client = new GatewayClient({
         chain: (process.env.ARC_CHAIN_NAME as any) || 'arcTestnet',
         privateKey: agentWallet.privateKey as `0x${string}`,
       });
-      const balances = await client.getBalances();
-      console.log(`[Citation Toll] Balances: Wallet (EOA) = ${balances.wallet.formatted} USDC, Gateway = ${balances.gateway.formattedAvailable} USDC`);
+      const { balance, formatted } = await client.getUsdcBalance();
+      console.log(`[Citation Toll] EOA Wallet Balance = ${formatted} USDC`);
       
-      const walletBalance = balances.wallet.balance;
-      if (walletBalance > 0n) {
-        console.log(`[Citation Toll] Auto-wrapping detected: EOA has ${balances.wallet.formatted} USDC. Depositing to Circle Gateway...`);
-        const depositRes = await client.deposit(balances.wallet.formatted);
+      if (balance > 0n) {
+        console.log(`[Citation Toll] Auto-wrapping detected: EOA has ${formatted} USDC. Depositing to Circle Gateway...`);
+        const depositRes = await client.deposit(formatted);
         console.log(`[Citation Toll] Deposit complete! TX Hash: ${depositRes.depositTxHash}`);
         
-        // Wait a brief moment for the API to reflect the deposit
+        // Wait a brief moment for the transaction to settle on-chain
         await new Promise((resolve) => setTimeout(resolve, 3000));
       }
     } catch (balanceErr: any) {

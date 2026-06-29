@@ -66,17 +66,16 @@ export async function payAndFetchArticle(
 
     // Check if EOA wallet has native USDC that needs to be auto-deposited/wrapped
     try {
-      console.log(`[Pay Tool] Checking balances for EOA: ${agentWallet.address}...`);
-      const balances = await client.getBalances();
-      console.log(`[Pay Tool] Balances: Wallet (EOA) = ${balances.wallet.formatted} USDC, Gateway = ${balances.gateway.formattedAvailable} USDC`);
+      console.log(`[Pay Tool] Checking on-chain EOA balance for: ${agentWallet.address}...`);
+      const { balance, formatted } = await client.getUsdcBalance();
+      console.log(`[Pay Tool] EOA Wallet Balance = ${formatted} USDC`);
       
-      const walletBalance = balances.wallet.balance;
-      if (walletBalance > 0n) {
-        console.log(`[Pay Tool] Auto-wrapping detected: EOA has ${balances.wallet.formatted} USDC. Depositing to Circle Gateway...`);
-        const depositRes = await client.deposit(balances.wallet.formatted);
+      if (balance > 0n) {
+        console.log(`[Pay Tool] Auto-wrapping detected: EOA has ${formatted} USDC. Depositing to Circle Gateway...`);
+        const depositRes = await client.deposit(formatted);
         console.log(`[Pay Tool] Deposit complete! TX Hash: ${depositRes.depositTxHash}`);
         
-        // Wait a brief moment for the API to reflect the deposit
+        // Wait a brief moment for the transaction to settle on-chain
         await new Promise((resolve) => setTimeout(resolve, 3000));
       }
     } catch (balanceErr: any) {

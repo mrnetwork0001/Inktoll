@@ -53,9 +53,9 @@ app.get('/api/agent/status', async (req, res) => {
     // Fetch real USDC balance from Arc Testnet
     let balance = 0.00; // fallback default
     try {
-      const provider = new ethers.JsonRpcProvider('https://rpc.testnet.arc.network');
+      const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
       const usdcAbi = ["function balanceOf(address owner) view returns (uint256)"];
-      const usdcContract = new ethers.Contract('0x3600000000000000000000000000000000000000', usdcAbi, provider);
+      const usdcContract = new ethers.Contract(process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000', usdcAbi, provider);
       
       const balStr = await usdcContract.balanceOf(wallet.address);
       balance = Number(ethers.formatUnits(balStr, 6)); // USDC has 6 decimals

@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS creators (
   ghost_url TEXT NOT NULL,
   ghost_api_key TEXT NOT NULL,
   wallet_address TEXT NOT NULL,
+  wallet_id TEXT NOT NULL,
   default_price_usdc REAL DEFAULT 0.005,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

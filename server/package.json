@@ -17,6 +17,7 @@
     "@circle-fin/x402-batching": "^3.0.4",
     "@x402/core": "^2.11.0",
     "@x402/evm": "^2.11.0",
+    "better-sqlite3": "^12.11.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.1",
@@ -24,6 +25,7 @@
     "viem": "^2.48.11"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.9",

@@ -61,15 +61,15 @@ export async function submitGatewayPayment(
     const value = Math.round(auth.amount * 1e6).toString(); // USDC uses 6 decimals
     paymentRequirements = {
       scheme: 'exact',
-      network: 'eip155:5042002', // Arc testnet
-      asset: '0x3600000000000000000000000000000000000000', // USDC on Arc testnet
+      network: `eip155:${config.arc.chainId}`,
+      asset: config.arc.usdcAddress,
       amount: value,
       payTo: auth.toAddress,
       maxTimeoutSeconds: 3600,
       extra: {
         name: 'GatewayWalletBatched',
         version: '1',
-        verifyingContract: '0x0077777d7EBA4688BDeF3E311b846F25870A19B9', // GatewayWallet verifying contract
+        verifyingContract: config.arc.verifyingContract,
       }
     };
 

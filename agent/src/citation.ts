@@ -103,8 +103,8 @@ export async function triggerCitationTolls(
       const domain = {
         name: 'GatewayWalletBatched',
         version: '1',
-        chainId: 5042002,
-        verifyingContract: '0x0077777d7EBA4688BDeF3E311b846F25870A19B9'
+        chainId: parseInt(process.env.ARC_CHAIN_ID || '5042002', 10),
+        verifyingContract: process.env.ARC_VERIFYING_CONTRACT || '0x0077777d7EBA4688BDeF3E311b846F25870A19B9'
       };
 
       const types = {

@@ -13,6 +13,10 @@ export interface PayResult {
 const walletPath = path.resolve('./data/agent_wallet.json');
 
 export function getOrCreateAgentWallet(): any {
+  if (process.env.AGENT_PRIVATE_KEY) {
+    return new ethers.Wallet(process.env.AGENT_PRIVATE_KEY);
+  }
+
   const dir = path.dirname(walletPath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -52,7 +56,7 @@ export async function payAndFetchArticle(
   try {
     console.log(`[Pay Tool] Initiating real x402 flow using @circle-fin/x402-batching GatewayClient...`);
     const client = new GatewayClient({
-      chain: 'arcTestnet',
+      chain: (process.env.ARC_CHAIN_NAME as any) || 'arcTestnet',
       privateKey: agentWallet.privateKey as `0x${string}`,
     });
 

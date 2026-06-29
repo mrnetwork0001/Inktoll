@@ -69,6 +69,7 @@ function CreatorDashboardInner() {
   const [error, setError] = useState('');
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState('');
+  const [withdrawAmount, setWithdrawAmount] = useState<string>('');
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   const [connectedType, setConnectedType] = useState<string>('managed');
 
@@ -148,6 +149,14 @@ function CreatorDashboardInner() {
       if (!connectedAddress) {
         throw new Error('Please connect your payout wallet (MetaMask) at the top right before initiating a withdrawal.');
       }
+      const amt = parseFloat(withdrawAmount);
+      if (isNaN(amt) || amt <= 0) {
+        throw new Error('Please enter a valid positive withdrawal amount.');
+      }
+      if (amt > stats.balanceUsdc) {
+        throw new Error(`Insufficient balance. You cannot withdraw more than your wallet balance of ${stats.balanceUsdc} USDC.`);
+      }
+
       const dest = connectedAddress;
       const res = await fetch(`${API_URL}/api/creators/withdraw`, {
         method: 'POST',
@@ -155,7 +164,7 @@ function CreatorDashboardInner() {
         body: JSON.stringify({
           creatorId,
           destinationAddress: dest,
-          amount: stats.balanceUsdc
+          amount: amt
         })
       });
       
@@ -165,7 +174,8 @@ function CreatorDashboardInner() {
       }
       
       const data = await res.json();
-      setWithdrawSuccess(`Success! Withdrew ${stats.balanceUsdc} USDC to ${dest.substring(0, 10)}... (Tx: ${data.txHash.substring(0, 16)}...)`);
+      setWithdrawSuccess(`Success! Withdrew ${amt} USDC to ${dest.substring(0, 10)}... (Tx: ${data.txHash.substring(0, 16)}...)`);
+      setWithdrawAmount('');
       await fetchStats();
     } catch (err: any) {
       setError('Withdrawal failed: ' + err.message);
@@ -251,9 +261,7 @@ function CreatorDashboardInner() {
               <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                 Ticking live as AI agents read and cite your blog
               </p>
-            </div>
-
-            {/* WALLET WIDGET */}
+                        {/* WALLET WIDGET */}
             <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '1.5rem' }}>
               <div>
                 <h4 style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -262,9 +270,34 @@ function CreatorDashboardInner() {
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '2.5rem', fontWeight: 700, margin: '0.5rem 0' }}>
                   {stats?.balanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>USDC</span>
                 </div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  Address: <code>{stats?.walletAddress}</code>
+                
+                {/* Copyable Wallet Address Row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.25rem 0' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Address:</span>
+                  <code style={{ fontSize: '0.8rem', background: 'rgba(0,0,0,0.15)', padding: '0.2rem 0.4rem', borderRadius: '4px', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-primary)' }}>
+                    {stats?.walletAddress}
+                  </code>
+                  <button
+                    onClick={() => {
+                      if (stats?.walletAddress) {
+                        navigator.clipboard.writeText(stats.walletAddress);
+                        alert('Address copied to clipboard!');
+                      }
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--accent)',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem',
+                      padding: 0,
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Copy
+                  </button>
                 </div>
+
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                   Blockchain: Arc Testnet (gasless stablecoin native L1)
                 </div>
@@ -291,6 +324,54 @@ function CreatorDashboardInner() {
                     )}
                   </div>
                 </div>
+
+                {/* Withdrawal Amount Input */}
+                <div style={{ marginTop: '0.75rem' }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
+                    Withdrawal Amount (USDC):
+                  </label>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <input
+                      type="number"
+                      placeholder="0.00"
+                      step="0.01"
+                      min="0.01"
+                      max={stats?.balanceUsdc || 0}
+                      value={withdrawAmount}
+                      onChange={(e) => setWithdrawAmount(e.target.value)}
+                      disabled={withdrawing}
+                      style={{
+                        flexGrow: 1,
+                        background: 'rgba(0,0,0,0.2)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '6px',
+                        padding: '0.4rem 0.6rem',
+                        fontSize: '0.9rem',
+                        color: 'var(--text-primary)',
+                        fontFamily: 'var(--font-mono)'
+                      }}
+                    />
+                    <button
+                      className="btn btn-secondary"
+                      style={{ padding: '0.4rem 0.8rem', minWidth: 'auto', fontSize: '0.8rem', marginBottom: 0 }}
+                      onClick={() => {
+                        if (stats?.balanceUsdc) {
+                          // Leave a tiny buffer of 0.01 for gas automatically
+                          const maxAmount = Math.max(0, parseFloat((stats.balanceUsdc - 0.01).toFixed(6)));
+                          setWithdrawAmount(maxAmount.toString());
+                        }
+                      }}
+                      disabled={withdrawing || !stats?.balanceUsdc || stats.balanceUsdc <= 0.01}
+                    >
+                      MAX
+                    </button>
+                  </div>
+                  {stats?.balanceUsdc > 0 && (
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                      * Leaving a 0.01 USDC buffer for network gas fees is recommended.
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -305,26 +386,28 @@ function CreatorDashboardInner() {
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  <button 
-                    className="btn btn-secondary" 
-                    style={{ flexGrow: 1, marginBottom: 0 }}
-                    onClick={handleFaucet}
-                    disabled={fauceting}
-                  >
-                    {fauceting ? 'Fauceting...' : '⛲ Faucet'}
-                  </button>
+                  {process.env.NEXT_PUBLIC_ARC_MAINNET !== 'true' && (
+                    <button 
+                      className="btn btn-secondary" 
+                      style={{ flexGrow: 1, marginBottom: 0 }}
+                      onClick={handleFaucet}
+                      disabled={fauceting}
+                    >
+                      {fauceting ? 'Fauceting...' : '⛲ Faucet'}
+                    </button>
+                  )}
                   <button 
                     className="btn btn-primary" 
                     style={{ flexGrow: 2, marginBottom: 0 }}
                     onClick={handleWithdraw}
-                    disabled={withdrawing || !stats?.balanceUsdc || stats.balanceUsdc <= 0 || !connectedAddress}
+                    disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) <= 0 || !connectedAddress}
                     title={!connectedAddress ? "Please connect a payout wallet to withdraw" : ""}
                   >
                     {withdrawing ? 'Withdrawing...' : 'Withdraw'}
                   </button>
                 </div>
               </div>
-            </div>
+            </div>    </div>
 
           </div>
 

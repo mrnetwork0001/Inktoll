@@ -28,11 +28,11 @@ export async function createCircleWallet(userId: string, type: 'creator' | 'agen
     throw new Error('Circle DCW Client is not initialized (check your CIRCLE_API_KEY and CIRCLE_ENTITY_SECRET in .env)');
   }
 
-  console.log(`[Wallet Service] [REAL] Provisioning ARC-TESTNET wallet for user ${userId} via Circle API...`);
+  console.log(`[Wallet Service] [REAL] Provisioning ${config.arc.blockchainName} wallet for user ${userId} via Circle API...`);
   
   const response = await client.createWallets({
     accountType: 'EOA',
-    blockchains: ['ARC-TESTNET'],
+    blockchains: [config.arc.blockchainName as any],
     count: 1,
     walletSetId: config.circle.walletSetId,
   });
@@ -70,7 +70,7 @@ export async function getWalletBalance(address: string): Promise<number> {
     // If we don't store reader wallet IDs in SQLite, we look them up via listWallets.
     const walletsResponse = await client.listWallets({
       address: address,
-      blockchain: 'ARC-TESTNET',
+      blockchain: config.arc.blockchainName as any,
     });
     const wallet = walletsResponse.data?.wallets?.[0];
     if (wallet) {
@@ -122,7 +122,7 @@ export async function processWithdrawal(fromAddress: string, toAddress: string, 
   } else {
     const walletsResponse = await client.listWallets({
       address: fromAddress,
-      blockchain: 'ARC-TESTNET',
+      blockchain: config.arc.blockchainName as any,
     });
     const wallet = walletsResponse.data?.wallets?.[0];
     if (wallet) {
@@ -146,7 +146,7 @@ export async function processWithdrawal(fromAddress: string, toAddress: string, 
   const transferResponse = await client.createTransaction({
     walletId: walletId,
     tokenAddress: usdcToken.token.tokenAddress,
-    blockchain: 'ARC-TESTNET',
+    blockchain: config.arc.blockchainName as any,
     destinationAddress: toAddress,
     amounts: [withdrawAmount.toString()],
     fee: {
@@ -189,10 +189,10 @@ export async function requestFaucetFunds(address: string, type: 'creator' | 'age
     throw new Error('Circle DCW Client is not initialized');
   }
 
-  console.log(`[Wallet Service] [REAL Faucet] Requesting ARC-TESTNET tokens for ${address}...`);
+  console.log(`[Wallet Service] [REAL Faucet] Requesting ${config.arc.blockchainName} tokens for ${address}...`);
   const response = await client.requestTestnetTokens({
     address: address,
-    blockchain: 'ARC-TESTNET',
+    blockchain: config.arc.blockchainName as any,
     usdc: true
   });
   

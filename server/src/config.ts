@@ -18,8 +18,11 @@ export const config = {
     entitySecret: process.env.CIRCLE_ENTITY_SECRET || '',
   },
   arc: {
-    rpcUrl: process.env.ARC_RPC_URL || 'https://arc-node.thecanteenapp.com',
-    chainId: parseInt(process.env.ARC_CHAIN_ID || '123456', 10),
+    rpcUrl: process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network',
+    chainId: parseInt(process.env.ARC_CHAIN_ID || '5042002', 10),
+    verifyingContract: process.env.ARC_VERIFYING_CONTRACT || '0x0077777d7EBA4688BDeF3E311b846F25870A19B9',
+    usdcAddress: process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000',
+    blockchainName: process.env.ARC_BLOCKCHAIN_NAME || 'ARC-TESTNET',
   },
   openai: {
     apiKey: process.env.OPENAI_API_KEY || '',

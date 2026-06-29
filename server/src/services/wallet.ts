@@ -139,6 +139,7 @@ export async function processWithdrawal(fromAddress: string, toAddress: string, 
   const transferResponse = await client.createTransaction({
     walletId: walletId,
     tokenAddress: usdcToken.token.tokenAddress,
+    blockchain: 'ARC-TESTNET',
     destinationAddress: toAddress,
     amounts: [amount.toString()],
     fee: {

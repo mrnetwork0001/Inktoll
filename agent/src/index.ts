@@ -165,12 +165,12 @@ app.post('/api/agent/ask', async (req, res) => {
     }
 
     // Detect citations from answer
-    const citations = await detectCitations(answer, OPENAI_API_KEY);
+    const citations = await detectCitations(userId, answer, OPENAI_API_KEY);
 
     // Trigger payments for matches
     let paymentResults: any[] = [];
     if (citations.length > 0) {
-      paymentResults = await triggerCitationTolls(citations, SERVER_URL);
+      paymentResults = await triggerCitationTolls(userId, citations, SERVER_URL);
     }
 
     return res.json({

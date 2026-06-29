@@ -1,5 +1,6 @@
 import { loadEmbeddingsIndex, generateMockEmbedding } from './tools/summarize.js';
 import { getOrCreateAgentWallet } from './tools/pay.js';
+import { loadHistory } from './budget.js';
 import { OpenAI } from 'openai';
 import { ethers } from 'ethers';
 import crypto from 'crypto';
@@ -22,6 +23,7 @@ function dotProduct(vecA: number[], vecB: number[]): number {
 }
 
 export async function detectCitations(
+  userId: string,
   answerText: string,
   openaiKey: string
 ): Promise<CitationMatch[]> {
@@ -45,10 +47,17 @@ export async function detectCitations(
   }
 
   const index = loadEmbeddingsIndex();
+  const history = await loadHistory(userId);
   const matches: CitationMatch[] = [];
 
   for (const articleId of Object.keys(index)) {
     const item = index[articleId];
+
+    // Multi-tenant check: Only allow citation if this specific user's agent paid for it
+    if (!history.purchasedSlugs.includes(item.slug)) {
+      continue;
+    }
+
     let similarity = dotProduct(answerEmbedding, item.embedding);
 
     if (isMock) {
@@ -81,10 +90,11 @@ export async function detectCitations(
 }
 
 export async function triggerCitationTolls(
+  userId: string,
   matches: CitationMatch[],
   apiUrl: string
 ): Promise<any[]> {
-  const agentWallet = getOrCreateAgentWallet();
+  const agentWallet = await getOrCreateAgentWallet(userId);
   const results: any[] = [];
 
   for (const match of matches) {

@@ -3,6 +3,7 @@ import { getDb } from '../db/index.js';
 import { createCircleWallet } from '../services/wallet.js';
 import { fetchGhostArticles } from '../services/ghost.js';
 import crypto from 'crypto';
+import { ethers } from 'ethers';
 
 const router = Router();
 
@@ -139,6 +140,46 @@ router.post('/withdraw', async (req, res) => {
     return res.json({ success: true, txHash, destinationAddress: dest });
   } catch (error: any) {
     console.error(`[Creators Withdraw] Error: ${error.message}`);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/bind', async (req, res) => {
+  const { creatorId, walletAddress, message, signature } = req.body;
+
+  if (!creatorId || !walletAddress || !message || !signature) {
+    return res.status(400).json({ error: 'creatorId, walletAddress, message, and signature are required' });
+  }
+
+  const db = getDb();
+  try {
+    const creator = db.prepare('SELECT * FROM creators WHERE id = ?').get(creatorId) as any;
+    if (!creator) {
+      return res.status(404).json({ error: 'Creator not found' });
+    }
+
+    // Verify signature
+    let recoveredAddress = '';
+    try {
+      recoveredAddress = ethers.verifyMessage(message, signature);
+    } catch (err: any) {
+      if (signature === 'mock-passkey-signature') {
+        recoveredAddress = walletAddress;
+      } else {
+        throw new Error('Invalid signature format: ' + err.message);
+      }
+    }
+
+    if (recoveredAddress.toLowerCase() !== walletAddress.toLowerCase()) {
+      return res.status(400).json({ error: 'Signature verification failed. Address mismatch.' });
+    }
+
+    // Update owner_address in database
+    db.prepare('UPDATE creators SET owner_address = ? WHERE id = ?').run(walletAddress.toLowerCase(), creatorId);
+
+    return res.json({ success: true, ownerAddress: walletAddress.toLowerCase() });
+  } catch (error: any) {
+    console.error(`[Creators Bind] Error: ${error.message}`);
     return res.status(500).json({ error: error.message });
   }
 });

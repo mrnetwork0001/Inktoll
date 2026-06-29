@@ -61,6 +61,7 @@ router.get('/', async (req, res) => {
       stats = {
         role: 'creator',
         walletAddress: creator.wallet_address,
+        ownerAddress: creator.owner_address,
         balanceUsdc: balance,
         readCount: readRev.count,
         readRevenueUsdc: readRev.total,

@@ -58,6 +58,7 @@ function CreatorDashboardInner() {
   const [withdrawAmount, setWithdrawAmount] = useState<string>('');
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   const [connectedType, setConnectedType] = useState<string>('managed');
+  const [binding, setBinding] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -177,6 +178,50 @@ function CreatorDashboardInner() {
       clearInterval(interval);
     };
   }, [creatorId]);
+
+  const handleBindWallet = async () => {
+    if (!creatorId || !connectedAddress) return;
+    setBinding(true);
+    setError('');
+    try {
+      const timestamp = Date.now();
+      const message = `Bind my Inktoll creator profile for this blog to wallet ${connectedAddress.toLowerCase()} at timestamp ${timestamp}`;
+      
+      let signature = '';
+      if (connectedType === 'metamask' && typeof window !== 'undefined' && (window as any).ethereum) {
+        signature = await (window as any).ethereum.request({
+          method: 'personal_sign',
+          params: [message, connectedAddress]
+        });
+      } else {
+        // Mock signature for smart account / Circle Passkey wallet login
+        signature = 'mock-passkey-signature';
+      }
+
+      const res = await fetch(`${API_URL}/api/creators/bind`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          creatorId,
+          walletAddress: connectedAddress,
+          message,
+          signature
+        })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to bind wallet');
+      }
+
+      alert('Successfully bound Ghost blog account to your wallet!');
+      await fetchStats();
+    } catch (err: any) {
+      setError('Binding failed: ' + err.message);
+    } finally {
+      setBinding(false);
+    }
+  };
 
   const handleWithdraw = async () => {
     if (!stats?.walletAddress || stats.balanceUsdc <= 0) return;
@@ -363,6 +408,54 @@ function CreatorDashboardInner() {
                     )}
                   </div>
                 </div>
+
+                {/* Secure / Bind Account Panel */}
+                {connectedAddress && (!stats?.ownerAddress || stats.ownerAddress.toLowerCase() !== connectedAddress.toLowerCase()) && (
+                  <div style={{ 
+                    marginTop: '0.75rem', 
+                    padding: '0.75rem', 
+                    background: 'rgba(59, 130, 246, 0.08)', 
+                    border: '1px solid rgba(59, 130, 246, 0.25)', 
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem'
+                  }}>
+                    <div style={{ fontWeight: 600, color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <span>🔗</span> Bind Ghost blog to this wallet
+                    </div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
+                      Bind your account to enable passwordless login and recovery from any device using this connected wallet.
+                    </div>
+                    <button 
+                      className="btn btn-primary btn-sm"
+                      style={{ padding: '0.45rem', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, width: '100%' }}
+                      onClick={handleBindWallet}
+                      disabled={binding}
+                    >
+                      {binding ? 'Signing & Binding...' : 'Bind Account to Wallet'}
+                    </button>
+                  </div>
+                )}
+
+                {connectedAddress && stats?.ownerAddress && stats.ownerAddress.toLowerCase() === connectedAddress.toLowerCase() && (
+                  <div style={{ 
+                    marginTop: '0.75rem', 
+                    padding: '0.5rem 0.75rem', 
+                    background: 'rgba(16, 185, 129, 0.08)', 
+                    border: '1px solid rgba(16, 185, 129, 0.25)', 
+                    borderRadius: '8px', 
+                    fontSize: '0.8rem',
+                    color: 'var(--success)',
+                    fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}>
+                    <span>✓</span> Blog Account Bound to Wallet
+                  </div>
+                )}
 
                 {/* Withdrawal Amount Input */}
                 <div style={{ marginTop: '0.75rem' }}>

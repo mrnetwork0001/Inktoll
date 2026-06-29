@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS creators (
   wallet_address TEXT NOT NULL,
   wallet_id TEXT NOT NULL,
   default_price_usdc REAL DEFAULT 0.005,
+  owner_address TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 `;

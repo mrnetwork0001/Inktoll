@@ -7,7 +7,7 @@ import crypto from 'crypto';
 const router = Router();
 
 router.post('/', async (req, res) => {
-  const { ghostUrl, ghostApiKey, defaultPriceUsdc } = req.body;
+  const { ghostUrl, ghostApiKey, defaultPriceUsdc, ownerAddress } = req.body;
 
   if (!ghostUrl) {
     return res.status(400).json({ error: 'ghostUrl is required' });
@@ -28,15 +28,16 @@ router.post('/', async (req, res) => {
 
       // Insert creator
       db.prepare(`
-        INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc, owner_address)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         creatorId,
         ghostUrl,
         ghostApiKey || '',
         wallet.address,
         wallet.id,
-        parseFloat(defaultPriceUsdc || '0.005')
+        parseFloat(defaultPriceUsdc || '0.005'),
+        ownerAddress ? ownerAddress.toLowerCase() : null
       );
 
       creator = {
@@ -46,7 +47,11 @@ router.post('/', async (req, res) => {
         wallet_address: wallet.address,
         wallet_id: wallet.id,
         default_price_usdc: parseFloat(defaultPriceUsdc || '0.005'),
+        owner_address: ownerAddress ? ownerAddress.toLowerCase() : null,
       };
+    } else if (ownerAddress && !creator.owner_address) {
+      db.prepare('UPDATE creators SET owner_address = ? WHERE id = ?').run(ownerAddress.toLowerCase(), creatorId);
+      creator.owner_address = ownerAddress.toLowerCase();
     }
 
     // Fetch and import articles
@@ -134,6 +139,24 @@ router.post('/withdraw', async (req, res) => {
     return res.json({ success: true, txHash, destinationAddress: dest });
   } catch (error: any) {
     console.error(`[Creators Withdraw] Error: ${error.message}`);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/lookup', (req, res) => {
+  const { wallet } = req.query;
+  if (!wallet) {
+    return res.status(400).json({ error: 'wallet address is required' });
+  }
+
+  const db = getDb();
+  try {
+    const creator = db.prepare('SELECT id FROM creators WHERE owner_address = ?').get((wallet as string).toLowerCase()) as any;
+    if (!creator) {
+      return res.status(404).json({ error: 'No creator profile found linked to this wallet.' });
+    }
+    return res.json({ success: true, creatorId: creator.id });
+  } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }
 });

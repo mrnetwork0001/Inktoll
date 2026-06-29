@@ -52,20 +52,6 @@ function CreatorDashboardInner() {
   const [creatorId, setCreatorId] = useState<string | null>(null);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (paramCreatorId) {
-      setCreatorId(paramCreatorId);
-      localStorage.setItem('inktoll_creator_id', paramCreatorId);
-    } else {
-      const stored = localStorage.getItem('inktoll_creator_id');
-      if (stored) {
-        setCreatorId(stored);
-      } else {
-        setLoading(false);
-      }
-    }
-  }, [paramCreatorId]);
   const [error, setError] = useState('');
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState('');
@@ -73,11 +59,83 @@ function CreatorDashboardInner() {
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   const [connectedType, setConnectedType] = useState<string>('managed');
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+  // 1. Initial Load of creatorId and Wallet Connection state
+  useEffect(() => {
+    // Sync storage values for wallet
+    const addr = localStorage.getItem('inktoll_connected_address');
+    const type = localStorage.getItem('inktoll_wallet_type') || 'managed';
+    setConnectedAddress(addr);
+    setConnectedType(type);
+
+    const loadCreator = async () => {
+      if (paramCreatorId) {
+        setCreatorId(paramCreatorId);
+        localStorage.setItem('inktoll_creator_id', paramCreatorId);
+        setLoading(false);
+      } else {
+        const stored = localStorage.getItem('inktoll_creator_id');
+        if (stored) {
+          setCreatorId(stored);
+          setLoading(false);
+        } else if (addr) {
+          // If EOA is connected, look it up on backend
+          try {
+            const res = await fetch(`${API_URL}/api/creators/lookup?wallet=${addr}`);
+            if (res.ok) {
+              const data = await res.json();
+              setCreatorId(data.creatorId);
+              localStorage.setItem('inktoll_creator_id', data.creatorId);
+            }
+          } catch (err) {
+            console.warn('Initial creator lookup failed:', err);
+          }
+          setLoading(false);
+        } else {
+          setLoading(false);
+        }
+      }
+    };
+    loadCreator();
+
+    // Listen to wallet changes
+    const handleWalletChange = async () => {
+      const a = localStorage.getItem('inktoll_connected_address');
+      const t = localStorage.getItem('inktoll_wallet_type') || 'managed';
+      setConnectedAddress(a);
+      setConnectedType(t);
+
+      // If user just connected a wallet and we don't have creatorId, attempt lookup
+      if (a && !localStorage.getItem('inktoll_creator_id')) {
+        setLoading(true);
+        try {
+          const res = await fetch(`${API_URL}/api/creators/lookup?wallet=${a}`);
+          if (res.ok) {
+            const data = await res.json();
+            setCreatorId(data.creatorId);
+            localStorage.setItem('inktoll_creator_id', data.creatorId);
+          }
+        } catch (err) {
+          console.warn('Wallet change creator lookup failed:', err);
+        }
+        setLoading(false);
+      } else if (!a) {
+        // Clear state if EOA disconnected
+        setCreatorId(null);
+        localStorage.removeItem('inktoll_creator_id');
+      }
+    };
+
+    window.addEventListener('wallet-changed', handleWalletChange);
+    return () => {
+      window.removeEventListener('wallet-changed', handleWalletChange);
+    };
+  }, [paramCreatorId]);
+
   // Animate Earnings Counter
   const totalEarnings = stats?.totalEarningsUsdc || 0;
   const animatedEarnings = useAnimatedCount(totalEarnings, 1200);
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   // Fetch stats function
   const fetchStats = async (silent = false) => {
@@ -105,37 +163,18 @@ function CreatorDashboardInner() {
     }
   };
 
+  // 2. Fetch stats when creatorId is present (includes interval polling)
   useEffect(() => {
-    if (!creatorId) {
-      setLoading(false);
-      return;
-    }
+    if (!creatorId) return;
 
     fetchStats();
 
-    // Load wallet connection states
-    const addr = localStorage.getItem('inktoll_connected_address');
-    const type = localStorage.getItem('inktoll_wallet_type') || 'managed';
-    setConnectedAddress(addr);
-    setConnectedType(type);
-
-    const handleWalletChange = () => {
-      const a = localStorage.getItem('inktoll_connected_address');
-      const t = localStorage.getItem('inktoll_wallet_type') || 'managed';
-      setConnectedAddress(a);
-      setConnectedType(t);
-    };
-
-    window.addEventListener('wallet-changed', handleWalletChange);
-
-    // Live update polling
     const interval = setInterval(() => {
       fetchStats(true);
     }, 3000);
 
     return () => {
       clearInterval(interval);
-      window.removeEventListener('wallet-changed', handleWalletChange);
     };
   }, [creatorId]);
 

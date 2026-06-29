@@ -83,6 +83,15 @@ export function initDatabase() {
 
   // Create tables using schema scripts
   dbInstance.exec(schema.CREATE_CREATORS_TABLE);
+  
+  // Safe migration for older sqlite tables
+  try {
+    dbInstance.exec("ALTER TABLE creators ADD COLUMN owner_address TEXT");
+    console.log("[DB] Added owner_address column to creators table.");
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
   dbInstance.exec(schema.CREATE_ARTICLES_TABLE);
   dbInstance.exec(schema.CREATE_PAYMENTS_TABLE);
   dbInstance.exec(schema.CREATE_READER_AGENTS_TABLE);

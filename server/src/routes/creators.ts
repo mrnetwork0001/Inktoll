@@ -83,6 +83,20 @@ router.post('/', async (req, res) => {
           post.published_at || new Date().toISOString()
         );
         importedCount++;
+      } else {
+        db.prepare(`
+          UPDATE articles
+          SET title = ?, excerpt = ?, preview_text = ?, full_html = ?, word_count = ?, published_at = ?
+          WHERE id = ?
+        `).run(
+          post.title,
+          post.excerpt || '',
+          previewText,
+          post.full_html || '',
+          words.length,
+          post.published_at || new Date().toISOString(),
+          articleId
+        );
       }
     }
 

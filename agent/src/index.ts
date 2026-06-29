@@ -43,12 +43,27 @@ const PORT = parseInt(process.env.AGENT_PORT || '3002', 10);
 const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
+// Middleware to enforce user authentication
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
+  
+  const userId = req.headers['x-user-id'] as string;
+  if (!userId) {
+    return res.status(401).json({ error: 'x-user-id header is required for agent multi-tenancy' });
+  }
+  (req as any).userId = userId;
+  next();
+});
+
 // Status Endpoint
 app.get('/api/agent/status', async (req, res) => {
+  const userId = (req as any).userId;
   try {
-    const wallet = getOrCreateAgentWallet();
-    const profile = loadProfile();
-    const history = loadHistory();
+    const wallet = await getOrCreateAgentWallet(userId);
+    const profile = await loadProfile(userId);
+    const history = await loadHistory(userId);
 
     // Fetch real USDC balance from Arc Testnet
     let balance = 0.00; // fallback default
@@ -79,16 +94,17 @@ app.get('/api/agent/status', async (req, res) => {
 });
 
 // Update Profile
-app.post('/api/agent/profile', (req, res) => {
+app.post('/api/agent/profile', async (req, res) => {
+  const userId = (req as any).userId;
   const { interests, maxPricePerArticle, dailyBudgetUsdc } = req.body;
 
   try {
-    const profile = loadProfile();
+    const profile = await loadProfile(userId);
     if (interests && Array.isArray(interests)) profile.interests = interests;
     if (maxPricePerArticle !== undefined) profile.maxPricePerArticle = parseFloat(maxPricePerArticle);
     if (dailyBudgetUsdc !== undefined) profile.dailyBudgetUsdc = parseFloat(dailyBudgetUsdc);
 
-    saveProfile(profile);
+    await saveProfile(userId, profile);
     return res.json({ success: true, profile });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
@@ -97,8 +113,9 @@ app.post('/api/agent/profile', (req, res) => {
 
 // Run Autonomous Agent Loop
 app.post('/api/agent/run', async (req, res) => {
+  const userId = (req as any).userId;
   try {
-    const summary = await runAutonomousAgent(SERVER_URL, OPENAI_API_KEY);
+    const summary = await runAutonomousAgent(userId, SERVER_URL, OPENAI_API_KEY);
     return res.json(summary);
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
@@ -107,6 +124,9 @@ app.post('/api/agent/run', async (req, res) => {
 
 // Ask Agent Question (with Citation Tolls)
 app.post('/api/agent/ask', async (req, res) => {
+  // We may not strictly need userId for asking general questions right now,
+  // but keeping it standard across the API.
+  const userId = (req as any).userId;
   const { question } = req.body;
 
   if (!question) {

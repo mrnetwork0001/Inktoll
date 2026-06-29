@@ -16,10 +16,21 @@ export default function ReaderFeed() {
   const AGENT_URL = process.env.NEXT_PUBLIC_AGENT_URL || 'http://localhost:3002';
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+  const getUserId = () => {
+    let id = localStorage.getItem('inktoll_user_id');
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem('inktoll_user_id', id);
+    }
+    return id;
+  };
+
   const fetchFeed = async () => {
     try {
       // 1. Get agent wallet address
-      const statusRes = await fetch(`${AGENT_URL}/api/agent/status`);
+      const statusRes = await fetch(`${AGENT_URL}/api/agent/status`, {
+        headers: { 'x-user-id': getUserId() }
+      });
       if (!statusRes.ok) throw new Error('Agent service is offline');
       const status = await statusRes.json();
       setAgentAddress(status.address);

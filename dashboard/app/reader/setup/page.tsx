@@ -54,9 +54,20 @@ export default function ReaderSetup() {
 
   const AGENT_URL = process.env.NEXT_PUBLIC_AGENT_URL || 'http://localhost:3002';
 
+  const getUserId = () => {
+    let id = localStorage.getItem('inktoll_user_id');
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem('inktoll_user_id', id);
+    }
+    return id;
+  };
+
   const fetchAgentStatus = async (silent = false) => {
     try {
-      const res = await fetch(`${AGENT_URL}/api/agent/status`);
+      const res = await fetch(`${AGENT_URL}/api/agent/status`, {
+        headers: { 'x-user-id': getUserId() }
+      });
       if (!res.ok) throw new Error('Agent service is offline');
       const data = await res.json();
       setStatus(data);
@@ -92,7 +103,10 @@ export default function ReaderSetup() {
       const formattedInterests = interests.split(',').map(s => s.trim()).filter(Boolean);
       const res = await fetch(`${AGENT_URL}/api/agent/profile`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-id': getUserId() 
+        },
         body: JSON.stringify({
           interests: formattedInterests,
           maxPricePerArticle: parseFloat(maxPrice),
@@ -116,6 +130,7 @@ export default function ReaderSetup() {
     try {
       const res = await fetch(`${AGENT_URL}/api/agent/run`, {
         method: 'POST',
+        headers: { 'x-user-id': getUserId() }
       });
       
       if (!res.ok) throw new Error('Agent run failed');

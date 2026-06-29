@@ -27,11 +27,22 @@ export default function ReaderAsk() {
 
   const AGENT_URL = process.env.NEXT_PUBLIC_AGENT_URL || 'http://localhost:3002';
 
+  const getUserId = () => {
+    let id = localStorage.getItem('inktoll_user_id');
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem('inktoll_user_id', id);
+    }
+    return id;
+  };
+
   useEffect(() => {
     // Fetch agent wallet address
     const fetchWallet = async () => {
       try {
-        const res = await fetch(`${AGENT_URL}/api/agent/status`);
+        const res = await fetch(`${AGENT_URL}/api/agent/status`, {
+          headers: { 'x-user-id': getUserId() }
+        });
         if (res.ok) {
           const data = await res.json();
           setAgentAddress(data.address);
@@ -62,7 +73,10 @@ export default function ReaderAsk() {
     try {
       const res = await fetch(`${AGENT_URL}/api/agent/ask`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-user-id': getUserId() 
+        },
         body: JSON.stringify({ question: userText }),
       });
 

@@ -12,7 +12,7 @@ export interface RunSummary {
   logs: string[];
 }
 
-export async function runAutonomousAgent(apiUrl: string, openaiKey: string): Promise<RunSummary> {
+export async function runAutonomousAgent(userId: string, apiUrl: string, openaiKey: string): Promise<RunSummary> {
   const summary: RunSummary = {
     articlesDiscovered: 0,
     articlesEvaluated: 0,
@@ -30,7 +30,7 @@ export async function runAutonomousAgent(apiUrl: string, openaiKey: string): Pro
   log('Starting autonomous run loop...');
 
   // 1. Discover articles
-  const unread = await discoverNewArticles(apiUrl);
+  const unread = await discoverNewArticles(userId, apiUrl);
   summary.articlesDiscovered = unread.length;
 
   if (unread.length === 0) {
@@ -44,7 +44,7 @@ export async function runAutonomousAgent(apiUrl: string, openaiKey: string): Pro
     summary.articlesEvaluated++;
 
     // Check budget
-    const budgetCheck = checkBudget(article.price);
+    const budgetCheck = await checkBudget(userId, article.price);
     if (!budgetCheck.allowed) {
       log(`Skipped "${article.title}": ${budgetCheck.reason}`);
       continue;
@@ -52,14 +52,14 @@ export async function runAutonomousAgent(apiUrl: string, openaiKey: string): Pro
 
     // Score article
     try {
-      const evaluation = await evaluateArticle(article.title, article.preview, article.price, openaiKey);
+      const evaluation = await evaluateArticle(userId, article.title, article.preview, article.price, openaiKey);
       log(`Evaluation: Score ${evaluation.score}/100. Reasoning: ${evaluation.reasoning}`);
 
       if (evaluation.shouldBuy) {
         log(`Decision: BUY "${article.title}"`);
 
         // Execute payment and fetch content
-        const payResult = await payAndFetchArticle(article.slug, article.price, article.wallet, apiUrl);
+        const payResult = await payAndFetchArticle(userId, article.slug, article.price, article.wallet, apiUrl);
 
         if (payResult.success && payResult.article) {
           log(`Payment Succeeded! Unlocked content for "${article.title}".`);

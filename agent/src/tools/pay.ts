@@ -3,6 +3,7 @@ import path from 'path';
 import { ethers } from 'ethers';
 import { recordPurchase } from '../budget.js';
 import { GatewayClient } from '@circle-fin/x402-batching/client';
+import { db } from '../db.js';
 
 export interface PayResult {
   success: boolean;
@@ -10,48 +11,48 @@ export interface PayResult {
   error?: string;
 }
 
-const walletPath = path.resolve('./data/agent_wallet.json');
-
-export function getOrCreateAgentWallet(): any {
+export async function getOrCreateAgentWallet(userId: string): Promise<ethers.Wallet> {
   if (process.env.AGENT_PRIVATE_KEY) {
+    // Legacy fallback for dev if needed
     return new ethers.Wallet(process.env.AGENT_PRIVATE_KEY);
   }
 
-  const dir = path.dirname(walletPath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
+  return new Promise((resolve, reject) => {
+    db.get('SELECT agentPrivateKey FROM AgentProfiles WHERE userId = ?', [userId], (err, row: any) => {
+      if (err) return reject(err);
+      
+      if (row && row.agentPrivateKey) {
+        return resolve(new ethers.Wallet(row.agentPrivateKey));
+      }
 
-  if (fs.existsSync(walletPath)) {
-    const raw = fs.readFileSync(walletPath, 'utf8');
-    const data = JSON.parse(raw);
-    return new ethers.Wallet(data.privateKey);
-  }
-
-  // Create new wallet
-  const wallet = ethers.Wallet.createRandom();
-  fs.writeFileSync(
-    walletPath,
-    JSON.stringify(
-      {
-        address: wallet.address,
-        privateKey: wallet.privateKey,
-      },
-      null,
-      2
-    )
-  );
-  console.log(`[Agent Wallet] Generated new agent wallet: ${wallet.address}`);
-  return wallet;
+      // Create new wallet
+      const wallet = ethers.Wallet.createRandom();
+      console.log(`[Agent Wallet] Generated new agent wallet for ${userId}: ${wallet.address}`);
+      
+      // Update the DB with the new key. 
+      // If the row doesn't exist, we insert it with defaults.
+      db.run(`
+        INSERT INTO AgentProfiles (userId, interests, maxPricePerArticle, dailyBudgetUsdc, agentAddress, agentPrivateKey)
+        VALUES (?, '["AI agent payments", "Web3 machine economy", "stablecoin-native L1", "Zero knowledge proofs", "DeFi privacy"]', 0.05, 1.00, ?, ?)
+        ON CONFLICT(userId) DO UPDATE SET
+          agentAddress=excluded.agentAddress,
+          agentPrivateKey=excluded.agentPrivateKey
+      `, [userId, wallet.address, wallet.privateKey], (updateErr) => {
+        if (updateErr) return reject(updateErr);
+        resolve(wallet);
+      });
+    });
+  });
 }
 
 export async function payAndFetchArticle(
+  userId: string,
   slug: string,
   price: number,
   recipientWallet: string,
   apiUrl: string
 ): Promise<PayResult> {
-  const agentWallet = getOrCreateAgentWallet();
+  const agentWallet = await getOrCreateAgentWallet(userId);
 
   try {
     console.log(`[Pay Tool] Initiating real x402 flow using @circle-fin/x402-batching GatewayClient...`);
@@ -75,7 +76,7 @@ export async function payAndFetchArticle(
     }
 
     if ((status === 200 || status === 201) && parsedData && parsedData.paid && parsedData.article) {
-      recordPurchase(slug, price);
+      await recordPurchase(userId, slug, price);
       return {
         success: true,
         article: parsedData.article,
@@ -90,4 +91,3 @@ export async function payAndFetchArticle(
     };
   }
 }
-export { walletPath };

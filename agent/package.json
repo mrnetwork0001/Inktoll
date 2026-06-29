@@ -16,6 +16,7 @@
     "@circle-fin/x402-batching": "^3.0.4",
     "@langchain/core": "^0.2.10",
     "@langchain/openai": "^0.2.0",
+    "@types/sqlite3": "^3.1.11",
     "@x402/core": "^2.11.0",
     "@x402/evm": "^2.11.0",
     "cors": "^2.8.5",
@@ -25,6 +26,7 @@
     "langchain": "^0.2.7",
     "openai": "^4.52.1",
     "rss-parser": "^3.13.0",
+    "sqlite3": "^6.0.1",
     "viem": "^2.48.11"
   },
   "devDependencies": {

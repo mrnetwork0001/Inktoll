@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import { db } from './db.js';
 
 export interface ReaderProfile {
   interests: string[];
@@ -13,34 +12,43 @@ const DEFAULT_PROFILE: ReaderProfile = {
   dailyBudgetUsdc: 1.00
 };
 
-const profilePath = path.resolve('./data/profile.json');
-
-export function loadProfile(): ReaderProfile {
-  try {
-    const dir = path.dirname(profilePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    if (!fs.existsSync(profilePath)) {
-      fs.writeFileSync(profilePath, JSON.stringify(DEFAULT_PROFILE, null, 2));
-      return DEFAULT_PROFILE;
-    }
-    const content = fs.readFileSync(profilePath, 'utf8');
-    return JSON.parse(content);
-  } catch (error) {
-    console.error('[Profile] Error loading profile, using defaults:', error);
-    return DEFAULT_PROFILE;
-  }
+export function loadProfile(userId: string): Promise<ReaderProfile> {
+  return new Promise((resolve) => {
+    db.get('SELECT interests, maxPricePerArticle, dailyBudgetUsdc FROM AgentProfiles WHERE userId = ?', [userId], (err, row: any) => {
+      if (err) {
+        console.error('[Profile] DB error loading profile:', err);
+        return resolve(DEFAULT_PROFILE);
+      }
+      if (!row) {
+        return resolve(DEFAULT_PROFILE);
+      }
+      resolve({
+        interests: JSON.parse(row.interests),
+        maxPricePerArticle: row.maxPricePerArticle,
+        dailyBudgetUsdc: row.dailyBudgetUsdc
+      });
+    });
+  });
 }
 
-export function saveProfile(profile: ReaderProfile): void {
-  try {
-    const dir = path.dirname(profilePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(profilePath, JSON.stringify(profile, null, 2));
-  } catch (error) {
-    console.error('[Profile] Error saving profile:', error);
-  }
+export function saveProfile(userId: string, profile: ReaderProfile, agentAddress: string = '', agentPrivateKey: string = ''): Promise<void> {
+  return new Promise((resolve, reject) => {
+    db.run(`
+      INSERT INTO AgentProfiles (userId, interests, maxPricePerArticle, dailyBudgetUsdc, agentAddress, agentPrivateKey)
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(userId) DO UPDATE SET
+        interests=excluded.interests,
+        maxPricePerArticle=excluded.maxPricePerArticle,
+        dailyBudgetUsdc=excluded.dailyBudgetUsdc,
+        agentAddress=CASE WHEN excluded.agentAddress != '' THEN excluded.agentAddress ELSE agentAddress END,
+        agentPrivateKey=CASE WHEN excluded.agentPrivateKey != '' THEN excluded.agentPrivateKey ELSE agentPrivateKey END
+    `, [userId, JSON.stringify(profile.interests), profile.maxPricePerArticle, profile.dailyBudgetUsdc, agentAddress, agentPrivateKey], (err) => {
+      if (err) {
+        console.error('[Profile] Error saving profile:', err);
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
 }

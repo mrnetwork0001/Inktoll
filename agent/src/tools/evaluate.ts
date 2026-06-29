@@ -9,12 +9,13 @@ export interface EvaluationResult {
 }
 
 export async function evaluateArticle(
+  userId: string,
   title: string,
   previewText: string,
   price: number,
   openaiKey: string
 ): Promise<EvaluationResult> {
-  const profile = loadProfile();
+  const profile = await loadProfile(userId);
 
   const isMock = !openaiKey || openaiKey === 'your_openai_api_key_here';
 
@@ -95,6 +96,6 @@ Evaluate this article and return the JSON.`;
     };
   } catch (error: any) {
     console.error(`[Evaluate Tool] Real LLM evaluation failed: ${error.message}. Falling back to mock.`);
-    return evaluateArticle(title, previewText, price, ''); // Trigger mock fallback
+    return evaluateArticle(userId, title, previewText, price, ''); // Trigger mock fallback
   }
 }

@@ -24,7 +24,7 @@ const parser = new Parser({
   },
 });
 
-export async function discoverNewArticles(apiUrl: string): Promise<DiscoverResult[]> {
+export async function discoverNewArticles(userId: string, apiUrl: string): Promise<DiscoverResult[]> {
   try {
     console.log(`[Discover Tool] Fetching active creators list from ${apiUrl}/api/creators...`);
     const creatorsResponse = await fetch(`${apiUrl}/api/creators`);
@@ -66,7 +66,7 @@ export async function discoverNewArticles(apiUrl: string): Promise<DiscoverResul
             }
 
             // Skip if already purchased
-            if (isPurchased(slug)) {
+            if (await isPurchased(userId, slug)) {
               continue;
             }
 

@@ -1,6 +1,5 @@
-import fs from 'fs';
-import path from 'path';
 import { loadProfile } from './profile.js';
+import { db } from './db.js';
 
 export interface ReadingHistory {
   dailySpentUsdc: number;
@@ -14,51 +13,59 @@ const DEFAULT_HISTORY: ReadingHistory = {
   purchasedSlugs: []
 };
 
-const historyPath = path.resolve('./data/reading_history.json');
+export function loadHistory(userId: string): Promise<ReadingHistory> {
+  return new Promise((resolve) => {
+    db.get('SELECT dailySpentUsdc, purchasedSlugs, updatedAt FROM AgentHistory WHERE userId = ?', [userId], (err, row: any) => {
+      if (err) {
+        console.error('[Budget] DB error loading history:', err);
+        return resolve(DEFAULT_HISTORY);
+      }
+      if (!row) {
+        return resolve(DEFAULT_HISTORY);
+      }
+      
+      const history = {
+        dailySpentUsdc: row.dailySpentUsdc,
+        lastSpentDate: row.updatedAt,
+        purchasedSlugs: JSON.parse(row.purchasedSlugs)
+      };
 
-export function loadHistory(): ReadingHistory {
-  try {
-    const dir = path.dirname(historyPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    if (!fs.existsSync(historyPath)) {
-      fs.writeFileSync(historyPath, JSON.stringify(DEFAULT_HISTORY, null, 2));
-      return DEFAULT_HISTORY;
-    }
-    const content = fs.readFileSync(historyPath, 'utf8');
-    const history = JSON.parse(content) as ReadingHistory;
+      // Reset daily budget if new day
+      const today = new Date().toISOString().split('T')[0];
+      if (history.lastSpentDate !== today) {
+        history.dailySpentUsdc = 0.00;
+        history.lastSpentDate = today;
+        saveHistory(userId, history); // Fire and forget update
+      }
 
-    // Reset daily budget if new day
-    const today = new Date().toISOString().split('T')[0];
-    if (history.lastSpentDate !== today) {
-      history.dailySpentUsdc = 0.00;
-      history.lastSpentDate = today;
-      saveHistory(history);
-    }
-
-    return history;
-  } catch (error) {
-    console.error('[Budget] Error loading history, using defaults:', error);
-    return DEFAULT_HISTORY;
-  }
+      resolve(history);
+    });
+  });
 }
 
-export function saveHistory(history: ReadingHistory): void {
-  try {
-    const dir = path.dirname(historyPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(historyPath, JSON.stringify(history, null, 2));
-  } catch (error) {
-    console.error('[Budget] Error saving history:', error);
-  }
+export function saveHistory(userId: string, history: ReadingHistory): Promise<void> {
+  return new Promise((resolve, reject) => {
+    db.run(`
+      INSERT INTO AgentHistory (userId, dailySpentUsdc, purchasedSlugs, updatedAt)
+      VALUES (?, ?, ?, ?)
+      ON CONFLICT(userId) DO UPDATE SET
+        dailySpentUsdc=excluded.dailySpentUsdc,
+        purchasedSlugs=excluded.purchasedSlugs,
+        updatedAt=excluded.updatedAt
+    `, [userId, history.dailySpentUsdc, JSON.stringify(history.purchasedSlugs), history.lastSpentDate], (err) => {
+      if (err) {
+        console.error('[Budget] Error saving history:', err);
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
 }
 
-export function checkBudget(price: number): { allowed: boolean; reason?: string } {
-  const profile = loadProfile();
-  const history = loadHistory();
+export async function checkBudget(userId: string, price: number): Promise<{ allowed: boolean; reason?: string }> {
+  const profile = await loadProfile(userId);
+  const history = await loadHistory(userId);
 
   if (price > profile.maxPricePerArticle) {
     return {
@@ -78,16 +85,16 @@ export function checkBudget(price: number): { allowed: boolean; reason?: string 
   return { allowed: true };
 }
 
-export function recordPurchase(slug: string, price: number): void {
-  const history = loadHistory();
+export async function recordPurchase(userId: string, slug: string, price: number): Promise<void> {
+  const history = await loadHistory(userId);
   history.dailySpentUsdc = parseFloat((history.dailySpentUsdc + price).toFixed(6));
   if (!history.purchasedSlugs.includes(slug)) {
     history.purchasedSlugs.push(slug);
   }
-  saveHistory(history);
+  await saveHistory(userId, history);
 }
 
-export function isPurchased(slug: string): boolean {
-  const history = loadHistory();
+export async function isPurchased(userId: string, slug: string): Promise<boolean> {
+  const history = await loadHistory(userId);
   return history.purchasedSlugs.includes(slug);
 }

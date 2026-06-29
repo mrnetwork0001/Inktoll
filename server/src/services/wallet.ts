@@ -131,7 +131,7 @@ export async function processWithdrawal(fromAddress: string, toAddress: string, 
     id: walletId,
   });
   const tokenBalances = balanceResponse.data?.tokenBalances ?? [];
-  const usdcToken = tokenBalances.find((t: any) => t.token?.symbol === 'USDC');
+  const usdcToken = tokenBalances.find((t: any) => t.token?.symbol === 'USDC' && t.token?.tokenAddress);
   if (!usdcToken || !usdcToken.token?.tokenAddress) {
     throw new Error('USDC token not found in wallet on Arc Testnet');
   }

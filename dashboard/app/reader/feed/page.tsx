@@ -17,6 +17,11 @@ export default function ReaderFeed() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
   const getUserId = () => {
+    // Tie identity to EOA wallet if connected, supporting cross-device recovery
+    const connectedAddr = localStorage.getItem('inktoll_connected_address');
+    if (connectedAddr) {
+      return connectedAddr.toLowerCase();
+    }
     let id = localStorage.getItem('inktoll_user_id');
     if (!id) {
       id = crypto.randomUUID();

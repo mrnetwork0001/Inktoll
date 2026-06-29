@@ -71,9 +71,16 @@ export async function payAndFetchArticle(
       console.log(`[Pay Tool] EOA Wallet Balance = ${formatted} USDC`);
       
       if (balance > 0n) {
-        console.log(`[Pay Tool] Auto-wrapping detected: EOA has ${formatted} USDC. Depositing to Circle Gateway...`);
-        const depositRes = await client.deposit(formatted);
-        console.log(`[Pay Tool] Deposit complete! TX Hash: ${depositRes.depositTxHash}`);
+        const gasBuffer = ethers.parseUnits("0.02", 6);
+        if (balance <= gasBuffer) {
+          console.log(`[Pay Tool] EOA balance (${formatted} USDC) is too low to cover the gas buffer (0.02 USDC). Skipping auto-wrap.`);
+        } else {
+          const depositAmountBig = balance - gasBuffer;
+          const depositAmountStr = ethers.formatUnits(depositAmountBig, 6);
+          console.log(`[Pay Tool] Auto-wrapping detected: EOA has ${formatted} USDC. Depositing ${depositAmountStr} USDC (leaving 0.02 USDC buffer for gas) to Circle Gateway...`);
+          const depositRes = await client.deposit(depositAmountStr);
+          console.log(`[Pay Tool] Deposit complete! TX Hash: ${depositRes.depositTxHash}`);
+        }
         
         // Wait a brief moment for the transaction to settle on-chain
         await new Promise((resolve) => setTimeout(resolve, 3000));

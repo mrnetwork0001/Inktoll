@@ -95,8 +95,8 @@ export async function triggerCitationTolls(
       Similarity Score: ${match.similarity}`);
 
     try {
-      const nonce = crypto.randomUUID();
-      const deadline = Math.floor(Date.now() / 1000) + 3600;
+      const nonce = '0x' + crypto.randomBytes(32).toString('hex');
+      const deadline = Math.floor(Date.now() / 1000) + 86400 * 365; // 1 year validity
       const value = ethers.parseUnits(tollAmount.toString(), 6);
 
       // Sign citation toll authorization using EIP-712 typed data
@@ -108,13 +108,13 @@ export async function triggerCitationTolls(
       };
 
       const types = {
-        Payment: [
+        TransferWithAuthorization: [
           { name: 'from', type: 'address' },
           { name: 'to', type: 'address' },
           { name: 'value', type: 'uint256' },
-          { name: 'nonce', type: 'string' },
+          { name: 'validAfter', type: 'uint256' },
           { name: 'validBefore', type: 'uint256' },
-          { name: 'validAfter', type: 'uint256' }
+          { name: 'nonce', type: 'bytes32' }
         ]
       };
 
@@ -122,9 +122,9 @@ export async function triggerCitationTolls(
         from: agentWallet.address,
         to: match.authorWallet,
         value: value.toString(),
-        nonce: nonce,
+        validAfter: 0,
         validBefore: deadline,
-        validAfter: 0
+        nonce: nonce
       };
 
       const signature = await agentWallet.signTypedData(domain, types, typedValue);

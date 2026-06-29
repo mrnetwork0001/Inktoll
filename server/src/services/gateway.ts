@@ -74,17 +74,23 @@ export async function submitGatewayPayment(
     };
 
     paymentPayload = {
-      x402Version: '1.0',
-      resource: 'urn:inktoll:citation',
+      x402Version: 2,
+      resource: {
+        url: 'http://localhost:3001/api/citations',
+        description: 'Citation toll payment for reading creator content',
+        mimeType: 'application/json'
+      },
       accepted: paymentRequirements,
       payload: {
         signature: auth.signature,
-        nonce: auth.nonce,
-        validBefore: auth.deadline,
-        validAfter: 0,
-        value,
-        from: auth.fromAddress,
-        to: auth.toAddress,
+        authorization: {
+          from: auth.fromAddress,
+          to: auth.toAddress,
+          value,
+          validAfter: '0',
+          validBefore: auth.deadline.toString(),
+          nonce: auth.nonce,
+        }
       }
     };
   }

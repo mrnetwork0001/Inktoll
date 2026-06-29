@@ -39,7 +39,7 @@ export async function getOrCreateAgentWallet(userId: string): Promise<ethers.Wal
           agentPrivateKey=excluded.agentPrivateKey
       `, [userId, wallet.address, wallet.privateKey], (updateErr) => {
         if (updateErr) return reject(updateErr);
-        resolve(wallet);
+        resolve(wallet as any);
       });
     });
   });
@@ -63,6 +63,26 @@ export async function payAndFetchArticle(
 
     const articleUrl = `${apiUrl}/api/articles/${slug}`;
     console.log(`[Pay Tool] Paying for article: ${articleUrl}`);
+
+    // Check if EOA wallet has native USDC that needs to be auto-deposited/wrapped
+    try {
+      console.log(`[Pay Tool] Checking balances for EOA: ${agentWallet.address}...`);
+      const balances = await client.getBalances();
+      console.log(`[Pay Tool] Balances: Wallet (EOA) = ${balances.wallet.formatted} USDC, Gateway = ${balances.gateway.formattedAvailable} USDC`);
+      
+      const walletBalance = balances.wallet.balance;
+      if (walletBalance > 0n) {
+        console.log(`[Pay Tool] Auto-wrapping detected: EOA has ${balances.wallet.formatted} USDC. Depositing to Circle Gateway...`);
+        const depositRes = await client.deposit(balances.wallet.formatted);
+        console.log(`[Pay Tool] Deposit complete! TX Hash: ${depositRes.depositTxHash}`);
+        
+        // Wait a brief moment for the API to reflect the deposit
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
+    } catch (balanceErr: any) {
+      console.warn(`[Pay Tool] Failed balance check/auto-wrap:`, balanceErr.message);
+    }
+
     const { status, data } = await client.pay(articleUrl);
     console.log(`[Pay Tool] GatewayClient response status: ${status}`);
 

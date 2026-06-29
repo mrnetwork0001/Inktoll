@@ -4,6 +4,7 @@ import { loadHistory } from './budget.js';
 import { OpenAI } from 'openai';
 import { ethers } from 'ethers';
 import crypto from 'crypto';
+import { GatewayClient } from '@circle-fin/x402-batching/client';
 
 export interface CitationMatch {
   articleId: string;
@@ -96,6 +97,31 @@ export async function triggerCitationTolls(
 ): Promise<any[]> {
   const agentWallet = await getOrCreateAgentWallet(userId);
   const results: any[] = [];
+
+  // Auto-wrap any ERC-20 USDC balance into the Circle Gateway before paying citation tolls
+  if (matches.length > 0) {
+    try {
+      console.log(`[Citation Toll] Checking balances for auto-wrap: ${agentWallet.address}...`);
+      const client = new GatewayClient({
+        chain: (process.env.ARC_CHAIN_NAME as any) || 'arcTestnet',
+        privateKey: agentWallet.privateKey as `0x${string}`,
+      });
+      const balances = await client.getBalances();
+      console.log(`[Citation Toll] Balances: Wallet (EOA) = ${balances.wallet.formatted} USDC, Gateway = ${balances.gateway.formattedAvailable} USDC`);
+      
+      const walletBalance = balances.wallet.balance;
+      if (walletBalance > 0n) {
+        console.log(`[Citation Toll] Auto-wrapping detected: EOA has ${balances.wallet.formatted} USDC. Depositing to Circle Gateway...`);
+        const depositRes = await client.deposit(balances.wallet.formatted);
+        console.log(`[Citation Toll] Deposit complete! TX Hash: ${depositRes.depositTxHash}`);
+        
+        // Wait a brief moment for the API to reflect the deposit
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
+    } catch (balanceErr: any) {
+      console.warn(`[Citation Toll] Failed balance check/auto-wrap:`, balanceErr.message);
+    }
+  }
 
   for (const match of matches) {
     const tollAmount = 0.0001; // $0.0001 USDC per citation

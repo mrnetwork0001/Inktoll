@@ -56,6 +56,13 @@ export default function ReaderFeed() {
 
   useEffect(() => {
     fetchFeed();
+
+    const handleWalletChange = () => {
+      fetchFeed();
+    };
+
+    window.addEventListener('wallet-changed', handleWalletChange);
+    return () => window.removeEventListener('wallet-changed', handleWalletChange);
   }, []);
 
   const handleOpenArticle = async (slug: string) => {

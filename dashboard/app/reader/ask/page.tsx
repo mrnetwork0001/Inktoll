@@ -42,7 +42,6 @@ export default function ReaderAsk() {
   };
 
   useEffect(() => {
-    // Fetch agent wallet address
     const fetchWallet = async () => {
       try {
         const res = await fetch(`${AGENT_URL}/api/agent/status`, {
@@ -57,6 +56,13 @@ export default function ReaderAsk() {
       }
     };
     fetchWallet();
+
+    const handleWalletChange = () => {
+      fetchWallet();
+    };
+
+    window.addEventListener('wallet-changed', handleWalletChange);
+    return () => window.removeEventListener('wallet-changed', handleWalletChange);
   }, []);
 
   useEffect(() => {

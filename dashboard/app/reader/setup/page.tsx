@@ -24,12 +24,17 @@ export default function ReaderSetup() {
     const storedAddr = localStorage.getItem('inktoll_connected_address');
     setCustodyType(storedType);
     setConnectedAddress(storedAddr);
+    
+    // Initial fetch on mount
+    fetchAgentStatus(false);
 
     const handleWalletChange = () => {
       const t = localStorage.getItem('inktoll_wallet_type') || 'managed';
       const a = localStorage.getItem('inktoll_connected_address');
       setCustodyType(t);
       setConnectedAddress(a);
+      // Instantly reload agent status when wallet is connected/disconnected
+      fetchAgentStatus(true);
     };
 
     window.addEventListener('wallet-changed', handleWalletChange);
@@ -90,9 +95,6 @@ export default function ReaderSetup() {
     }
   };
 
-  useEffect(() => {
-    fetchAgentStatus();
-  }, []);
 
   useEffect(() => {
     if (logTerminalRef.current) {

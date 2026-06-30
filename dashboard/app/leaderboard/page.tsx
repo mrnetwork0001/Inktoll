@@ -269,8 +269,20 @@ export default function Leaderboard() {
                           gap: '0.25rem'
                         }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
-                          <span>{formattedTime}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-muted)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span>{formattedTime}</span>
+                            {act.tx_hash && (
+                              <a 
+                                href={`https://explorer.testnet.arc.network/tx/${act.tx_hash}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: 'var(--primary-light)', textDecoration: 'underline', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}
+                              >
+                                (Receipt)
+                              </a>
+                            )}
+                          </div>
                           <span style={{ 
                             fontSize: '0.7rem', 
                             padding: '1px 6px', 

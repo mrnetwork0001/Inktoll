@@ -786,9 +786,18 @@ function CreatorDashboardInner() {
                           {showBalances ? `$${tx.amount_usdc}` : '$ ••••••'}
                         </td>
                         <td>
-                          <code style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                            {tx.tx_hash.substring(0, 14)}...
-                          </code>
+                          {tx.tx_hash ? (
+                            <a 
+                              href={`https://explorer.testnet.arc.network/tx/${tx.tx_hash}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: 'var(--primary-light)', textDecoration: 'underline', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}
+                            >
+                              {tx.tx_hash.substring(0, 12)}...
+                            </a>
+                          ) : (
+                            <span style={{ color: 'var(--text-muted)' }}>-</span>
+                          )}
                         </td>
                       </tr>
                     ))

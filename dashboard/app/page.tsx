@@ -25,7 +25,12 @@ export default function LandingPage() {
         setLoading(false);
       }
     };
+    
     fetchStats();
+    
+    // Auto-update every 5 seconds to feel live
+    const interval = setInterval(fetchStats, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   return (

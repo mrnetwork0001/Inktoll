@@ -59,6 +59,7 @@ function CreatorDashboardInner() {
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   const [connectedType, setConnectedType] = useState<string>('managed');
   const [binding, setBinding] = useState(false);
+  const [payoutAddress, setPayoutAddress] = useState<string>('');
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -69,6 +70,7 @@ function CreatorDashboardInner() {
     const type = localStorage.getItem('inktoll_wallet_type') || 'managed';
     setConnectedAddress(addr);
     setConnectedType(type);
+    if (addr) setPayoutAddress(addr);
 
     const loadCreator = async () => {
       if (paramCreatorId) {
@@ -106,6 +108,7 @@ function CreatorDashboardInner() {
       const t = localStorage.getItem('inktoll_wallet_type') || 'managed';
       setConnectedAddress(a);
       setConnectedType(t);
+      if (a) setPayoutAddress(a);
 
       // If user just connected a wallet and we don't have creatorId, attempt lookup
       if (a && !localStorage.getItem('inktoll_creator_id')) {
@@ -230,8 +233,12 @@ function CreatorDashboardInner() {
     setError('');
 
     try {
-      if (!connectedAddress) {
-        throw new Error('Please connect your payout wallet (MetaMask) at the top right before initiating a withdrawal.');
+      const dest = payoutAddress.trim();
+      if (!dest) {
+        throw new Error('Please specify a destination wallet address to withdraw your funds.');
+      }
+      if (!/^0x[a-fA-F0-9]{40}$/.test(dest)) {
+        throw new Error('Invalid Ethereum wallet address format. Please check the spelling.');
       }
       const amt = parseFloat(withdrawAmount);
       if (isNaN(amt) || amt <= 0) {
@@ -241,7 +248,6 @@ function CreatorDashboardInner() {
         throw new Error(`Insufficient balance. You cannot withdraw more than your wallet balance of ${stats.balanceUsdc} USDC.`);
       }
 
-      const dest = connectedAddress;
       const res = await fetch(`${API_URL}/api/creators/withdraw`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -385,29 +391,35 @@ function CreatorDashboardInner() {
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                   Blockchain: Arc Testnet (gasless stablecoin native L1)
                 </div>
-                
-                {/* Connected Wallet Payout Destination Info */}
-                <div style={{ 
-                  marginTop: '0.75rem', 
-                  padding: '0.5rem 0.75rem', 
-                  background: 'rgba(255,255,255,0.02)', 
-                  border: '1px solid var(--border)', 
-                  borderRadius: '8px', 
-                  fontSize: '0.8rem' 
-                }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Payout Destination:</span>
-                  <div style={{ marginTop: '0.25rem' }}>
-                    {connectedAddress ? (
-                      <code style={{ color: 'var(--accent)', fontWeight: 'bold' }}>
-                        {connectedAddress.substring(0, 8)}...{connectedAddress.substring(connectedAddress.length - 6)} ({connectedType === 'metamask' ? 'EVM EOA' : 'Circle Passkey'})
-                      </code>
-                    ) : (
-                      <span style={{ color: 'var(--error)', fontStyle: 'italic', fontWeight: 500 }}>
-                        No destination wallet connected. Connect your Web3 payout wallet at the top right to enable withdrawals.
-                      </span>
-                    )}
-                  </div>
-                </div>
+                          {/* Payout Destination Address */}
+                 <div style={{ marginTop: '0.75rem' }}>
+                   <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
+                     Payout Destination:
+                   </label>
+                   <input
+                     type="text"
+                     placeholder="0x... (EVM EOA Address)"
+                     value={payoutAddress}
+                     onChange={(e) => setPayoutAddress(e.target.value)}
+                     disabled={withdrawing}
+                     style={{
+                       width: '100%',
+                       background: 'rgba(0,0,0,0.2)',
+                       border: '1px solid var(--border)',
+                       borderRadius: '6px',
+                       padding: '0.4rem 0.6rem',
+                       fontSize: '0.8rem',
+                       fontFamily: 'var(--font-mono)',
+                       color: 'var(--text-primary)',
+                       outline: 'none'
+                     }}
+                   />
+                   {!connectedAddress && !payoutAddress && (
+                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '0.15rem', display: 'block' }}>
+                       Tip: You can paste any valid EVM wallet address to withdraw.
+                     </span>
+                   )}
+                 </div>        
 
                 {/* Secure / Bind Account Panel */}
                 {connectedAddress && (!stats?.ownerAddress || stats.ownerAddress.toLowerCase() !== connectedAddress.toLowerCase()) && (
@@ -522,8 +534,8 @@ function CreatorDashboardInner() {
                     className="btn btn-primary" 
                     style={{ flexGrow: 1, marginBottom: 0 }}
                     onClick={handleWithdraw}
-                    disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) <= 0 || !connectedAddress}
-                    title={!connectedAddress ? "Please connect a payout wallet to withdraw" : ""}
+                    disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) <= 0 || !payoutAddress}
+                    title={!payoutAddress ? "Please specify a destination wallet address to withdraw" : ""}
                   >
                     {withdrawing ? 'Withdrawing...' : 'Withdraw'}
                   </button>

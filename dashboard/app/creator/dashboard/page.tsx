@@ -60,6 +60,7 @@ function CreatorDashboardInner() {
   const [connectedType, setConnectedType] = useState<string>('managed');
   const [binding, setBinding] = useState(false);
   const [payoutAddress, setPayoutAddress] = useState<string>('');
+  const [isEditingPayout, setIsEditingPayout] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -428,35 +429,85 @@ function CreatorDashboardInner() {
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                   Blockchain: Arc Testnet (gasless stablecoin native L1)
                 </div>
-                          {/* Payout Destination Address */}
-                 <div style={{ marginTop: '0.75rem' }}>
-                   <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
-                     Payout Destination:
-                   </label>
-                   <input
-                     type="text"
-                     placeholder="0x... (EVM EOA Address)"
-                     value={payoutAddress}
-                     onChange={(e) => setPayoutAddress(e.target.value)}
-                     disabled={withdrawing}
-                     style={{
-                       width: '100%',
-                       background: 'rgba(0,0,0,0.2)',
-                       border: '1px solid var(--border)',
-                       borderRadius: '6px',
-                       padding: '0.4rem 0.6rem',
-                       fontSize: '0.8rem',
-                       fontFamily: 'var(--font-mono)',
-                       color: 'var(--text-primary)',
-                       outline: 'none'
-                     }}
-                   />
-                   {!connectedAddress && !payoutAddress && (
-                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '0.15rem', display: 'block' }}>
-                       Tip: You can paste any valid EVM wallet address to withdraw.
-                     </span>
-                   )}
-                 </div>        
+
+                {/* Payout Destination Address */}
+                <div style={{ marginTop: '0.75rem' }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
+                    Payout Destination:
+                  </label>
+                  {!isEditingPayout ? (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.15)', border: '1px solid var(--border)', borderRadius: '6px', padding: '0.4rem 0.6rem' }}>
+                      <code style={{ fontSize: '0.8rem', color: payoutAddress ? 'var(--accent)' : 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                        {payoutAddress ? `${payoutAddress.substring(0, 10)}...${payoutAddress.substring(payoutAddress.length - 8)}` : 'None specified'}
+                      </code>
+                      <button
+                        onClick={() => setIsEditingPayout(true)}
+                        disabled={withdrawing}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--primary-light)',
+                          cursor: 'pointer',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          padding: 0
+                        }}
+                      >
+                        ✏️ Edit
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <input
+                        type="text"
+                        placeholder="0x... (EVM EOA Address)"
+                        value={payoutAddress}
+                        onChange={(e) => setPayoutAddress(e.target.value)}
+                        disabled={withdrawing}
+                        style={{
+                          flexGrow: 1,
+                          background: 'rgba(0,0,0,0.2)',
+                          border: '1px solid var(--border)',
+                          borderRadius: '6px',
+                          padding: '0.4rem 0.6rem',
+                          fontSize: '0.8rem',
+                          fontFamily: 'var(--font-mono)',
+                          color: 'var(--text-primary)',
+                          outline: 'none'
+                        }}
+                      />
+                      <button
+                        onClick={() => {
+                          const val = payoutAddress.trim();
+                          if (val && !/^0x[a-fA-F0-9]{40}$/.test(val)) {
+                            alert('Invalid Ethereum wallet address format. Please check the spelling.');
+                            return;
+                          }
+                          setIsEditingPayout(false);
+                        }}
+                        className="btn btn-secondary"
+                        style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, minWidth: '50px' }}
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => {
+                          setPayoutAddress(connectedAddress || '');
+                          setIsEditingPayout(false);
+                        }}
+                        className="btn btn-secondary"
+                        style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, opacity: 0.7, minWidth: '60px' }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                  {!connectedAddress && !payoutAddress && !isEditingPayout && (
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '0.15rem', display: 'block' }}>
+                      Tip: Click Edit to specify any custom EVM destination address.
+                    </span>
+                  )}
+                </div>
 
                 {/* Secure / Bind Account Panel */}
                 {connectedAddress && (!stats?.ownerAddress || stats.ownerAddress.toLowerCase() !== connectedAddress.toLowerCase()) && (

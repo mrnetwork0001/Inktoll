@@ -936,9 +936,33 @@ function CreatorDashboardInner() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Circle Transfer ID (UUID):</span>
-                  <code style={{ background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--accent)', wordBreak: 'break-all' }}>
-                    {selectedReceipt.tx_hash}
-                  </code>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <code style={{ flex: 1, background: 'rgba(0,0,0,0.3)', padding: '6px 10px', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--accent)', wordBreak: 'break-all', fontFamily: 'var(--font-mono)' }}>
+                      {selectedReceipt.tx_hash}
+                    </code>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(selectedReceipt.tx_hash);
+                        showToast('Transfer ID copied to clipboard!', 'success');
+                      }}
+                      title="Copy Transfer ID"
+                      style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '6px',
+                        padding: '6px 10px',
+                        color: 'var(--text-secondary)',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        outline: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      📋 Copy
+                    </button>
+                  </div>
                 </div>
               </div>
 

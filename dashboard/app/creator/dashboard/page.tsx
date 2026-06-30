@@ -687,7 +687,9 @@ function CreatorDashboardInner() {
             </div>
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Read Revenue (USDC)</span>
-              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--primary-light)' }}>${stats?.readRevenueUsdc?.toFixed(4) || '0.0000'}</h3>
+              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--primary-light)' }}>
+                {showBalances ? `$${stats?.readRevenueUsdc?.toFixed(4) || '0.0000'}` : '$ ••••••'}
+              </h3>
             </div>
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Total Citations</span>
@@ -695,7 +697,9 @@ function CreatorDashboardInner() {
             </div>
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Citation Toll Revenue</span>
-              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--accent)' }}>${stats?.citationRevenueUsdc?.toFixed(4) || '0.0000'}</h3>
+              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--accent)' }}>
+                {showBalances ? `$${stats?.citationRevenueUsdc?.toFixed(4) || '0.0000'}` : '$ ••••••'}
+              </h3>
             </div>
           </div>
 
@@ -726,7 +730,9 @@ function CreatorDashboardInner() {
                             {art.citations > 0 && <span style={{ fontSize: '0.75rem', background: 'rgba(245,166,35,0.15)', color: 'var(--accent)', padding: '2px 6px', borderRadius: '10px', fontWeight: 600 }}>Toll Active</span>}
                           </span>
                         </td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>${art.revenue.toFixed(4)}</td>
+                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                          {showBalances ? `$${art.revenue.toFixed(4)}` : '$ ••••••'}
+                        </td>
                       </tr>
                     ))
                   ) : (

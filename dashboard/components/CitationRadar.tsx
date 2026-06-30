@@ -114,7 +114,7 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
             SEMANTIC RADAR SCAN
           </span>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-            Cosine similarity threshold: 0.75
+            Cosine similarity threshold: 0.55
           </span>
         </div>
 

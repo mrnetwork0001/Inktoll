@@ -143,6 +143,92 @@ app.post('/api/agent/withdraw', async (req, res) => {
   }
 });
 
+// Faucet Status Endpoint
+app.get('/api/agent/faucet/status', async (req, res) => {
+  const userId = (req as any).userId;
+  const db = (await import('./db.js')).db;
+
+  try {
+    db.get('SELECT lastClaimedAt FROM FaucetClaims WHERE userId = ?', [userId], (err, row: any) => {
+      if (err) return res.status(500).json({ error: err.message });
+      
+      const now = Date.now();
+      const oneDayMs = 24 * 60 * 60 * 1000;
+      
+      if (row && row.lastClaimedAt) {
+        const timePassed = now - row.lastClaimedAt;
+        if (timePassed < oneDayMs) {
+          const remainingSeconds = Math.ceil((oneDayMs - timePassed) / 1000);
+          return res.json({ allowed: false, cooldownRemainingSeconds: remainingSeconds });
+        }
+      }
+      return res.json({ allowed: true });
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// Faucet Claim Endpoint
+app.post('/api/agent/faucet/claim', async (req, res) => {
+  const userId = (req as any).userId;
+  const db = (await import('./db.js')).db;
+  
+  const faucetPrivateKey = process.env.FAUCET_PRIVATE_KEY;
+  if (!faucetPrivateKey) {
+    return res.status(500).json({ error: 'Faucet is not configured on this server. Please define FAUCET_PRIVATE_KEY in your .env file.' });
+  }
+
+  try {
+    const wallet = await getOrCreateAgentWallet(userId);
+    
+    // Check cooldown
+    db.get('SELECT lastClaimedAt FROM FaucetClaims WHERE userId = ?', [userId], async (err, row: any) => {
+      if (err) return res.status(500).json({ error: err.message });
+      
+      const now = Date.now();
+      const oneDayMs = 24 * 60 * 60 * 1000;
+      
+      if (row && row.lastClaimedAt) {
+        const timePassed = now - row.lastClaimedAt;
+        if (timePassed < oneDayMs) {
+          const remainingSeconds = Math.ceil((oneDayMs - timePassed) / 1000);
+          return res.status(400).json({ error: `Faucet is on a 24-hour cooldown. Please wait ${remainingSeconds} seconds.` });
+        }
+      }
+      
+      // Execute faucet transfer on-chain
+      try {
+        const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
+        const faucetWallet = new ethers.Wallet(faucetPrivateKey, provider);
+        const usdcAbi = ["function transfer(address to, uint256 value) returns (bool)"];
+        const usdcContract = new ethers.Contract(process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000', usdcAbi, faucetWallet);
+
+        console.log(`[Faucet] Transferring 1.0 USDC from faucet to agent EOA: ${wallet.address}...`);
+        const tx = await usdcContract.transfer(wallet.address, ethers.parseUnits("1.0", 6));
+        await tx.wait();
+        console.log(`[Faucet] Transfer succeeded: ${tx.hash}`);
+
+        // Update last claimed timestamp in database
+        db.run(`
+          INSERT INTO FaucetClaims (userId, lastClaimedAt)
+          VALUES (?, ?)
+          ON CONFLICT(userId) DO UPDATE SET lastClaimedAt = excluded.lastClaimedAt
+        `, [userId, now], (updateErr) => {
+          if (updateErr) console.error('[Faucet] Failed to save timestamp in DB:', updateErr);
+        });
+
+        return res.json({ success: true, txHash: tx.hash });
+      } catch (txErr: any) {
+        console.error('[Faucet] On-chain transfer failed:', txErr.message);
+        return res.status(500).json({ error: `On-chain transfer failed: ${txErr.message}` });
+      }
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 // Update Profile
 app.post('/api/agent/profile', async (req, res) => {
   const userId = (req as any).userId;

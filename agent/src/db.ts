@@ -41,6 +41,13 @@ export const db = new sqlite3.Database(dbPath, (err) => {
           PRIMARY KEY (userId)
         )
       `);
+
+      db.run(`
+        CREATE TABLE IF NOT EXISTS FaucetClaims (
+          userId TEXT PRIMARY KEY,
+          lastClaimedAt INTEGER
+        )
+      `);
     });
   }
 });

@@ -22,6 +22,49 @@ export default function ReaderSetup() {
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [withdrawing, setWithdrawing] = useState(false);
 
+  // Faucet States
+  const [faucetAllowed, setFaucetAllowed] = useState(true);
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [claimingFaucet, setClaimingFaucet] = useState(false);
+
+  const fetchFaucetStatus = async () => {
+    try {
+      const res = await fetch(`${AGENT_URL}/api/agent/faucet/status`, {
+        headers: { 'x-user-id': getUserId() }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setFaucetAllowed(data.allowed);
+        if (!data.allowed && data.cooldownRemainingSeconds) {
+          setCooldownSeconds(data.cooldownRemainingSeconds);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch faucet status:', err);
+    }
+  };
+
+  const handleClaimFaucet = async () => {
+    setClaimingFaucet(true);
+    try {
+      const res = await fetch(`${AGENT_URL}/api/agent/faucet/claim`, {
+        method: 'POST',
+        headers: { 'x-user-id': getUserId() }
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to claim from faucet');
+      }
+      alert(`1.0 USDC transferred successfully! Transaction Hash: ${data.txHash}`);
+      await fetchAgentStatus(true);
+      await fetchFaucetStatus();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setClaimingFaucet(false);
+    }
+  };
+
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!withdrawAmount || isNaN(parseFloat(withdrawAmount)) || parseFloat(withdrawAmount) <= 0) {
@@ -76,6 +119,7 @@ export default function ReaderSetup() {
     
     // Initial fetch on mount
     fetchAgentStatus(false);
+    fetchFaucetStatus();
 
     const handleWalletChange = () => {
       const t = localStorage.getItem('inktoll_wallet_type') || 'managed';
@@ -89,6 +133,24 @@ export default function ReaderSetup() {
     window.addEventListener('wallet-changed', handleWalletChange);
     return () => window.removeEventListener('wallet-changed', handleWalletChange);
   }, []);
+
+  // Faucet cooldown countdown effect
+  useEffect(() => {
+    let interval: any = null;
+    if (cooldownSeconds > 0) {
+      interval = setInterval(() => {
+        setCooldownSeconds(prev => {
+          if (prev <= 1) {
+            setFaucetAllowed(true);
+            clearInterval(interval);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [cooldownSeconds]);
 
   const handleCustodyChange = (type: string, optAddress?: string) => {
     setCustodyType(type);
@@ -278,7 +340,27 @@ export default function ReaderSetup() {
                     )}
                     <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                       <div>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Agent EOA Wallet Balance</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Agent EOA Wallet Balance</span>
+                          <button
+                            className="btn btn-secondary"
+                            onClick={handleClaimFaucet}
+                            disabled={claimingFaucet || !faucetAllowed}
+                            style={{
+                              padding: '4px 8px',
+                              fontSize: '0.7rem',
+                              minHeight: 'auto',
+                              marginBottom: 0,
+                              lineHeight: 1,
+                              borderRadius: '4px',
+                              background: faucetAllowed ? 'rgba(0,115,195,0.15)' : 'rgba(255,255,255,0.05)',
+                              borderColor: faucetAllowed ? 'var(--primary)' : 'var(--border)',
+                              color: faucetAllowed ? 'var(--primary-light)' : 'var(--text-muted)'
+                            }}
+                          >
+                            {claimingFaucet ? 'Claiming...' : faucetAllowed ? '🚰 Claim 1 USDC' : `⏳ Cooldown: ${Math.floor(cooldownSeconds / 3600)}h ${Math.floor((cooldownSeconds % 3600) / 60)}m ${cooldownSeconds % 60}s`}
+                          </button>
+                        </div>
                         <div style={{ fontSize: '1.25rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
                           ${status?.balanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>USDC</span>
                         </div>

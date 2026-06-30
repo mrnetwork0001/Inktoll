@@ -346,7 +346,26 @@ function CreatorDashboardInner() {
             
             {/* LARGE EARNINGS COUNTER */}
             <div className="glass-card earnings-box" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <span className="earnings-label">USDC Earnings Counter</span>
+              <span className="earnings-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'center' }}>
+                USDC Earnings Counter
+                <span 
+                  title="All-time cumulative USDC earned by your blog from purchases and citation tolls. This number only goes up."
+                  style={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    width: '14px', 
+                    height: '14px', 
+                    borderRadius: '50%', 
+                    background: 'rgba(255,255,255,0.1)', 
+                    fontSize: '0.65rem', 
+                    cursor: 'help',
+                    color: 'var(--text-secondary)'
+                  }}
+                >
+                  ℹ
+                </span>
+              </span>
               <div className="earnings-value">${animatedEarnings.toFixed(6)}</div>
               <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                 Ticking live as AI agents read and cite your blog
@@ -354,8 +373,26 @@ function CreatorDashboardInner() {
                         {/* WALLET WIDGET */}
             <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '1.5rem' }}>
               <div>
-                <h4 style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <h4 style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   Inktoll Wallet Balance
+                  <span 
+                    title="The actual claimable USDC balance sitting in your blog's custodial wallet right now. This decreases when you withdraw funds."
+                    style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      width: '14px', 
+                      height: '14px', 
+                      borderRadius: '50%', 
+                      background: 'rgba(255,255,255,0.1)', 
+                      fontSize: '0.65rem', 
+                      cursor: 'help',
+                      color: 'var(--text-secondary)',
+                      textTransform: 'none'
+                    }}
+                  >
+                    ℹ
+                  </span>
                 </h4>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '2.5rem', fontWeight: 700, margin: '0.5rem 0' }}>
                   {stats?.balanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>USDC</span>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Footer from '../components/Footer';
+import { NotificationProvider } from '../components/NotificationProvider';
 
 export const metadata: Metadata = {
   title: 'Inktoll — The AI-Powered Knowledge Economy',
@@ -15,15 +16,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        {/* Glow ambient background elements */}
-        <div className="bg-glow-container">
-          <div className="bg-glow-1"></div>
-          <div className="bg-glow-2"></div>
-        </div>
-        <div style={{ flex: '1 0 auto' }}>
-          {children}
-        </div>
-        <Footer />
+        <NotificationProvider>
+          {/* Glow ambient background elements */}
+          <div className="bg-glow-container">
+            <div className="bg-glow-1"></div>
+            <div className="bg-glow-2"></div>
+          </div>
+          <div style={{ flex: '1 0 auto' }}>
+            {children}
+          </div>
+          <Footer />
+        </NotificationProvider>
       </body>
     </html>
   );

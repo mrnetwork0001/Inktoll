@@ -3,8 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Header from '../../../components/Header';
 import PasskeyConnector from '../../../components/PasskeyConnector';
+import { useNotification } from '../../../components/NotificationProvider';
 
 export default function ReaderSetup() {
+  const { showAlert, showPrompt, showToast } = useNotification();
   const [status, setStatus] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -55,11 +57,11 @@ export default function ReaderSetup() {
       if (!res.ok) {
         throw new Error(data.error || 'Failed to claim from faucet');
       }
-      alert(`1.0 USDC transferred successfully! Transaction Hash: ${data.txHash}`);
+      showToast('1.0 USDC claimed successfully!', 'success');
       await fetchAgentStatus(true);
       await fetchFaucetStatus();
     } catch (err: any) {
-      alert(err.message);
+      showAlert(err.message, { title: 'Faucet Claim Error' });
     } finally {
       setClaimingFaucet(false);
     }
@@ -68,13 +70,16 @@ export default function ReaderSetup() {
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!withdrawAmount || isNaN(parseFloat(withdrawAmount)) || parseFloat(withdrawAmount) <= 0) {
-      alert('Please enter a valid amount');
+      showToast('Please enter a valid amount', 'error');
       return;
     }
     
-    const destination = connectedAddress || prompt('Please enter the recipient EVM wallet address to withdraw to:');
+    const destination = connectedAddress || await showPrompt('Please enter the recipient EVM wallet address to withdraw to:', {
+      title: 'Withdraw Funds',
+      placeholder: '0xcd0a2370...'
+    });
     if (!destination) {
-      alert('Destination address is required');
+      showToast('Destination address is required', 'error');
       return;
     }
 
@@ -100,11 +105,11 @@ export default function ReaderSetup() {
       }
 
       const data = await res.json();
-      alert(`Withdrawal successful! Hash: ${data.txHash}`);
+      showAlert(`Withdrawal successful! Hash: ${data.txHash}`, { title: 'Withdrawal Success' });
       setWithdrawAmount('');
       await fetchAgentStatus(true);
     } catch (err: any) {
-      alert(`Withdrawal failed: ${err.message}`);
+      showAlert(`Withdrawal failed: ${err.message}`, { title: 'Withdrawal Error' });
     } finally {
       setWithdrawing(false);
     }
@@ -235,7 +240,7 @@ export default function ReaderSetup() {
       if (!res.ok) throw new Error('Failed to update agent settings');
       
       await fetchAgentStatus(true);
-      alert('Agent settings saved successfully!');
+      showToast('Agent settings saved successfully!', 'success');
     } catch (err: any) {
       setError(err.message);
     }
@@ -318,7 +323,7 @@ export default function ReaderSetup() {
                         style={{ padding: '6px 12px', fontSize: '0.8rem', minHeight: 'auto', marginBottom: 0 }}
                         onClick={() => {
                           navigator.clipboard.writeText(status?.address || '');
-                          alert('Address copied to clipboard!');
+                          showToast('Address copied to clipboard!', 'success');
                         }}
                       >
                         📋

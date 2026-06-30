@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
+import { useNotification } from '../../../components/NotificationProvider';
 
 // Custom hook to animate number counting
 function useAnimatedCount(targetValue: number, duration: number = 800) {
@@ -45,6 +46,7 @@ function useAnimatedCount(targetValue: number, duration: number = 800) {
 import { Suspense } from 'react';
 
 function CreatorDashboardInner() {
+  const { showAlert, showPrompt, showToast } = useNotification();
   const searchParams = useSearchParams();
   const router = useRouter();
   const paramCreatorId = searchParams.get('creatorId');
@@ -228,7 +230,7 @@ function CreatorDashboardInner() {
         throw new Error(errData.error || 'Failed to bind wallet');
       }
 
-      alert('Successfully bound Ghost blog account to your wallet!');
+      showToast('Successfully bound Ghost blog account to your wallet!', 'success');
       await fetchStats();
     } catch (err: any) {
       setError('Binding failed: ' + err.message);
@@ -456,7 +458,7 @@ function CreatorDashboardInner() {
                     onClick={() => {
                       if (stats?.walletAddress) {
                         navigator.clipboard.writeText(stats.walletAddress);
-                        alert('Address copied to clipboard!');
+                        showToast('Address copied to clipboard!', 'success');
                       }
                     }}
                     style={{
@@ -524,10 +526,10 @@ function CreatorDashboardInner() {
                         }}
                       />
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           const val = payoutAddress.trim();
                           if (val && !/^0x[a-fA-F0-9]{40}$/.test(val)) {
-                            alert('Invalid Ethereum wallet address format. Please check the spelling.');
+                            await showAlert('Invalid Ethereum wallet address format. Please check the spelling.', { title: 'Address Validation' });
                             return;
                           }
                           setIsEditingPayout(false);

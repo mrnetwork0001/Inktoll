@@ -9,6 +9,7 @@ import paymentsRouter from './routes/payments.js';
 import citationsRouter from './routes/citations.js';
 import faucetRouter from './routes/faucet.js';
 import walletRouter from './routes/wallet.js';
+import statsRouter from './routes/stats.js';
 
 // Validate config
 validateConfig();
@@ -34,6 +35,7 @@ app.use('/api/payments', paymentsRouter);
 app.use('/api/citations', citationsRouter);
 app.use('/api/faucet', faucetRouter);
 app.use('/api/wallet', walletRouter);
+app.use('/api/stats', statsRouter);
 
 // Health check
 app.get('/health', (req, res) => {

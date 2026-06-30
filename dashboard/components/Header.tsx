@@ -333,22 +333,6 @@ export default function Header() {
               <ul className="nav-links" style={{ marginBottom: 0 }}>
                 <li>
                   <Link 
-                    href="/leaderboard" 
-                    className={`nav-link ${isActive('/leaderboard') ? 'active' : ''}`}
-                  >
-                    🏆 Leaderboard
-                  </Link>
-                </li>
-                <li>
-                  <Link 
-                    href="/creator/dashboard" 
-                    className={`nav-link ${isActive('/creator') ? 'active' : ''}`}
-                  >
-                    Creator Panel
-                  </Link>
-                </li>
-                <li>
-                  <Link 
                     href="/reader/feed" 
                     className={`nav-link ${isActive('/reader/feed') ? 'active' : ''}`}
                   >
@@ -369,6 +353,22 @@ export default function Header() {
                     className={`nav-link ${isActive('/reader/setup') ? 'active' : ''}`}
                   >
                     🤖 Agent Settings
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/creator/dashboard" 
+                    className={`nav-link ${isActive('/creator') ? 'active' : ''}`}
+                  >
+                    Creator Panel
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/leaderboard" 
+                    className={`nav-link ${isActive('/leaderboard') ? 'active' : ''}`}
+                  >
+                    🏆 Leaderboard
                   </Link>
                 </li>
               </ul>

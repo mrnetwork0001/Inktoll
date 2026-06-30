@@ -1,10 +1,33 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header';
 
 export default function LandingPage() {
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/stats/leaderboard`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            setStats(data.stats);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load landing stats:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
   return (
     <>
       <Header />
@@ -67,6 +90,34 @@ export default function LandingPage() {
                   boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
                 }} 
               />
+            </div>
+          </section>
+
+          {/* Ecosystem Stats Row */}
+          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginTop: '-2rem' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--accent)' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Global USDC Circulated</span>
+              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--accent)' }}>
+                {loading ? '...' : `$${(stats?.totalVolumeUsdc || 0).toFixed(4)}`}
+              </h3>
+            </div>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary-light)' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Articles Indexed</span>
+              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0' }}>
+                {loading ? '...' : (stats?.totalArticles || 0)}
+              </h3>
+            </div>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--success)' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Active Reader Agents</span>
+              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--success)' }}>
+                {loading ? '...' : (stats?.activeAgents || 0)}
+              </h3>
+            </div>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid #3b82f6' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Settlement Network</span>
+              <h3 style={{ fontSize: '1.5rem', margin: '0.55rem 0 0 0', color: '#3b82f6', fontWeight: 600 }}>
+                Arc Testnet
+              </h3>
             </div>
           </section>
 

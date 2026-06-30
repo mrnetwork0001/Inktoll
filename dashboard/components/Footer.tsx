@@ -53,11 +53,7 @@ export default function Footer() {
 
         </div>
 
-        <div style={{ borderTop: '1px solid #111827', paddingTop: '2rem', textAlign: 'center' }}>
-          <p style={{ color: '#4b5563', fontSize: '0.75rem' }}>
-            © 2026 Inktoll Protocol.
-          </p>
-        </div>
+
       </div>
     </footer>
   );

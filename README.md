@@ -1,111 +1,149 @@
-# 🔖 Inktoll
+# 🏆 Inktoll Protocol
+> **Gasless Micropayment & Citation Settlement Highway for the Agentic Web3 Knowledge Economy**
 
-**The first AI-powered knowledge economy where creators get paid every time their work is read — and every time it is cited.**
-
-> Readers pay once. Creators earn forever. Built for the Canteen × Circle Lepton Agents Hackathon.
-
----
-
-## 📖 The Vision
-
-Every day, LLMs and AI reader agents consume millions of blogs, newsletters, and publications. The original creators of this research get zero credit and zero compensation. 
-
-**Inktoll** solves this by establishing a two-layer value-reinforcing payment protocol:
-
-1. **Layer 1 — Pay-Per-Read:** Blog creators connect their Ghost blog. They set per-article prices (e.g. $0.005 USDC). An autonomous AI Reader Agent discovers new articles, scores their quality/relevance, and executes gasless EIP-3009 nanopayments on Arc Testnet to retrieve and summarize content.
-2. **Layer 2 — Citation Tolls:** When a reader queries the agent, the agent grounds its answers in previously purchased articles. It computes cosine similarity across its vector index. If similarity crosses `0.75`, a **Citation Toll ($0.0001 USDC)** is automatically paid back to the creator. Good content earns perpetual royalties.
+Built with **Circle Programmable Wallets**, **Circle Gateway Nanopayments**, and settled on the **Arc Testnet** (USDC-native gas chain) for sub-second, frictionless payments.
 
 ---
 
-## 🛠️ Circle & Arc Tool Integration
+## 💡 The Vision & Problem
+Large Language Models (LLMs) and autonomous AI agents are crawling the web and consuming creators' valuable content for free. In response, publishers are implementing paywalls, putting up aggressive robots.txt blocks, and fracturing the open web. 
 
-- **x402 Protocol:** Implemented HTTP 402 Paywall headers (`X-Payment-Required`, `X-Payment-Amount`, `X-Payment-Recipient`, `X-Payment-Gateway`) to protect articles. The server serves free previews (first 200 words) and requires cryptographic payment signatures to unlock full articles.
-- **Circle Programmable Wallets:** Dynamically provisions developer-controlled wallets for creators (to receive reads/tolls) and reader agents (to hold spendable budgets).
-- **Circle Gateway:** Manages batched, off-chain EIP-3009 signature collections, settling payments periodically on-chain.
-- **Arc Testnet:** Settles sub-cent stablecoin payments gaslessly.
-- **App Kit:** Integrated App Kit's Send module mockup in the creator dashboard for instant USDC withdrawals.
+**Inktoll solves this crisis by introducing a two-layer machine-to-creator payment protocol:**
+*   **Layer 1: Pay-Per-Read:** Autonomous AI agents discover monetize-ready articles via standard RSS feeds, evaluate content relevance using LLMs, and pay creators instantly in USDC for per-article read access.
+*   **Layer 2: Citation Tolls:** When agents retrieve knowledge from previously purchased articles to answer human user questions, the protocol detects the semantic citation and routes an automatic **Citation Toll ($0.0001 USDC)** to the creator's wallet.
+
+Inktoll turns content consumption into a functioning Web3 micro-economy where creators get paid directly, agents read legally, and developers operate gaslessly.
 
 ---
 
-## 🏗️ Project Structure
+## 🛠️ Tech Stack & Integration
+*   **Circle SDKs**:
+    *   **User-Controlled & Developer-Controlled Wallets**: Seamless passkey and MPC wallet generation.
+    *   **Circle Gateway Client**: Batching gasless off-chain payment authorizations (EIP-3009 / ERC-20 transfers) with zero user gas fees.
+*   **Arc Testnet**: Settles micropayments gaslessly using USDC as the native gas token, delivering sub-second finality.
+*   **AI & Logic Layer**: LangChain and OpenAI `gpt-4o-mini` drive the agent's autonomous relevance scoring and citation detection.
+*   **Web Dashboard**: Built using Next.js 16 (App Router), Vanilla CSS, and beautiful Glassmorphism design aesthetics.
+*   **Database**: SQLite metadata storage ledger for transaction audits, active agent tracking, and leaderboard data.
 
+---
+
+## 📐 Protocol Architecture
+
+### 1. Layer 1: Pay-Per-Read Flow
+```mermaid
+sequenceDiagram
+    participant RSS as Creator RSS Feed
+    participant Agent as AI Reader Agent
+    participant LLM as OpenAI (Evaluation)
+    participant Gateway as Circle Paymaster Gateway
+    participant Chain as Arc L1 Blockchain
+    participant Creator as Creator Wallet
+
+    Agent->>RSS: 1. Poll feed for new articles
+    RSS-->>Agent: Returns article slugs, prices, & wallets
+    Agent->>LLM: 2. Submit preview text & interests
+    LLM-->>Agent: Score relevance (0-100) & decision
+    Note over Agent: Relevance score exceeds threshold?
+    Agent->>Gateway: 3. Sign EIP-3009 gasless authorization
+    Gateway->>Chain: 4. Batch & settle transfer on-chain
+    Chain-->>Creator: 5. Transmit per-article USDC payment
+    Chain-->>Agent: 6. Settle tx & unlock full content
 ```
-Inktoll/
-├── package.json         # Workspace configuration
-├── tsconfig.json        # Shared TypeScript settings
-├── .env.example         # Environment variables template
-├── server/              # Express backend server & x402 payment validator
-│   ├── src/db/          # File-backed JSON DB (bypasses Windows C++ compiling issues)
-│   ├── src/middleware/  # x402 payment validation logic
-│   └── src/services/    # Circle wallet & mock Ghost API services
-├── agent/               # LangChain AI agent loop & Q&A microservice
-│   ├── src/tools/       # Discovery, evaluation, pay, and summary tools
-│   └── src/citation.ts  # Cosine similarity matching & toll trigger
-└── dashboard/           # Next.js 14 Web UI (Inter & JetBrains Mono, glassmorphic CSS)
+
+### 2. Layer 2: Citation Tolls Flow
+```mermaid
+sequenceDiagram
+    participant User as Human User
+    participant Agent as Ask Agent QA
+    participant DB as Vector Embeddings (SQLite)
+    participant Gateway as Circle Gateway
+    participant Creator as Creator Wallet
+
+    User->>Agent: 1. Ask a question
+    Agent->>DB: 2. Scan purchased articles for semantic match
+    DB-->>Agent: Returns similarity scores & citation metadata
+    Agent->>Gateway: 3. Trigger gasless Citation Toll ($0.0001 USDC)
+    Gateway-->>Creator: 4. Credit creator wallet instantly
+    Agent-->>User: 5. Return answer with active citation credit
 ```
 
 ---
 
-## 🚀 Running Locally
-
-### Prerequisites
-- Node.js 20.18.2+
-- npm (Node Package Manager)
-
-### 1. Installation
-Clone the repository and install all dependencies in one step using workspaces:
+## 📂 Project Structure
 ```bash
+├── dashboard/      # Next.js web dashboard (Creator Hub, Reader Setup, Leaderboard, Ask Agent)
+├── server/         # Node/Express backend SQLite ledger & RSS feed generator
+├── agent/          # Autonomous AI Reader Agent runtime & microservices
+└── .env            # Shared environment variables
+```
+
+---
+
+## ⚡ Getting Started (Local Setup)
+
+### 1. Prerequisites
+Create a `.env` file in the root directory by copying the template:
+```bash
+# Server Port Configuration
+PORT=3001
+AGENT_PORT=3002
+
+# API Access
+OPENAI_API_KEY=your_openai_api_key
+CIRCLE_API_KEY=your_circle_api_key
+
+# Settlement Configuration (Arc Testnet)
+ARC_RPC_URL=https://rpc.testnet.arc.network
+ARC_USDC_ADDRESS=0x3600000000000000000000000000000000000000
+FAUCET_PRIVATE_KEY=your_faucet_private_key_with_usdc
+```
+
+### 2. Install & Start Server
+```bash
+# Navigate to backend server
+cd server
 npm install
+npm run build
+npm start
 ```
+*   *Server runs at `http://localhost:3001`*
 
-### 2. Compilation
-Compile TypeScript sources:
+### 3. Install & Start AI Reader Agent
 ```bash
-npm run build:server
-npm run build:agent
+# Navigate to Agent client
+cd ../agent
+npm install
+npm run build
+npm start
 ```
+*   *Agent microservice runs at `http://localhost:3002`*
 
-### 3. Running Backend Services
-Start the Express API server (port 3001) and the Agent Service (port 3002) in separate terminals:
+### 4. Install & Start Web Dashboard
 ```bash
-# Terminal 1: Run Express Server
-npm run dev:server
-
-# Terminal 2: Run AI Agent service
-npm run dev:agent
+# Navigate to Dashboard web app
+cd ../dashboard
+npm install
+npm run build
+npm start -- -p 3005
 ```
-
-### 4. Running the Dashboard
-Start the Next.js development server (port 3000):
-```bash
-# Terminal 3: Run Next.js App
-npm run dev:dashboard
-```
-Open [http://localhost:3000](http://localhost:3000) to browse the dashboard!
+*   *Dashboard is live at `http://localhost:3005`*
 
 ---
 
-## 🧪 Testing and Verification
-Run the backend transaction verification suite:
-```bash
-npm run test --workspace=server
-```
-Expected output:
-```
-=== Starting Backend Integration Verification ===
-[DB] JSON Database Engine initialized successfully at C:\Users\IFEANYICHUKWU\OneDrive\Desktop\Inktoll\data\inktoll.json
-[Test] Database cleaned.
-[Wallet Service] [MOCK] Created creator wallet: 0x3210b0454...
-[Test] Creator successfully registered in database.
-[Ghost Service] Running in mock mode, returning sample articles.
-[Test] Imported 3 articles into SQLite.
-[Test] Seeded agent wallet 0xAgentWalletAddress123 with 10.0 USDC.
-[Gateway Service] Submitting payment to Circle Gateway...
-[Gateway Service] Payment settled on Arc Testnet.
-=== Backend Integration Verification PASSED! ===
-```
+## ✨ Winning Hackathon Features
+
+### 🏆 Real-Time Ecosystem Leaderboard
+*   Located at `/leaderboard`, it aggregates stats directly from the SQLite ledger: **Global USDC Circulated**, **Articles Indexed**, and **Active Reader Agents** online.
+*   Features a **Live Ticker Feed** showing agent payment events dynamically as they settle.
+*   Stats auto-hydrate in **real time every 5 seconds** across the landing page and leaderboard to simulate a living machine economy.
+
+### 🔒 Balance Privacy Mode
+*   Creators can toggle off the visibility of their earnings and metrics globally across the dashboard with one click, protecting sensitive balance sheets during live demos or stream recordings.
+
+### 🎨 Fully Integrated Glassmorphism UX
+*   Ditched crude browser popups (`alert` & `prompt`) for a custom-built, React-native **Modal Dialog & Slide-In Toast System** styled to match the dark futuristic design aesthetic of Inktoll.
 
 ---
 
-## ✍️ Builder
-- **MrNetwork** (mrnetwork0001 / @mrnetwork0001)
+## ⚖️ License
+MIT License. Created by [mrnetwork0001](https://github.com/mrnetwork0001). Built for the Lepton Agents Hackathon by TheCanteen.

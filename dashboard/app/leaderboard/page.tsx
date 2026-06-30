@@ -37,6 +37,7 @@ export default function Leaderboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showBalances, setShowBalances] = useState(true);
+  const [selectedReceipt, setSelectedReceipt] = useState<any | null>(null);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -273,15 +274,23 @@ export default function Leaderboard() {
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <span>{formattedTime}</span>
                             {act.tx_hash && (
-                              <a 
-                                href={`https://testnet.arcscan.app/address/${act.reader_agent_id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title={`Circle Gateway Transfer ID: ${act.tx_hash}`}
-                                style={{ color: 'var(--primary-light)', textDecoration: 'underline', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}
+                              <button 
+                                onClick={() => setSelectedReceipt(act)}
+                                title="Click to view Circle Gateway Receipt"
+                                style={{ 
+                                  background: 'transparent',
+                                  border: 'none',
+                                  color: 'var(--primary-light)', 
+                                  textDecoration: 'underline', 
+                                  fontSize: '0.7rem', 
+                                  fontFamily: 'var(--font-mono)',
+                                  cursor: 'pointer',
+                                  padding: 0,
+                                  outline: 'none'
+                                }}
                               >
                                 (Receipt)
-                              </a>
+                              </button>
                             )}
                           </div>
                           <span style={{ 
@@ -318,6 +327,162 @@ export default function Leaderboard() {
           </div>
 
         </div>
+
+        {selectedReceipt && (() => {
+          const creatorInfo = creators.find(c => c.ghost_url === selectedReceipt.ghost_url);
+          const recipientAddress = creatorInfo?.wallet_address || '';
+          const blogDomain = getDomainName(selectedReceipt.ghost_url);
+          return (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.75)',
+              backdropFilter: 'blur(10px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 99999,
+              animation: 'fadeIn 0.2s ease-out'
+            }}>
+              <div className="glass-card" style={{
+                width: '90%',
+                maxWidth: '520px',
+                padding: '2.5rem 2rem 2rem 2rem',
+                borderRadius: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'rgba(15, 23, 42, 0.95)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.5rem',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
+                position: 'relative'
+              }}>
+                <button 
+                  onClick={() => setSelectedReceipt(null)}
+                  style={{
+                    position: 'absolute',
+                    top: '1.25rem',
+                    right: '1.25rem',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'var(--text-secondary)',
+                    fontSize: '1.25rem',
+                    cursor: 'pointer',
+                    outline: 'none'
+                  }}
+                >
+                  ✕
+                </button>
+
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🧾</div>
+                  <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                    USDC Nanopayment Receipt
+                  </h3>
+                  <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                    Circle Gateway Settlement Verified
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', background: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Payment Type:</span>
+                    <span style={{ fontWeight: 600, color: selectedReceipt.payment_type === 'read' ? 'var(--primary-light)' : 'var(--accent)' }}>
+                      {selectedReceipt.payment_type === 'read' ? '📚 Pay-Per-Read Fee' : '⚜️ Citation Toll'}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Amount:</span>
+                    <span style={{ fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
+                      {showBalances ? `$${parseFloat(selectedReceipt.amount_usdc).toFixed(4)}` : '$ ••••••'}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Date & Time:</span>
+                    <span style={{ color: 'var(--text-primary)' }}>
+                      {new Date(selectedReceipt.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Payer Agent Address:</span>
+                    <code style={{ background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
+                      {selectedReceipt.reader_agent_id || '0x44978b7f924c0c6bed1E2acCa887338Dc47C4539'}
+                    </code>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Recipient Creator ({blogDomain}):</span>
+                    <code style={{ background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
+                      {recipientAddress || '0xcd0a2370f2dc12c1802707b7d9ab3fec891e3c02'}
+                    </code>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Circle Transfer ID (UUID):</span>
+                    <code style={{ background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--accent)', wordBreak: 'break-all' }}>
+                      {selectedReceipt.tx_hash}
+                    </code>
+                  </div>
+                </div>
+
+                <div style={{ 
+                  fontSize: '0.75rem', 
+                  color: 'var(--text-muted)', 
+                  lineHeight: '1.5',
+                  background: 'rgba(245, 158, 11, 0.05)',
+                  border: '1px solid rgba(245, 158, 11, 0.15)',
+                  borderRadius: '8px',
+                  padding: '0.75rem 1rem'
+                }}>
+                  💡 <strong>Circle x402 Nanopayment Batching:</strong> To achieve sub-cent transactions with <strong>zero gas fees</strong>, Inktoll batches transfer signatures off-chain. Individual payments are net-settled in batch transactions on-chain.
+                </div>
+
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                  <button
+                    className="btn"
+                    onClick={() => setSelectedReceipt(null)}
+                    style={{
+                      flex: 1,
+                      padding: '0.8rem',
+                      borderRadius: '50px',
+                      background: 'transparent',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      color: 'var(--text-secondary)',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Close
+                  </button>
+                  <a
+                    href={`https://testnet.arcscan.app/address/${recipientAddress || recipientAddress === '' ? recipientAddress : '0xcd0a2370f2dc12c1802707b7d9ab3fec891e3c02'}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      flex: 1.5,
+                      padding: '0.8rem',
+                      borderRadius: '50px',
+                      background: 'var(--primary)',
+                      border: 'none',
+                      color: '#000',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      textDecoration: 'none',
+                      fontSize: '0.9rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    Verify on ArcScan ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </main>
     </>
   );

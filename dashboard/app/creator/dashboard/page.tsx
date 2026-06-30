@@ -348,15 +348,23 @@ function CreatorDashboardInner() {
       <Header />
       <main style={{ padding: '3rem 0' }}>
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          
-          {error && (
+                 {error && (
             <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid var(--error)', borderRadius: '8px', color: 'var(--error)' }}>
               ⚠️ {error}
             </div>
           )}
 
-          {/* Privacy Visibility Toggle */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          {/* Header Title Bar */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
+            <div>
+              <h1 style={{ margin: 0, fontSize: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                🔮 Creator Dashboard
+              </h1>
+              <p style={{ margin: '0.25rem 0 0 0', color: 'var(--text-secondary)' }}>
+                Manage your monetized blog feeds, payouts, and on-chain earnings.
+              </p>
+            </div>
+            
             <button
               onClick={() => {
                 const nextVal = !showBalances;
@@ -390,69 +398,73 @@ function CreatorDashboardInner() {
             </button>
           </div>
 
-          {/* Earnings & Wallet Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-            
-            {/* LARGE EARNINGS COUNTER */}
-            <div className="glass-card earnings-box" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <span className="earnings-label" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'center' }}>
-                USDC Earnings Counter
-                <span 
-                  title="All-time cumulative USDC earned by your blog from purchases and citation tolls. This number only goes up."
-                  style={{ 
-                    display: 'inline-flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    width: '14px', 
-                    height: '14px', 
-                    borderRadius: '50%', 
-                    background: 'rgba(255,255,255,0.1)', 
-                    fontSize: '0.65rem', 
-                    cursor: 'help',
-                    color: 'var(--text-secondary)'
-                  }}
-                >
-                  ℹ
-                </span>
+          {/* Top Row KPI Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+            {/* 1. All-Time Accumulated Earnings */}
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid #eab308' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                All-Time Earnings
+                <span title="Cumulative USDC earned by your blog from purchases and citation tolls. This number only goes up." style={{ cursor: 'help', opacity: 0.6 }}>ℹ</span>
               </span>
-              <div className="earnings-value">
+              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: '#eab308', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {showBalances ? `$${animatedEarnings.toFixed(6)}` : '$ ••••••'}
-              </div>
-              <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                Ticking live as AI agents read and cite your blog
-              </p>
-                        {/* WALLET WIDGET */}
-            <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '1.5rem' }}>
+              </h3>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>Ticking live via reader agents</span>
+            </div>
+
+            {/* 2. Claimable Wallet Balance */}
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary-light)' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                Claimable Balance
+                <span title="The claimable USDC balance sitting in your blog's custodial wallet right now. This decreases when you withdraw." style={{ cursor: 'help', opacity: 0.6 }}>ℹ</span>
+              </span>
+              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--primary-light)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+                {showBalances ? `$${(stats?.balanceUsdc || 0).toFixed(6)}` : '$ ••••••'}
+              </h3>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>USDC on Arc L1 network</span>
+            </div>
+
+            {/* 3. Monetized Content */}
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--success)' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Monetized Articles</span>
+              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--success)', fontWeight: 800 }}>
+                {stats?.articles?.length || 0}
+              </h3>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>Indexed from Ghost RSS feed</span>
+            </div>
+
+            {/* 4. Total Reads & Citations */}
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--accent)' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Reads & Citations</span>
+              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--accent)', fontWeight: 800 }}>
+                {stats?.readCount || 0} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/</span> {stats?.citationCount || 0}
+              </h3>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>Reads vs semantic citations</span>
+            </div>
+          </div>
+
+          {/* Main Workspace two-column grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem', alignItems: 'start' }}>
+            
+            {/* Left Column: Wallet & Settlement Hub */}
+            <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div>
-                <h4 style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  Inktoll Wallet Balance
-                  <span 
-                    title="The actual claimable USDC balance sitting in your blog's custodial wallet right now. This decreases when you withdraw funds."
-                    style={{ 
-                      display: 'inline-flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center', 
-                      width: '14px', 
-                      height: '14px', 
-                      borderRadius: '50%', 
-                      background: 'rgba(255,255,255,0.1)', 
-                      fontSize: '0.65rem', 
-                      cursor: 'help',
-                      color: 'var(--text-secondary)',
-                      textTransform: 'none'
-                    }}
-                  >
-                    ℹ
-                  </span>
-                </h4>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '2.5rem', fontWeight: 700, margin: '0.5rem 0' }}>
-                  {showBalances ? (stats?.balanceUsdc?.toFixed(6) || '0.000000') : '••••••'} <span style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>USDC</span>
+                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  💳 Settlement & Payout Hub
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  Manage custodial storage and transfer rewards to your private address.
+                </p>
+              </div>
+
+              {/* Custodial Wallet address */}
+              <div style={{ background: 'rgba(0,0,0,0.15)', border: '1px solid var(--border)', borderRadius: '10px', padding: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Custodial Storage Wallet</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--primary-light)', background: 'rgba(59,130,246,0.1)', padding: '2px 8px', borderRadius: '4px' }}>Arc L1</span>
                 </div>
-                
-                {/* Copyable Wallet Address Row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.25rem 0' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Address:</span>
-                  <code style={{ fontSize: '0.8rem', background: 'rgba(0,0,0,0.15)', padding: '0.2rem 0.4rem', borderRadius: '4px', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-primary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <code style={{ flex: 1, fontSize: '0.75rem', background: 'rgba(0,0,0,0.25)', padding: '6px 10px', borderRadius: '6px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
                     {stats?.walletAddress}
                   </code>
                   <button
@@ -463,293 +475,263 @@ function CreatorDashboardInner() {
                       }
                     }}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--accent)',
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '6px',
+                      padding: '6px 10px',
+                      color: 'var(--text-secondary)',
                       cursor: 'pointer',
                       fontSize: '0.75rem',
-                      padding: 0,
-                      textDecoration: 'underline'
+                      outline: 'none'
                     }}
                   >
                     Copy
                   </button>
                 </div>
+              </div>
 
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Blockchain: Arc Testnet (gasless stablecoin native L1)
-                </div>
-
-                {/* Payout Destination Address */}
-                <div style={{ marginTop: '0.75rem' }}>
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
-                    Payout Destination:
-                  </label>
-                  {!isEditingPayout ? (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.15)', border: '1px solid var(--border)', borderRadius: '6px', padding: '0.4rem 0.6rem' }}>
-                      <code style={{ fontSize: '0.8rem', color: payoutAddress ? 'var(--accent)' : 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                        {payoutAddress ? `${payoutAddress.substring(0, 10)}...${payoutAddress.substring(payoutAddress.length - 8)}` : 'None specified'}
-                      </code>
-                      <button
-                        onClick={() => setIsEditingPayout(true)}
-                        disabled={withdrawing}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: 'var(--primary-light)',
-                          cursor: 'pointer',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          padding: 0
-                        }}
-                      >
-                        ✏️ Edit
-                      </button>
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <input
-                        type="text"
-                        placeholder="0x... (EVM EOA Address)"
-                        value={payoutAddress}
-                        onChange={(e) => setPayoutAddress(e.target.value)}
-                        disabled={withdrawing}
-                        style={{
-                          flexGrow: 1,
-                          background: 'rgba(0,0,0,0.2)',
-                          border: '1px solid var(--border)',
-                          borderRadius: '6px',
-                          padding: '0.4rem 0.6rem',
-                          fontSize: '0.8rem',
-                          fontFamily: 'var(--font-mono)',
-                          color: 'var(--text-primary)',
-                          outline: 'none'
-                        }}
-                      />
-                      <button
-                        onClick={async () => {
-                          const val = payoutAddress.trim();
-                          if (val && !/^0x[a-fA-F0-9]{40}$/.test(val)) {
-                            await showAlert('Invalid Ethereum wallet address format. Please check the spelling.', { title: 'Address Validation' });
-                            return;
-                          }
-                          setIsEditingPayout(false);
-                        }}
-                        className="btn btn-secondary"
-                        style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, minWidth: '50px' }}
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => {
-                          setPayoutAddress(connectedAddress || '');
-                          setIsEditingPayout(false);
-                        }}
-                        className="btn btn-secondary"
-                        style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, opacity: 0.7, minWidth: '60px' }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  )}
-                  {!connectedAddress && !payoutAddress && !isEditingPayout && (
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontStyle: 'italic', marginTop: '0.15rem', display: 'block' }}>
-                      Tip: Click Edit to specify any custom EVM destination address.
-                    </span>
-                  )}
-                </div>
-
-                {/* Secure / Bind Account Panel */}
-                {connectedAddress && (!stats?.ownerAddress || stats.ownerAddress.toLowerCase() !== connectedAddress.toLowerCase()) && (
-                  <div style={{ 
-                    marginTop: '0.75rem', 
-                    padding: '0.75rem', 
-                    background: 'rgba(59, 130, 246, 0.08)', 
-                    border: '1px solid rgba(59, 130, 246, 0.25)', 
-                    borderRadius: '8px',
-                    fontSize: '0.8rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5rem'
-                  }}>
-                    <div style={{ fontWeight: 600, color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      <span>🔗</span> Bind Ghost blog to this wallet
-                    </div>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
-                      Bind your account to enable passwordless login and recovery from any device using this connected wallet.
-                    </div>
-                    <button 
-                      className="btn btn-primary btn-sm"
-                      style={{ padding: '0.45rem', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, width: '100%' }}
-                      onClick={handleBindWallet}
-                      disabled={binding}
+              {/* Payout Destination */}
+              <div style={{ background: 'rgba(0,0,0,0.15)', border: '1px solid var(--border)', borderRadius: '10px', padding: '1rem' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
+                  Payout Destination Address
+                </span>
+                {!isEditingPayout ? (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.25)', padding: '6px 10px', borderRadius: '6px' }}>
+                    <code style={{ fontSize: '0.75rem', color: payoutAddress ? 'var(--accent)' : 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                      {payoutAddress ? `${payoutAddress.substring(0, 12)}...${payoutAddress.substring(payoutAddress.length - 10)}` : 'None specified'}
+                    </code>
+                    <button
+                      onClick={() => setIsEditingPayout(true)}
+                      disabled={withdrawing}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--primary-light)',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        padding: 0
+                      }}
                     >
-                      {binding ? 'Signing & Binding...' : 'Bind Account to Wallet'}
+                      ✏️ Edit
                     </button>
                   </div>
-                )}
-
-                {connectedAddress && stats?.ownerAddress && stats.ownerAddress.toLowerCase() === connectedAddress.toLowerCase() && (
-                  <div style={{ 
-                    marginTop: '0.75rem', 
-                    padding: '0.5rem 0.75rem', 
-                    background: 'rgba(16, 185, 129, 0.08)', 
-                    border: '1px solid rgba(16, 185, 129, 0.25)', 
-                    borderRadius: '8px', 
-                    fontSize: '0.8rem',
-                    color: 'var(--success)',
-                    fontWeight: 500,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.35rem'
-                  }}>
-                    <span>✓</span> Blog Account Bound to Wallet
-                  </div>
-                )}
-
-                {/* Withdrawal Amount Input */}
-                <div style={{ marginTop: '0.75rem' }}>
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.25rem' }}>
-                    Withdrawal Amount (USDC):
-                  </label>
-                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                ) : (
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <input
-                      type="number"
-                      placeholder="0.00"
-                      step="0.01"
-                      min="0.01"
-                      max={stats?.balanceUsdc || 0}
-                      value={withdrawAmount}
-                      onChange={(e) => setWithdrawAmount(e.target.value)}
+                      type="text"
+                      placeholder="0x... (EVM EOA Address)"
+                      value={payoutAddress}
+                      onChange={(e) => setPayoutAddress(e.target.value)}
                       disabled={withdrawing}
                       style={{
                         flexGrow: 1,
-                        background: 'rgba(0,0,0,0.2)',
+                        background: 'rgba(0,0,0,0.25)',
                         border: '1px solid var(--border)',
                         borderRadius: '6px',
                         padding: '0.4rem 0.6rem',
-                        fontSize: '0.9rem',
+                        fontSize: '0.8rem',
+                        fontFamily: 'var(--font-mono)',
                         color: 'var(--text-primary)',
-                        fontFamily: 'var(--font-mono)'
+                        outline: 'none'
                       }}
                     />
                     <button
-                      className="btn btn-secondary"
-                      style={{ padding: '0.4rem 0.8rem', minWidth: 'auto', fontSize: '0.8rem', marginBottom: 0 }}
-                      onClick={() => {
-                        if (stats?.balanceUsdc) {
-                          // Leave a tiny buffer of 0.01 for gas automatically
-                          const maxAmount = Math.max(0, parseFloat((stats.balanceUsdc - 0.01).toFixed(6)));
-                          setWithdrawAmount(maxAmount.toString());
+                      onClick={async () => {
+                        const val = payoutAddress.trim();
+                        if (val && !/^0x[a-fA-F0-9]{40}$/.test(val)) {
+                          await showAlert('Invalid Ethereum wallet address format. Please check the spelling.', { title: 'Address Validation' });
+                          return;
                         }
+                        setIsEditingPayout(false);
                       }}
-                      disabled={withdrawing || !stats?.balanceUsdc || stats.balanceUsdc <= 0.01}
+                      className="btn btn-secondary"
+                      style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0 }}
                     >
-                      MAX
+                      Save
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPayoutAddress(connectedAddress || '');
+                        setIsEditingPayout(false);
+                      }}
+                      className="btn btn-secondary"
+                      style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, opacity: 0.7 }}
+                    >
+                      Cancel
                     </button>
                   </div>
-                  {stats?.balanceUsdc > 0 && (
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                      * Leaving a 0.01 USDC buffer for network gas fees is recommended.
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
 
-              <div>
+              {/* Secure / Bind Account Panel */}
+              {connectedAddress && (!stats?.ownerAddress || stats.ownerAddress.toLowerCase() !== connectedAddress.toLowerCase()) && (
+                <div style={{ 
+                  padding: '0.85rem', 
+                  background: 'rgba(59, 130, 246, 0.05)', 
+                  border: '1px solid rgba(59, 130, 246, 0.15)', 
+                  borderRadius: '10px',
+                  fontSize: '0.75rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem'
+                }}>
+                  <div style={{ fontWeight: 600, color: 'var(--primary-light)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <span>🔗</span> Bind Ghost blog to connected wallet
+                  </div>
+                  <div style={{ color: 'var(--text-secondary)' }}>
+                    Bind your blog account to enable passwordless wallet authentication and secure logins.
+                  </div>
+                  <button 
+                    className="btn btn-primary btn-sm"
+                    style={{ padding: '0.5rem', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, width: '100%' }}
+                    onClick={handleBindWallet}
+                    disabled={binding}
+                  >
+                    {binding ? 'Binding account...' : 'Bind Account to Wallet'}
+                  </button>
+                </div>
+              )}
+
+              {connectedAddress && stats?.ownerAddress && stats.ownerAddress.toLowerCase() === connectedAddress.toLowerCase() && (
+                <div style={{ 
+                  padding: '0.6rem 0.85rem', 
+                  background: 'rgba(16, 185, 129, 0.05)', 
+                  border: '1px solid rgba(16, 185, 129, 0.15)', 
+                  borderRadius: '10px', 
+                  fontSize: '0.75rem',
+                  color: 'var(--success)',
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem'
+                }}>
+                  <span>✓</span> Blog Account Bound to Wallet
+                </div>
+              )}
+
+              {/* Withdraw Form block */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                  Withdrawal Amount (USDC):
+                </label>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input
+                    type="number"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0.01"
+                    max={stats?.balanceUsdc || 0}
+                    value={withdrawAmount}
+                    onChange={(e) => setWithdrawAmount(e.target.value)}
+                    disabled={withdrawing}
+                    style={{
+                      flexGrow: 1,
+                      background: 'rgba(0,0,0,0.2)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '8px',
+                      padding: '0.6rem 0.75rem',
+                      fontSize: '0.9rem',
+                      color: 'var(--text-primary)',
+                      fontFamily: 'var(--font-mono)',
+                      outline: 'none'
+                    }}
+                  />
+                  <button
+                    className="btn btn-secondary"
+                    style={{ padding: '0.6rem 1rem', minWidth: 'auto', fontSize: '0.8rem', marginBottom: 0, borderRadius: '8px' }}
+                    onClick={() => {
+                      if (stats?.balanceUsdc) {
+                        const maxAmount = Math.max(0, parseFloat((stats.balanceUsdc - 0.01).toFixed(6)));
+                        setWithdrawAmount(maxAmount.toString());
+                      }
+                    }}
+                    disabled={withdrawing || !stats?.balanceUsdc || stats.balanceUsdc <= 0.01}
+                  >
+                    MAX
+                  </button>
+                </div>
+                {stats?.balanceUsdc > 0 && (
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                    * Leaving a 0.01 USDC buffer for network gas fees is recommended.
+                  </div>
+                )}
+                
                 {withdrawSuccess && (
-                  <div style={{ padding: '0.5rem', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.8rem', marginBottom: '0.75rem' }}>
+                  <div style={{ padding: '0.5rem 0.75rem', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
                     {withdrawSuccess}
                   </div>
                 )}
                 {faucetSuccess && (
-                  <div style={{ padding: '0.5rem', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.8rem', marginBottom: '0.75rem' }}>
+                  <div style={{ padding: '0.5rem 0.75rem', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
                     {faucetSuccess}
                   </div>
                 )}
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  <button 
-                    className="btn btn-primary" 
-                    style={{ flexGrow: 1, marginBottom: 0 }}
-                    onClick={handleWithdraw}
-                    disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) <= 0 || !payoutAddress}
-                    title={!payoutAddress ? "Please specify a destination wallet address to withdraw" : ""}
-                  >
-                    {withdrawing ? 'Withdrawing...' : 'Withdraw'}
-                  </button>
-                </div>
+
+                <button 
+                  className="btn btn-primary" 
+                  style={{ width: '100%', padding: '0.8rem', borderRadius: '50px', fontWeight: 'bold', marginTop: '0.5rem' }}
+                  onClick={handleWithdraw}
+                  disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) <= 0 || !payoutAddress}
+                  title={!payoutAddress ? "Please specify a destination wallet address to withdraw" : ""}
+                >
+                  {withdrawing ? 'Withdrawing...' : 'Withdraw Funds'}
+                </button>
               </div>
-            </div>    </div>
+            </div>
 
-          </div>
+            {/* Right Column: Monetized Content Hub */}
+            <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div style={{ marginBottom: '1rem' }}>
+                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  📚 Monetized Content Hub
+                </h3>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  Detailed earnings breakdown of articles scraped and evaluated by reader agents.
+                </p>
+              </div>
 
-          {/* Core Metrics Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-            <div className="glass-card" style={{ padding: '1.25rem' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Total Reads Count</span>
-              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0' }}>{stats?.readCount || 0}</h3>
-            </div>
-            <div className="glass-card" style={{ padding: '1.25rem' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Read Revenue (USDC)</span>
-              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--primary-light)' }}>
-                {showBalances ? `$${stats?.readRevenueUsdc?.toFixed(4) || '0.0000'}` : '$ ••••••'}
-              </h3>
-            </div>
-            <div className="glass-card" style={{ padding: '1.25rem' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Total Citations</span>
-              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0' }}>{stats?.citationCount || 0}</h3>
-            </div>
-            <div className="glass-card" style={{ padding: '1.25rem' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Citation Toll Revenue</span>
-              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--accent)' }}>
-                {showBalances ? `$${stats?.citationRevenueUsdc?.toFixed(4) || '0.0000'}` : '$ ••••••'}
-              </h3>
-            </div>
-          </div>
-
-          {/* Article breakdown */}
-          <div className="glass-card">
-            <h3>Monetized Articles</h3>
-            <div style={{ overflowX: 'auto' }}>
-              <table className="custom-table">
-                <thead>
-                  <tr>
-                    <th>Article Title</th>
-                    <th>Price (USDC)</th>
-                    <th>Reads</th>
-                    <th>Citations</th>
-                    <th>Total Earnings</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats?.articles && stats.articles.length > 0 ? (
-                    stats.articles.map((art: any) => (
-                      <tr key={art.id}>
-                        <td style={{ fontWeight: 500 }}>{art.title}</td>
-                        <td style={{ fontFamily: 'var(--font-mono)' }}>${art.price_usdc}</td>
-                        <td>{art.reads}</td>
-                        <td>
-                          <span style={{ display: 'inline-flex', gap: '0.25rem', alignItems: 'center' }}>
-                            {art.citations}
-                            {art.citations > 0 && <span style={{ fontSize: '0.75rem', background: 'rgba(245,166,35,0.15)', color: 'var(--accent)', padding: '2px 6px', borderRadius: '10px', fontWeight: 600 }}>Toll Active</span>}
-                          </span>
-                        </td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                          {showBalances ? `$${art.revenue.toFixed(4)}` : '$ ••••••'}
+              <div style={{ overflowX: 'auto' }}>
+                <table className="custom-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                      <th style={{ textAlign: 'left', padding: '0.75rem 0.5rem' }}>Article Title</th>
+                      <th style={{ textAlign: 'center', padding: '0.75rem 0.5rem' }}>Price</th>
+                      <th style={{ textAlign: 'center', padding: '0.75rem 0.5rem' }}>Reads</th>
+                      <th style={{ textAlign: 'center', padding: '0.75rem 0.5rem' }}>Citations</th>
+                      <th style={{ textAlign: 'right', padding: '0.75rem 0.5rem' }}>Total Earnings</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {stats?.articles && stats.articles.length > 0 ? (
+                      stats.articles.map((art: any) => (
+                        <tr key={art.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                          <td style={{ padding: '1rem 0.5rem', fontWeight: 600 }}>{art.title}</td>
+                          <td style={{ padding: '1rem 0.5rem', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>${art.price_usdc}</td>
+                          <td style={{ padding: '1rem 0.5rem', textAlign: 'center' }}>{art.reads}</td>
+                          <td style={{ padding: '1rem 0.5rem', textAlign: 'center' }}>
+                            <span style={{ display: 'inline-flex', gap: '0.25rem', alignItems: 'center' }}>
+                              {art.citations}
+                              {art.citations > 0 && <span style={{ fontSize: '0.7rem', background: 'rgba(245,166,35,0.15)', color: 'var(--accent)', padding: '2px 6px', borderRadius: '10px', fontWeight: 600 }}>Toll Active</span>}
+                            </span>
+                          </td>
+                          <td style={{ padding: '1rem 0.5rem', textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
+                            {showBalances ? `$${art.revenue.toFixed(4)}` : '$ ••••••'}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                          No articles imported yet.
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                        No articles imported yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
             </div>
           </div>
+        </div>
 
           {/* Recent Payments History */}
           <div className="glass-card">

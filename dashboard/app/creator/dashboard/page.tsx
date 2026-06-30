@@ -518,19 +518,9 @@ function CreatorDashboardInner() {
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  {process.env.NEXT_PUBLIC_ARC_MAINNET !== 'true' && (
-                    <button 
-                      className="btn btn-secondary" 
-                      style={{ flexGrow: 1, marginBottom: 0 }}
-                      onClick={handleFaucet}
-                      disabled={fauceting}
-                    >
-                      {fauceting ? 'Fauceting...' : '⛲ Faucet'}
-                    </button>
-                  )}
                   <button 
                     className="btn btn-primary" 
-                    style={{ flexGrow: 2, marginBottom: 0 }}
+                    style={{ flexGrow: 1, marginBottom: 0 }}
                     onClick={handleWithdraw}
                     disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) <= 0 || !connectedAddress}
                     title={!connectedAddress ? "Please connect a payout wallet to withdraw" : ""}

@@ -202,6 +202,38 @@ router.get('/lookup', (req, res) => {
   }
 });
 
+router.post('/register-agent', (req, res) => {
+  const { id, walletAddress, interests, maxPricePerArticle, dailyBudgetUsdc, isActive } = req.body;
+  if (!id || !walletAddress) {
+    return res.status(400).json({ error: 'id and walletAddress are required' });
+  }
+
+  const db = getDb();
+  try {
+    db.prepare(`
+      INSERT INTO reader_agents (id, wallet_address, interests, max_price_per_article, daily_budget_usdc, is_active)
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        wallet_address = excluded.wallet_address,
+        interests = excluded.interests,
+        max_price_per_article = excluded.max_price_per_article,
+        daily_budget_usdc = excluded.daily_budget_usdc,
+        is_active = excluded.is_active
+    `).run(
+      id,
+      walletAddress,
+      interests || '',
+      parseFloat(maxPricePerArticle || '0.05'),
+      parseFloat(dailyBudgetUsdc || '1.0'),
+      isActive ? 1 : 0
+    );
+    return res.json({ success: true });
+  } catch (error: any) {
+    console.error('[Register Agent Route] Error:', error.message);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/', (req, res) => {
   const db = getDb();
   const creators = db.prepare('SELECT id, ghost_url, wallet_address, default_price_usdc FROM creators').all();

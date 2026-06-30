@@ -92,6 +92,24 @@ app.get('/api/agent/status', async (req, res) => {
       console.warn('[Agent Status] Failed to fetch gateway balance:', (err as any).message);
     }
 
+    // Sync with the backend database to register active agents
+    try {
+      await originalFetch(`${SERVER_URL}/api/creators/register-agent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: userId,
+          walletAddress: wallet.address,
+          interests: profile.interests.join(', '),
+          maxPricePerArticle: profile.maxPricePerArticle,
+          dailyBudgetUsdc: profile.dailyBudgetUsdc,
+          isActive: true
+        })
+      });
+    } catch (err) {
+      console.warn('[Agent Status Sync] Failed to register agent with backend:', (err as any).message);
+    }
+
     return res.json({
       address: wallet.address,
       balanceUsdc: balance,

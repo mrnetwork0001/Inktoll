@@ -788,12 +788,13 @@ function CreatorDashboardInner() {
                         <td>
                           {tx.tx_hash ? (
                             <a 
-                              href={`https://testnet.arcscan.app/tx/${tx.tx_hash}`}
+                              href={`https://testnet.arcscan.app/address/${stats?.walletAddress}`}
                               target="_blank"
                               rel="noopener noreferrer"
+                              title={`Circle Gateway Transfer ID: ${tx.tx_hash}`}
                               style={{ color: 'var(--primary-light)', textDecoration: 'underline', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}
                             >
-                              {tx.tx_hash.substring(0, 12)}...
+                              {tx.tx_hash.substring(0, 13)}...
                             </a>
                           ) : (
                             <span style={{ color: 'var(--text-muted)' }}>-</span>

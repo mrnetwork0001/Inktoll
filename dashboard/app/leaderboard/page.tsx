@@ -274,9 +274,10 @@ export default function Leaderboard() {
                             <span>{formattedTime}</span>
                             {act.tx_hash && (
                               <a 
-                                href={`https://testnet.arcscan.app/tx/${act.tx_hash}`}
+                                href={`https://testnet.arcscan.app/address/${act.reader_agent_id}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                title={`Circle Gateway Transfer ID: ${act.tx_hash}`}
                                 style={{ color: 'var(--primary-light)', textDecoration: 'underline', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}
                               >
                                 (Receipt)

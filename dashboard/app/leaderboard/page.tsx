@@ -274,7 +274,7 @@ export default function Leaderboard() {
                             <span>{formattedTime}</span>
                             {act.tx_hash && (
                               <a 
-                                href={`https://explorer.testnet.arc.network/tx/${act.tx_hash}`}
+                                href={`https://testnet.arcscan.app/tx/${act.tx_hash}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{ color: 'var(--primary-light)', textDecoration: 'underline', fontSize: '0.7rem', fontFamily: 'var(--font-mono)' }}

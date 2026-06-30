@@ -788,7 +788,7 @@ function CreatorDashboardInner() {
                         <td>
                           {tx.tx_hash ? (
                             <a 
-                              href={`https://explorer.testnet.arc.network/tx/${tx.tx_hash}`}
+                              href={`https://testnet.arcscan.app/tx/${tx.tx_hash}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               style={{ color: 'var(--primary-light)', textDecoration: 'underline', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}

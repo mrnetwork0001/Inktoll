@@ -62,6 +62,7 @@ function CreatorDashboardInner() {
   const [payoutAddress, setPayoutAddress] = useState<string>('');
   const [isEditingPayout, setIsEditingPayout] = useState(false);
   const [showBalances, setShowBalances] = useState<boolean>(true);
+  const [logsPage, setLogsPage] = useState<number>(1);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -763,7 +764,7 @@ function CreatorDashboardInner() {
                 </thead>
                 <tbody>
                   {stats?.history && stats.history.length > 0 ? (
-                    stats.history.map((tx: any) => (
+                    stats.history.slice((logsPage - 1) * 10, logsPage * 10).map((tx: any) => (
                       <tr key={tx.id}>
                         <td>{new Date(tx.created_at).toLocaleTimeString()}</td>
                         <td>{tx.article_title}</td>
@@ -780,7 +781,7 @@ function CreatorDashboardInner() {
                           </span>
                         </td>
                         <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: tx.payment_type === 'read' ? '#fff' : 'var(--accent)' }}>
-                          ${tx.amount_usdc}
+                          {showBalances ? `$${tx.amount_usdc}` : '$ ••••••'}
                         </td>
                         <td>
                           <code style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -799,6 +800,31 @@ function CreatorDashboardInner() {
                 </tbody>
               </table>
             </div>
+            {stats?.history && stats.history.length > 10 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', padding: '0 0.5rem' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  Page <strong>{logsPage}</strong> of <strong>{Math.ceil(stats.history.length / 10)}</strong> ({stats.history.length} total logs)
+                </span>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => setLogsPage(prev => Math.max(1, prev - 1))}
+                    disabled={logsPage === 1}
+                    style={{ padding: '4px 12px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0 }}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => setLogsPage(prev => Math.min(Math.ceil(stats.history.length / 10), prev + 1))}
+                    disabled={logsPage === Math.ceil(stats.history.length / 10)}
+                    style={{ padding: '4px 12px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0 }}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
         </div>

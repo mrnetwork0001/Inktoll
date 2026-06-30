@@ -61,8 +61,17 @@ function CreatorDashboardInner() {
   const [binding, setBinding] = useState(false);
   const [payoutAddress, setPayoutAddress] = useState<string>('');
   const [isEditingPayout, setIsEditingPayout] = useState(false);
+  const [showBalances, setShowBalances] = useState<boolean>(true);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+  // Load showBalances from localStorage
+  useEffect(() => {
+    const val = localStorage.getItem('inktoll_show_balances');
+    if (val === 'false') {
+      setShowBalances(false);
+    }
+  }, []);
 
   // 1. Initial Load of creatorId and Wallet Connection state
   useEffect(() => {
@@ -342,6 +351,41 @@ function CreatorDashboardInner() {
             </div>
           )}
 
+          {/* Privacy Visibility Toggle */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <button
+              onClick={() => {
+                const nextVal = !showBalances;
+                setShowBalances(nextVal);
+                localStorage.setItem('inktoll_show_balances', String(nextVal));
+              }}
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--border)',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                fontSize: '0.8rem',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                transition: 'all 0.2s',
+                outline: 'none'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.borderColor = 'var(--border)';
+              }}
+            >
+              {showBalances ? '👁️ Hide Balances' : '🙈 Show Balances'}
+            </button>
+          </div>
+
           {/* Earnings & Wallet Row */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
             
@@ -367,7 +411,9 @@ function CreatorDashboardInner() {
                   ℹ
                 </span>
               </span>
-              <div className="earnings-value">${animatedEarnings.toFixed(6)}</div>
+              <div className="earnings-value">
+                {showBalances ? `$${animatedEarnings.toFixed(6)}` : '$ ••••••'}
+              </div>
               <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                 Ticking live as AI agents read and cite your blog
               </p>
@@ -396,7 +442,7 @@ function CreatorDashboardInner() {
                   </span>
                 </h4>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '2.5rem', fontWeight: 700, margin: '0.5rem 0' }}>
-                  {stats?.balanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>USDC</span>
+                  {showBalances ? (stats?.balanceUsdc?.toFixed(6) || '0.000000') : '••••••'} <span style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>USDC</span>
                 </div>
                 
                 {/* Copyable Wallet Address Row */}

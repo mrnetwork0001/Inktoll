@@ -32,6 +32,7 @@ export default function Header() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [walletType, setWalletType] = useState<string>('managed'); // 'managed' | 'metamask' | 'passkey'
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
@@ -342,7 +343,8 @@ export default function Header() {
           <img src="/logo.png" alt="Inktoll Logo" style={{ height: '80px', objectFit: 'contain' }} />
         </Link>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+        {/* Desktop Navigation Group */}
+        <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
@@ -494,7 +496,7 @@ export default function Header() {
                       }}
                       onClick={connectWallet}
                     >
-                      🦊 MetaMask (EVM EOA)
+                      MetaMask (EVM EOA)
                     </button>
                     <button 
                       style={{ 
@@ -509,7 +511,7 @@ export default function Header() {
                       }}
                       onClick={() => switchWalletType('passkey')}
                     >
-                      ⚜️ Circle Wallet
+                      Circle Wallet
                     </button>
 
                   </div>
@@ -533,8 +535,140 @@ export default function Header() {
               )}
             </div>
           )}
-
         </div>
+
+        {/* Mobile Navigation controls */}
+        {pathname !== '/' && (
+          <button 
+            className="mobile-menu-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenuOpen ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            )}
+          </button>
+        )}
+
+        {/* Mobile Dropdown Panel Menu */}
+        {pathname !== '/' && (
+          <div className={`mobile-nav-menu ${mobileMenuOpen ? 'open' : ''}`}>
+            <Link 
+              href="/reader/feed" 
+              className={`nav-link ${isActive('/reader/feed') ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Reader Feed
+            </Link>
+            <Link 
+              href="/reader/ask" 
+              className={`nav-link ${isActive('/reader/ask') ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Ask Agent Q&A
+            </Link>
+            <Link 
+              href="/reader/setup" 
+              className={`nav-link ${isActive('/reader/setup') ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Agent Settings
+            </Link>
+            <Link 
+              href="/creator/dashboard" 
+              className={`nav-link ${isActive('/creator') ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Creator Panel
+            </Link>
+            <Link 
+              href="/leaderboard" 
+              className={`nav-link ${isActive('/leaderboard') ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Leaderboard
+            </Link>
+
+            <hr style={{ border: 'none', borderBottom: '1px solid var(--border)', margin: '0.5rem 0' }} />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 0.75rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Theme Mode</span>
+              <button
+                onClick={toggleTheme}
+                style={{
+                  background: 'var(--bg-active)',
+                  border: '1px solid var(--border)',
+                  cursor: 'pointer',
+                  borderRadius: '50%',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  outline: 'none'
+                }}
+              >
+                {theme === 'light' ? '🌙' : '☀️'}
+              </button>
+            </div>
+
+            <hr style={{ border: 'none', borderBottom: '1px solid var(--border)', margin: '0.5rem 0' }} />
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.25rem 0.75rem' }}>
+              {walletAddress ? (
+                <>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <span style={{ 
+                      width: '8px', 
+                      height: '8px', 
+                      borderRadius: '50%', 
+                      background: walletType === 'metamask' ? '#f5a623' : '#10b981'
+                    }}></span>
+                    Connected: {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)} ({walletType})
+                  </div>
+                  <button 
+                    className="btn btn-secondary" 
+                    style={{ width: '100%', minHeight: '38px', fontSize: '0.85rem', marginBottom: 0 }}
+                    onClick={() => {
+                      disconnectWallet();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Disconnect Wallet
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                    Connect Wallet options:
+                  </div>
+                  <button 
+                    className="btn btn-secondary" 
+                    style={{ width: '100%', minHeight: '38px', fontSize: '0.85rem', marginBottom: 0, justifyContent: 'flex-start' }}
+                    onClick={() => {
+                      connectWallet();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    MetaMask (EVM EOA)
+                  </button>
+                  <button 
+                    className="btn btn-primary" 
+                    style={{ width: '100%', minHeight: '38px', fontSize: '0.85rem', marginBottom: 0, justifyContent: 'flex-start' }}
+                    onClick={() => {
+                      switchWalletType('passkey');
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Circle Wallet (Passkey)
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* CIRCLE AUTH MODAL */}

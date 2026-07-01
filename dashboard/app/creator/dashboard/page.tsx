@@ -780,7 +780,7 @@ function CreatorDashboardInner() {
                         <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }} title={agent.wallet}>{agent.name}</span>
                       </div>
                       <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem' }}>
-                        {showBalances ? \`$\${agent.spent.toFixed(2)}\` : '$ ••••••'}
+                        {showBalances ? `$${agent.spent.toFixed(2)}` : '$ ••••••'}
                       </div>
                     </div>
                   ))

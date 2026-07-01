@@ -439,7 +439,7 @@ function CreatorDashboardInner() {
               <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--accent)', fontWeight: 800 }}>
                 {stats?.readCount || 0} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/</span> {stats?.citationCount || 0}
               </h3>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>Reads vs semantic citations</span>
+<span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>Reads vs semantic citations</span>
             </div>
           </div>
 
@@ -447,24 +447,28 @@ function CreatorDashboardInner() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem', alignItems: 'start' }}>
             
             {/* Left Column: Wallet & Settlement Hub */}
-            <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div>
-                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  💳 Settlement & Payout Hub
+                <h3 style={{ margin: '0 0 0.4rem 0', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-primary)' }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary)' }}>
+                    <rect x="2" y="5" width="20" height="14" rx="2" />
+                    <line x1="2" y1="10" x2="22" y2="10" />
+                  </svg>
+                  Settlement & Payout Hub
                 </h3>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                   Manage custodial storage and transfer rewards to your private address.
                 </p>
               </div>
 
               {/* Custodial Wallet address */}
-              <div style={{ background: 'rgba(0,0,0,0.15)', border: '1px solid var(--border)', borderRadius: '10px', padding: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '12px', padding: '1.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Custodial Storage Wallet</span>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--primary-light)', background: 'rgba(59,130,246,0.1)', padding: '2px 8px', borderRadius: '4px' }}>Arc L1</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--primary)', background: 'var(--primary-glow)', padding: '2px 8px', borderRadius: '4px', fontWeight: 600 }}>Arc L1</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <code style={{ flex: 1, fontSize: '0.75rem', background: 'rgba(0,0,0,0.25)', padding: '6px 10px', borderRadius: '6px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
+                  <code style={{ flex: 1, fontSize: '0.75rem', background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '8px 12px', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
                     {stats?.walletAddress}
                   </code>
                   <button
@@ -475,14 +479,24 @@ function CreatorDashboardInner() {
                       }
                     }}
                     style={{
-                      background: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '6px',
-                      padding: '6px 10px',
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
                       color: 'var(--text-secondary)',
                       cursor: 'pointer',
                       fontSize: '0.75rem',
-                      outline: 'none'
+                      outline: 'none',
+                      transition: 'all 0.2s',
+                      fontWeight: 600
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--primary)';
+                      e.currentTarget.style.color = 'var(--primary)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--border)';
+                      e.currentTarget.style.color = 'var(--text-secondary)';
                     }}
                   >
                     Copy
@@ -491,13 +505,13 @@ function CreatorDashboardInner() {
               </div>
 
               {/* Payout Destination */}
-              <div style={{ background: 'rgba(0,0,0,0.15)', border: '1px solid var(--border)', borderRadius: '10px', padding: '1rem' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
+              <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '12px', padding: '1.25rem' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '0.6rem' }}>
                   Payout Destination Address
                 </span>
                 {!isEditingPayout ? (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0,0,0,0.25)', padding: '6px 10px', borderRadius: '6px' }}>
-                    <code style={{ fontSize: '0.75rem', color: payoutAddress ? 'var(--accent)' : 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '8px 12px', borderRadius: '8px' }}>
+                    <code style={{ fontSize: '0.75rem', color: payoutAddress ? 'var(--primary)' : 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                       {payoutAddress ? `${payoutAddress.substring(0, 12)}...${payoutAddress.substring(payoutAddress.length - 10)}` : 'None specified'}
                     </code>
                     <button
@@ -506,14 +520,14 @@ function CreatorDashboardInner() {
                       style={{
                         background: 'transparent',
                         border: 'none',
-                        color: 'var(--primary-light)',
+                        color: 'var(--primary)',
                         cursor: 'pointer',
                         fontSize: '0.75rem',
-                        fontWeight: 600,
+                        fontWeight: 700,
                         padding: 0
                       }}
                     >
-                      ✏️ Edit
+                      Edit
                     </button>
                   </div>
                 ) : (
@@ -526,15 +540,18 @@ function CreatorDashboardInner() {
                       disabled={withdrawing}
                       style={{
                         flexGrow: 1,
-                        background: 'rgba(0,0,0,0.25)',
+                        background: 'var(--bg-card)',
                         border: '1px solid var(--border)',
-                        borderRadius: '6px',
-                        padding: '0.4rem 0.6rem',
+                        borderRadius: '8px',
+                        padding: '0.5rem 0.75rem',
                         fontSize: '0.8rem',
                         fontFamily: 'var(--font-mono)',
                         color: 'var(--text-primary)',
-                        outline: 'none'
+                        outline: 'none',
+                        transition: 'border-color 0.2s'
                       }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
+                      onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
                     />
                     <button
                       onClick={async () => {
@@ -546,7 +563,7 @@ function CreatorDashboardInner() {
                         setIsEditingPayout(false);
                       }}
                       className="btn btn-secondary"
-                      style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0 }}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, borderRadius: '8px' }}
                     >
                       Save
                     </button>
@@ -556,7 +573,7 @@ function CreatorDashboardInner() {
                         setIsEditingPayout(false);
                       }}
                       className="btn btn-secondary"
-                      style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, opacity: 0.7 }}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, opacity: 0.7, borderRadius: '8px' }}
                     >
                       Cancel
                     </button>
@@ -567,24 +584,25 @@ function CreatorDashboardInner() {
               {/* Secure / Bind Account Panel */}
               {connectedAddress && (!stats?.ownerAddress || stats.ownerAddress.toLowerCase() !== connectedAddress.toLowerCase()) && (
                 <div style={{ 
-                  padding: '0.85rem', 
-                  background: 'rgba(59, 130, 246, 0.05)', 
-                  border: '1px solid rgba(59, 130, 246, 0.15)', 
-                  borderRadius: '10px',
+                  padding: '1rem', 
+                  background: 'var(--primary-glow)', 
+                  border: '1px solid var(--border)', 
+                  borderRadius: '12px',
                   fontSize: '0.75rem',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '0.5rem'
                 }}>
-                  <div style={{ fontWeight: 600, color: 'var(--primary-light)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <span>🔗</span> Bind Ghost blog to connected wallet
+                  <div style={{ fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+                    Bind Ghost blog to connected wallet
                   </div>
                   <div style={{ color: 'var(--text-secondary)' }}>
                     Bind your blog account to enable passwordless wallet authentication and secure logins.
                   </div>
                   <button 
-                    className="btn btn-primary btn-sm"
-                    style={{ padding: '0.5rem', fontSize: '0.75rem', minHeight: 'auto', marginBottom: 0, width: '100%' }}
+                    className="btn btn-primary"
+                    style={{ padding: '0.6rem', fontSize: '0.8rem', minHeight: 'auto', marginBottom: 0, width: '100%', borderRadius: '8px' }}
                     onClick={handleBindWallet}
                     disabled={binding}
                   >
@@ -595,23 +613,24 @@ function CreatorDashboardInner() {
 
               {connectedAddress && stats?.ownerAddress && stats.ownerAddress.toLowerCase() === connectedAddress.toLowerCase() && (
                 <div style={{ 
-                  padding: '0.6rem 0.85rem', 
-                  background: 'rgba(16, 185, 129, 0.05)', 
-                  border: '1px solid rgba(16, 185, 129, 0.15)', 
-                  borderRadius: '10px', 
-                  fontSize: '0.75rem',
+                  padding: '0.75rem 1rem', 
+                  background: 'var(--success-glow)', 
+                  border: '1px solid rgba(46, 204, 138, 0.25)', 
+                  borderRadius: '12px', 
+                  fontSize: '0.8rem',
                   color: 'var(--success)',
-                  fontWeight: 500,
+                  fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.35rem'
+                  gap: '0.4rem'
                 }}>
-                  <span>✓</span> Blog Account Bound to Wallet
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  Blog Account Bound to Wallet
                 </div>
               )}
 
               {/* Withdraw Form block */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', borderTop: '1px solid var(--border)', paddingTop: '1.25rem' }}>
                 <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
                   Withdrawal Amount (USDC):
                 </label>
@@ -627,19 +646,22 @@ function CreatorDashboardInner() {
                     disabled={withdrawing}
                     style={{
                       flexGrow: 1,
-                      background: 'rgba(0,0,0,0.2)',
+                      background: 'var(--bg-card)',
                       border: '1px solid var(--border)',
                       borderRadius: '8px',
                       padding: '0.6rem 0.75rem',
                       fontSize: '0.9rem',
                       color: 'var(--text-primary)',
                       fontFamily: 'var(--font-mono)',
-                      outline: 'none'
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
                     }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
                   />
                   <button
                     className="btn btn-secondary"
-                    style={{ padding: '0.6rem 1rem', minWidth: 'auto', fontSize: '0.8rem', marginBottom: 0, borderRadius: '8px' }}
+                    style={{ padding: '0.6rem 1rem', minWidth: 'auto', fontSize: '0.8rem', marginBottom: 0, borderRadius: '8px', fontWeight: 700 }}
                     onClick={() => {
                       if (stats?.balanceUsdc) {
                         const maxAmount = Math.max(0, parseFloat((stats.balanceUsdc - 0.01).toFixed(6)));
@@ -658,19 +680,19 @@ function CreatorDashboardInner() {
                 )}
                 
                 {withdrawSuccess && (
-                  <div style={{ padding: '0.5rem 0.75rem', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
+                  <div style={{ padding: '0.5rem 0.75rem', background: 'var(--success-glow)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
                     {withdrawSuccess}
                   </div>
                 )}
                 {faucetSuccess && (
-                  <div style={{ padding: '0.5rem 0.75rem', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
+                  <div style={{ padding: '0.5rem 0.75rem', background: 'var(--success-glow)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
                     {faucetSuccess}
                   </div>
                 )}
 
                 <button 
                   className="btn btn-primary" 
-                  style={{ width: '100%', padding: '0.8rem', borderRadius: '50px', fontWeight: 'bold', marginTop: '0.5rem' }}
+                  style={{ width: '100%', padding: '0.9rem', borderRadius: '50px', fontWeight: 'bold', marginTop: '0.75rem', fontSize: '0.95rem' }}
                   onClick={handleWithdraw}
                   disabled={withdrawing || !withdrawAmount || parseFloat(withdrawAmount) <= 0 || !payoutAddress}
                   title={!payoutAddress ? "Please specify a destination wallet address to withdraw" : ""}

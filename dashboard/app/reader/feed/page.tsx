@@ -118,7 +118,7 @@ export default function ReaderFeed() {
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
           {error && (
-            <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid var(--error)', borderRadius: '8px', color: 'var(--error)' }}>
+            <div style={{ padding: '1rem', background: 'var(--bg-active)', border: '1px solid var(--primary)', borderRadius: '8px', color: 'var(--primary)' }}>
               ⚠️ {error}
             </div>
           )}
@@ -146,7 +146,7 @@ export default function ReaderFeed() {
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                         Purchased: {new Date(art.purchased_at).toLocaleDateString()}
                       </span>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600, background: 'rgba(245,166,35,0.1)', padding: '2px 8px', borderRadius: '10px' }}>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 600, background: 'var(--primary-glow)', padding: '2px 8px', borderRadius: '10px' }}>
                         Paid {art.price_usdc} USDC
                       </span>
                     </div>

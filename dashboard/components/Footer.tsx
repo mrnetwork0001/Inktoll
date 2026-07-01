@@ -4,6 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function Footer() {
+
+
   return (
     <footer style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', borderTop: '1px solid var(--border)', padding: '4rem 0', marginTop: 'auto' }}>
       <div className="container" style={{ margin: '0 auto' }}>
@@ -12,7 +14,7 @@ export default function Footer() {
           {/* Column 1: Brand */}
           <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-              <img src="/logo.png" alt="Inktoll Logo" style={{ height: '90px', objectFit: 'contain' }} />
+              <img src="/logo-dark.png" alt="Inktoll Logo" style={{ height: '90px', objectFit: 'contain' }} />
             </Link>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: '1.6', maxWidth: '300px', marginTop: '0.5rem' }}>
               Monetizing AI data consumption through instant USDC nanopayments and citation royalties.

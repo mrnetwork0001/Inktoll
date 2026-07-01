@@ -78,7 +78,7 @@ export default function LandingPage() {
           width: '500px',
           height: '500px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(79, 70, 229, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, var(--primary-glow) 0%, transparent 70%)',
           filter: 'blur(130px)',
           zIndex: -2,
           pointerEvents: 'none'
@@ -90,7 +90,7 @@ export default function LandingPage() {
           width: '600px',
           height: '600px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, var(--primary-glow) 0%, transparent 70%)',
           filter: 'blur(150px)',
           zIndex: -2,
           pointerEvents: 'none'
@@ -113,7 +113,7 @@ export default function LandingPage() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  background: 'rgba(79, 70, 229, 0.08)',
+                  background: 'var(--primary-glow)',
                   color: 'var(--primary)',
                   fontWeight: 600,
                   fontSize: '0.75rem',
@@ -121,7 +121,7 @@ export default function LandingPage() {
                   letterSpacing: '0.1em',
                   padding: '6px 14px',
                   borderRadius: '9999px',
-                  border: '1px solid rgba(79, 70, 229, 0.15)',
+                  border: '1px solid var(--primary-glow)',
                   marginBottom: '1.25rem'
                 }}>
                   <span className="status-dot pulsing" style={{ width: '6px', height: '6px' }}></span> Built for Lepton Agents Hackathon
@@ -136,7 +136,7 @@ export default function LandingPage() {
                 }}>
                   Monetize Content in the <br />
                   <span style={{ 
-                    background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%)', 
+                    background: 'var(--primary)', 
                     WebkitBackgroundClip: 'text', 
                     WebkitTextFillColor: 'transparent',
                     fontWeight: 800
@@ -164,12 +164,12 @@ export default function LandingPage() {
                 </div>
                 <span style={{ color: 'var(--text-muted)' }}>➔</span>
                 <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: 'var(--shadow-soft)' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent)' }}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary)' }}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
                   AI Agent Scan
                 </div>
                 <span style={{ color: 'var(--text-muted)' }}>➔</span>
                 <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: 'var(--shadow-soft)' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--success)' }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="6" x2="12" y2="18" /><path d="M17 9H12.5a3 3 0 1 0 0 6H17" /></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary)' }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="6" x2="12" y2="18" /><path d="M17 9H12.5a3 3 0 1 0 0 6H17" /></svg>
                   Instant USDC
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default function LandingPage() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'rotateX(4deg) rotateY(-6deg) rotateZ(1deg) translateY(-8px)';
-                  e.currentTarget.style.boxShadow = '0 25px 45px -10px rgba(79, 70, 229, 0.2)';
+                  e.currentTarget.style.boxShadow = '0 25px 45px -10px var(--primary-glow)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'rotateX(8deg) rotateY(-14deg) rotateZ(3deg)';
@@ -225,7 +225,7 @@ export default function LandingPage() {
                     <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>Live Payout Network</h4>
                     <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Circle Gateway Aggregation</span>
                   </div>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--success)', background: 'var(--success-glow)', padding: '4px 10px', borderRadius: '50px', fontWeight: 700 }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--primary)', background: 'var(--primary-glow)', padding: '4px 10px', borderRadius: '50px', fontWeight: 700 }}>
                     ACTIVE
                   </span>
                 </div>
@@ -255,7 +255,7 @@ export default function LandingPage() {
                       <span style={{ 
                         fontSize: '0.8rem', 
                         fontWeight: 700, 
-                        color: p.type === 'read' ? 'var(--primary)' : 'var(--accent)',
+                        color: p.type === 'read' ? 'var(--primary)' : 'var(--primary)',
                         fontFamily: 'var(--font-mono)' 
                       }}>
                         {p.amount}
@@ -274,9 +274,9 @@ export default function LandingPage() {
 
           {/* 2. ECOSYSTEM STATS GRID */}
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.75rem', marginTop: '-2rem' }}>
-            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--accent)' }}>
+            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Global USDC Volume</span>
-              <h3 style={{ fontSize: '2.25rem', margin: '0.5rem 0 0 0', color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+              <h3 style={{ fontSize: '2.25rem', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {loading ? '...' : `$${(stats?.totalVolumeUsdc || 0).toFixed(4)}`}
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Micro-settlements routed</span>
@@ -288,14 +288,14 @@ export default function LandingPage() {
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Feeds parsed by agent loop</span>
             </div>
-            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--success)' }}>
+            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Active Reader Agents</span>
-              <h3 style={{ fontSize: '2.25rem', margin: '0.5rem 0 0 0', color: 'var(--success)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+              <h3 style={{ fontSize: '2.25rem', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {loading ? '...' : (stats?.activeAgents || 0)}
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Self-governed crawlers active</span>
             </div>
-            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid #6366f1' }}>
+            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Settlement Layer</span>
               <h3 style={{ fontSize: '1.75rem', margin: '0.75rem 0 0 0', color: 'var(--text-primary)', fontWeight: 800 }}>
                 Arc Testnet
@@ -312,11 +312,11 @@ export default function LandingPage() {
             textAlign: 'center', 
             padding: '4rem 2rem', 
             gap: '1.5rem', 
-            border: '1px solid rgba(239,68,68,0.12)', 
-            background: 'linear-gradient(to bottom, rgba(239,68,68,0.03), transparent)',
+            border: '1px solid var(--bg-active)', 
+            background: 'var(--primary), transparent)',
             borderRadius: '24px'
           }}>
-            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(239,68,68,0.08)', padding: '1rem', borderRadius: '50%', color: 'rgba(239,68,68,0.8)' }}>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-active)', padding: '1rem', borderRadius: '50%', color: 'var(--bg-active)' }}>
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="2" x2="12" y2="22" /><line x1="5" y1="7" x2="19" y2="7" /><path d="M5 9c0 3 1.5 5 5 5s5-2 5-5M19 9c0 3-1.5 5-5 5s-5-2-5-5" /></svg>
             </span>
             <h2 style={{ fontSize: '2.25rem', margin: 0 }}>The Publisher vs. AI Crisis</h2>
@@ -328,7 +328,7 @@ export default function LandingPage() {
           {/* 4. LAYER 1: PAY-PER-READ */}
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ background: 'rgba(79,70,229,0.08)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
+              <div style={{ background: 'var(--primary-glow)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
               </div>
               <h2 style={{ fontSize: '2.25rem', margin: 0 }}>Layer 1: Pay-Per-Read</h2>
@@ -337,19 +337,19 @@ export default function LandingPage() {
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
-                  <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>✓</span> Settle micro-transactions as small as $0.001
+                  <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Settle micro-transactions as small as $0.001
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
-                  <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>✓</span> Gasless payouts settled dynamically on-chain
+                  <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Gasless payouts settled dynamically on-chain
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
-                  <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>✓</span> No user subscription boundaries
+                  <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> No user subscription boundaries
                 </div>
               </div>
             </div>
             <div className="glass-card" style={{ padding: '3rem', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '1.25rem', textAlign: 'center', borderRadius: '24px' }}>
               <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)' }}>Ledger Event</span>
-              <div style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--success)', fontFamily: 'var(--font-mono)' }}>+ $0.005 USDC</div>
+              <div style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--primary)', fontFamily: 'var(--font-mono)' }}>+ $0.005 USDC</div>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
                 Agent <strong>"FinanceEvaluator"</strong> unlocked access to article: <br />
                 <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>"The Future of AI Settlement Nodes"</span>
@@ -359,7 +359,7 @@ export default function LandingPage() {
 
           {/* 5. LAYER 2: CITATION TOLLS */}
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}>
-            <div className="glass-card" style={{ padding: '2.5rem', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '1.25rem', borderRadius: '24px', border: '1px solid rgba(124, 58, 237, 0.2)' }}>
+            <div className="glass-card" style={{ padding: '2.5rem', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '1.25rem', borderRadius: '24px', border: '1px solid var(--primary-glow)' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Semantic Output</div>
               <p style={{ fontStyle: 'italic', color: 'var(--text-primary)', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>
                 "As analyzed in recent decentralization literature, content monetization models must shift from monthly aggregates to sub-cent queries..."
@@ -367,12 +367,12 @@ export default function LandingPage() {
               <hr style={{ border: 'none', borderBottom: '1px solid var(--border)' }} />
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Citation Toll Routed:</span>
-                <span style={{ color: 'var(--accent)', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>+ $0.0001 USDC</span>
+                <span style={{ color: 'var(--primary)', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>+ $0.0001 USDC</span>
               </div>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ background: 'rgba(124,58,237,0.08)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--accent)', boxShadow: 'var(--shadow-soft)' }}>
+              <div style={{ background: 'var(--primary-glow)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
               </div>
               <h2 style={{ fontSize: '2.25rem', margin: 0 }}>Layer 2: Citation Tolls</h2>
@@ -381,13 +381,13 @@ export default function LandingPage() {
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
-                  <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>✓</span> Earn perpetual royalties on LLM references
+                  <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Earn perpetual royalties on LLM references
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
-                  <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>✓</span> Automated, immutable citation audit trail
+                  <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Automated, immutable citation audit trail
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
-                  <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>✓</span> Incentivizes detailed quantitative research
+                  <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Incentivizes detailed quantitative research
                 </div>
               </div>
             </div>
@@ -396,7 +396,7 @@ export default function LandingPage() {
           {/* 6. FOR READERS: AUTONOMOUS BUDGETS */}
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ background: 'rgba(59,130,246,0.08)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
+              <div style={{ background: 'var(--primary-glow)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
               </div>
               <h2 style={{ fontSize: '2.25rem', margin: 0 }}>Autonomous Budgets</h2>
@@ -422,7 +422,7 @@ export default function LandingPage() {
                 <span style={{ fontWeight: 800, fontSize: '1.25rem', fontFamily: 'var(--font-mono)', color: 'var(--primary)' }}>$1.00 USDC</span>
               </div>
               <div style={{ height: '10px', background: 'var(--bg-primary)', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                <div style={{ height: '100%', width: '45%', background: 'linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%)' }}></div>
+                <div style={{ height: '100%', width: '45%', background: 'var(--primary)' }}></div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                 <span>$0.45 Spent (90 Articles)</span>

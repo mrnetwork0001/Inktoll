@@ -160,25 +160,25 @@ export default function ReaderAsk() {
                       />
                       <div style={{ 
                         padding: '0.75rem', 
-                        background: 'rgba(245, 166, 35, 0.08)', 
-                        border: '1px solid rgba(245, 166, 35, 0.25)', 
+                        background: 'var(--primary-glow)', 
+                        border: '1px solid var(--primary-glow)', 
                         borderRadius: '8px',
                         fontSize: '0.85rem' 
                       }}>
-                        <div style={{ fontWeight: 700, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.5rem' }}>
+                        <div style={{ fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.5rem' }}>
                           <span>⚜️</span> CITATION TOLLS TRANSACTION DETAILS
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           {msg.citations.map((cit: any, index: number) => {
                             const payment = msg.payments?.find(p => p.title === cit.title);
                             return (
-                              <div key={index} style={{ borderBottom: index < msg.citations!.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: '0.25rem' }}>
-                                <div style={{ fontWeight: 600, color: '#fff' }}>
+                              <div key={index} style={{ borderBottom: index < msg.citations!.length - 1 ? '1px solid var(--border)' : 'none', paddingBottom: '0.25rem' }}>
+                                <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                                   Source: "{cit.title}"
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
                                   <span>Similarity Score: {(cit.similarity * 100).toFixed(1)}%</span>
-                                  <span style={{ color: 'var(--accent)', fontWeight: 600 }}>Toll Paid: +$0.0001 USDC</span>
+                                  <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Toll Paid: +$0.0001 USDC</span>
                                 </div>
                                 {payment?.success && (
                                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginTop: '0.15rem' }}>

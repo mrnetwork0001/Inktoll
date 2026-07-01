@@ -122,7 +122,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
             padding: '2rem',
             borderRadius: '20px',
             border: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(15, 23, 42, 0.85)',
+            background: 'var(--bg-card)',
             display: 'flex',
             flexDirection: 'column',
             gap: '1.5rem',
@@ -170,7 +170,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
             padding: '2rem',
             borderRadius: '20px',
             border: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(15, 23, 42, 0.85)',
+            background: 'var(--bg-card)',
             display: 'flex',
             flexDirection: 'column',
             gap: '1.5rem',
@@ -193,8 +193,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
                 width: '100%',
                 padding: '0.9rem 1.25rem',
                 borderRadius: '12px',
-                background: 'rgba(30, 41, 59, 0.6)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border)',
                 color: 'var(--text-primary)',
                 fontSize: '1rem',
                 outline: 'none',
@@ -202,7 +202,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
                 transition: 'all 0.2s ease-in-out'
               }}
               onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
-              onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handlePromptSubmit();
                 if (e.key === 'Escape') handlePromptCancel();
@@ -216,7 +216,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
                   padding: '0.7rem 1.8rem',
                   borderRadius: '50px',
                   background: 'transparent',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: '1px solid var(--border)',
                   color: 'var(--text-secondary)',
                   fontWeight: 'bold',
                   cursor: 'pointer'
@@ -253,18 +253,18 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
             style={{
               padding: '1rem 1.5rem',
               borderRadius: '12px',
-              background: 'rgba(15, 23, 42, 0.9)',
+              background: 'var(--bg-card)',
               backdropFilter: 'blur(16px)',
               borderLeft: `4px solid ${
                 toast.type === 'success'
-                  ? 'var(--success)'
+                  ? 'var(--primary)'
                   : toast.type === 'error'
-                  ? 'var(--error)'
-                  : 'var(--accent)'
+                  ? 'var(--primary)'
+                  : 'var(--primary)'
               }`,
-              borderTop: '1px solid rgba(255,255,255,0.06)',
-              borderRight: '1px solid rgba(255,255,255,0.06)',
-              borderBottom: '1px solid rgba(255,255,255,0.06)',
+              borderTop: '1px solid var(--border)',
+              borderRight: '1px solid var(--border)',
+              borderBottom: '1px solid var(--border)',
               color: 'var(--text-primary)',
               fontSize: '0.95rem',
               boxShadow: '0 20px 25px -5px rgba(0,0,0,0.5)',

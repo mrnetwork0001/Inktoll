@@ -349,7 +349,7 @@ function CreatorDashboardInner() {
       <main style={{ padding: '3rem 0' }}>
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                  {error && (
-            <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid var(--error)', borderRadius: '8px', color: 'var(--error)' }}>
+            <div style={{ padding: '1rem', background: 'var(--bg-active)', border: '1px solid var(--primary)', borderRadius: '8px', color: 'var(--primary)' }}>
               ⚠️ {error}
             </div>
           )}
@@ -401,12 +401,12 @@ function CreatorDashboardInner() {
           {/* Top Row KPI Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
             {/* 1. All-Time Accumulated Earnings */}
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid #eab308' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 All-Time Earnings
                 <span title="Cumulative USDC earned by your blog from purchases and citation tolls. This number only goes up." style={{ cursor: 'help', opacity: 0.6 }}>ℹ</span>
               </span>
-              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: '#eab308', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {showBalances ? `$${animatedEarnings.toFixed(6)}` : '$ ••••••'}
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>Ticking live via reader agents</span>
@@ -425,18 +425,18 @@ function CreatorDashboardInner() {
             </div>
 
             {/* 3. Monetized Content */}
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--success)' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Monetized Articles</span>
-              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--success)', fontWeight: 800 }}>
+              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontWeight: 800 }}>
                 {stats?.articles?.length || 0}
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>Indexed from Ghost RSS feed</span>
             </div>
 
             {/* 4. Total Reads & Citations */}
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--accent)' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Reads & Citations</span>
-              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--accent)', fontWeight: 800 }}>
+              <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontWeight: 800 }}>
                 {stats?.readCount || 0} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/</span> {stats?.citationCount || 0}
               </h3>
 <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>Reads vs semantic citations</span>
@@ -614,11 +614,11 @@ function CreatorDashboardInner() {
               {connectedAddress && stats?.ownerAddress && stats.ownerAddress.toLowerCase() === connectedAddress.toLowerCase() && (
                 <div style={{ 
                   padding: '0.75rem 1rem', 
-                  background: 'var(--success-glow)', 
+                  background: 'var(--primary-glow)', 
                   border: '1px solid rgba(46, 204, 138, 0.25)', 
                   borderRadius: '12px', 
                   fontSize: '0.8rem',
-                  color: 'var(--success)',
+                  color: 'var(--primary)',
                   fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
@@ -680,12 +680,12 @@ function CreatorDashboardInner() {
                 )}
                 
                 {withdrawSuccess && (
-                  <div style={{ padding: '0.5rem 0.75rem', background: 'var(--success-glow)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
+                  <div style={{ padding: '0.5rem 0.75rem', background: 'var(--primary-glow)', border: '1px solid var(--primary)', borderRadius: '6px', color: 'var(--primary)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
                     {withdrawSuccess}
                   </div>
                 )}
                 {faucetSuccess && (
-                  <div style={{ padding: '0.5rem 0.75rem', background: 'var(--success-glow)', border: '1px solid var(--success)', borderRadius: '6px', color: 'var(--success)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
+                  <div style={{ padding: '0.5rem 0.75rem', background: 'var(--primary-glow)', border: '1px solid var(--primary)', borderRadius: '6px', color: 'var(--primary)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
                     {faucetSuccess}
                   </div>
                 )}
@@ -734,10 +734,10 @@ function CreatorDashboardInner() {
                           <td style={{ padding: '1rem 0.5rem', textAlign: 'center' }}>
                             <span style={{ display: 'inline-flex', gap: '0.25rem', alignItems: 'center' }}>
                               {art.citations}
-                              {art.citations > 0 && <span style={{ fontSize: '0.7rem', background: 'rgba(245,166,35,0.15)', color: 'var(--accent)', padding: '2px 6px', borderRadius: '10px', fontWeight: 600 }}>Toll Active</span>}
+                              {art.citations > 0 && <span style={{ fontSize: '0.7rem', background: 'var(--primary-glow)', color: 'var(--primary)', padding: '2px 6px', borderRadius: '10px', fontWeight: 600 }}>Toll Active</span>}
                             </span>
                           </td>
-                          <td style={{ padding: '1rem 0.5rem', textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
+                          <td style={{ padding: '1rem 0.5rem', textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--primary)' }}>
                             {showBalances ? `$${art.revenue.toFixed(4)}` : '$ ••••••'}
                           </td>
                         </tr>
@@ -781,13 +781,13 @@ function CreatorDashboardInner() {
                             padding: '2px 8px', 
                             borderRadius: '12px', 
                             fontWeight: 600,
-                            background: tx.payment_type === 'read' ? 'rgba(0,115,195,0.15)' : 'rgba(245,166,35,0.15)',
-                            color: tx.payment_type === 'read' ? 'var(--primary-light)' : 'var(--accent)'
+                            background: tx.payment_type === 'read' ? 'rgba(0,115,195,0.15)' : 'var(--primary-glow)',
+                            color: tx.payment_type === 'read' ? 'var(--primary-light)' : 'var(--primary)'
                           }}>
                             {tx.payment_type === 'read' ? '📚 Pay-Per-Read' : '⚜️ Citation Toll'}
                           </span>
                         </td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: tx.payment_type === 'read' ? '#fff' : 'var(--accent)' }}>
+                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: tx.payment_type === 'read' ? '#fff' : 'var(--primary)' }}>
                           {showBalances ? `$${tx.amount_usdc}` : '$ ••••••'}
                         </td>
                         <td>
@@ -872,8 +872,8 @@ function CreatorDashboardInner() {
               maxWidth: '520px',
               padding: '2.5rem 2rem 2rem 2rem',
               borderRadius: '20px',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              background: 'rgba(15, 23, 42, 0.95)',
+              border: '1px solid var(--border)',
+              background: 'var(--bg-card)',
               display: 'flex',
               flexDirection: 'column',
               gap: '1.5rem',
@@ -907,16 +907,16 @@ function CreatorDashboardInner() {
                 </p>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', background: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', background: 'var(--bg-secondary)', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Payment Type:</span>
-                  <span style={{ fontWeight: 600, color: selectedReceipt.payment_type === 'read' ? 'var(--primary-light)' : 'var(--accent)' }}>
+                  <span style={{ fontWeight: 600, color: selectedReceipt.payment_type === 'read' ? 'var(--primary-light)' : 'var(--primary)' }}>
                     {selectedReceipt.payment_type === 'read' ? '📚 Pay-Per-Read' : '⚜️ Citation Toll'}
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Amount:</span>
-                  <span style={{ fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
+                  <span style={{ fontWeight: 700, color: 'var(--primary)', fontFamily: 'var(--font-mono)' }}>
                     {showBalances ? `$${parseFloat(selectedReceipt.amount_usdc).toFixed(4)}` : '$ ••••••'}
                   </span>
                 </div>
@@ -928,20 +928,20 @@ function CreatorDashboardInner() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Payer Agent:</span>
-                  <code style={{ background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
+                  <code style={{ background: 'var(--bg-active)', color: 'var(--text-primary)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
                     {selectedReceipt.reader_agent_id || '0x44978b7f924c0c6bed1E2acCa887338Dc47C4539'}
                   </code>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Recipient Creator:</span>
-                  <code style={{ background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
+                  <code style={{ background: 'var(--bg-active)', color: 'var(--text-primary)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
                     {stats?.walletAddress || '0xcd0a2370f2dc12c1802707b7d9ab3fec891e3c02'}
                   </code>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Circle Transfer ID (UUID):</span>
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <code style={{ flex: 1, background: 'rgba(0,0,0,0.3)', padding: '6px 10px', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--accent)', wordBreak: 'break-all', fontFamily: 'var(--font-mono)' }}>
+                    <code style={{ flex: 1, background: 'var(--bg-active)', padding: '6px 10px', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--primary)', wordBreak: 'break-all', fontFamily: 'var(--font-mono)' }}>
                       {selectedReceipt.tx_hash}
                     </code>
                     <button 
@@ -951,8 +951,8 @@ function CreatorDashboardInner() {
                       }}
                       title="Copy Transfer ID"
                       style={{
-                        background: 'rgba(255,255,255,0.05)',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: 'var(--bg-card)',
+                        border: '1px solid var(--border)',
                         borderRadius: '6px',
                         padding: '6px 10px',
                         color: 'var(--text-secondary)',
@@ -991,7 +991,7 @@ function CreatorDashboardInner() {
                     padding: '0.8rem',
                     borderRadius: '50px',
                     background: 'transparent',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    border: '1px solid var(--border)',
                     color: 'var(--text-secondary)',
                     fontWeight: 'bold',
                     cursor: 'pointer'
@@ -1009,7 +1009,7 @@ function CreatorDashboardInner() {
                     borderRadius: '50px',
                     background: 'var(--primary)',
                     border: 'none',
-                    color: '#000',
+                    color: '#fff',
                     fontWeight: 'bold',
                     textAlign: 'center',
                     textDecoration: 'none',

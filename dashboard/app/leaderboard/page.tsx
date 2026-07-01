@@ -131,16 +131,16 @@ export default function Leaderboard() {
           </div>
 
           {error && (
-            <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid var(--error)', borderRadius: '8px', color: 'var(--error)' }}>
+            <div style={{ padding: '1rem', background: 'var(--bg-active)', border: '1px solid var(--primary)', borderRadius: '8px', color: 'var(--primary)' }}>
               ⚠️ {error}
             </div>
           )}
 
           {/* Global KPI Stats Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--accent)' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Global USDC Circulated</span>
-              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--accent)' }}>
+              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--primary)' }}>
                 {loading ? '...' : (showBalances ? `$${(stats?.totalVolumeUsdc || 0).toFixed(4)}` : '$ ••••••')}
               </h3>
             </div>
@@ -150,15 +150,15 @@ export default function Leaderboard() {
                 {loading ? '...' : (stats?.totalArticles || 0)}
               </h3>
             </div>
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--success)' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Active Reader Agents</span>
-              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--success)' }}>
+              <h3 style={{ fontSize: '2rem', margin: '0.5rem 0 0 0', color: 'var(--primary)' }}>
                 {loading ? '...' : (stats?.activeAgents || 0)}
               </h3>
             </div>
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid #3b82f6' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Settlement Network</span>
-              <h3 style={{ fontSize: '1.5rem', margin: '0.55rem 0 0 0', color: '#3b82f6', fontWeight: 600 }}>
+              <h3 style={{ fontSize: '1.5rem', margin: '0.55rem 0 0 0', color: 'var(--primary)', fontWeight: 600 }}>
                 Arc Testnet
               </h3>
             </div>
@@ -227,7 +227,7 @@ export default function Leaderboard() {
                             <td style={{ padding: '1rem 0.5rem', textAlign: 'center' }}>
                               {c.citations_count}
                             </td>
-                            <td style={{ padding: '1rem 0.5rem', textAlign: 'right', fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
+                            <td style={{ padding: '1rem 0.5rem', textAlign: 'right', fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--primary)' }}>
                               {showBalances ? `$${c.total_earnings.toFixed(4)}` : '$ ••••••'}
                             </td>
                           </tr>
@@ -242,7 +242,7 @@ export default function Leaderboard() {
             {/* Right Column: Live Economy Feed */}
             <div className="glass-card" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span className="status-dot pulsing" style={{ width: '8px', height: '8px', background: 'var(--success)' }}></span>
+                <span className="status-dot pulsing" style={{ width: '8px', height: '8px', background: 'var(--primary)' }}></span>
                 Live Activity Feed
               </h2>
               {loading ? (
@@ -299,8 +299,8 @@ export default function Leaderboard() {
                             fontSize: '0.7rem', 
                             padding: '1px 6px', 
                             borderRadius: '4px', 
-                            background: act.payment_type === 'read' ? 'rgba(0,115,195,0.1)' : 'rgba(245,166,35,0.1)',
-                            color: act.payment_type === 'read' ? 'var(--primary-light)' : 'var(--accent)'
+                            background: act.payment_type === 'read' ? 'rgba(0,115,195,0.1)' : 'var(--primary-glow)',
+                            color: act.payment_type === 'read' ? 'var(--primary-light)' : 'var(--primary)'
                           }}>
                             {act.payment_type === 'read' ? 'Read Fee' : 'Citation Toll'}
                           </span>
@@ -310,7 +310,7 @@ export default function Leaderboard() {
                           Reader Agent <code style={{ fontSize: '0.75rem', background: 'rgba(0,0,0,0.15)', padding: '1px 3px', borderRadius: '3px' }}>
                             {act.reader_agent_id.substring(0, 6)}...{act.reader_agent_id.substring(act.reader_agent_id.length - 4)}
                           </code> paid{' '}
-                          <strong style={{ color: 'var(--accent)' }}>
+                          <strong style={{ color: 'var(--primary)' }}>
                             {showBalances ? `$${act.amount_usdc.toFixed(4)}` : '$ ••••••'}
                           </strong>{' '}
                           to <strong style={{ color: 'var(--primary-light)' }}>{blogDomain}</strong>
@@ -354,8 +354,8 @@ export default function Leaderboard() {
                 maxWidth: '520px',
                 padding: '2.5rem 2rem 2rem 2rem',
                 borderRadius: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                background: 'rgba(15, 23, 42, 0.95)',
+                border: '1px solid var(--border)',
+                background: 'var(--bg-card)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '1.5rem',
@@ -389,16 +389,16 @@ export default function Leaderboard() {
                   </p>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', background: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', background: 'var(--bg-secondary)', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Payment Type:</span>
-                    <span style={{ fontWeight: 600, color: selectedReceipt.payment_type === 'read' ? 'var(--primary-light)' : 'var(--accent)' }}>
+                    <span style={{ fontWeight: 600, color: selectedReceipt.payment_type === 'read' ? 'var(--primary-light)' : 'var(--primary)' }}>
                       {selectedReceipt.payment_type === 'read' ? '📚 Pay-Per-Read Fee' : '⚜️ Citation Toll'}
                     </span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Amount:</span>
-                    <span style={{ fontWeight: 700, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
+                    <span style={{ fontWeight: 700, color: 'var(--primary)', fontFamily: 'var(--font-mono)' }}>
                       {showBalances ? `$${parseFloat(selectedReceipt.amount_usdc).toFixed(4)}` : '$ ••••••'}
                     </span>
                   </div>
@@ -410,20 +410,20 @@ export default function Leaderboard() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Payer Agent Address:</span>
-                    <code style={{ background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
+                    <code style={{ background: 'var(--bg-active)', color: 'var(--text-primary)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
                       {selectedReceipt.reader_agent_id || '0x44978b7f924c0c6bed1E2acCa887338Dc47C4539'}
                     </code>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Recipient Creator ({blogDomain}):</span>
-                    <code style={{ background: 'rgba(0,0,0,0.3)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
+                    <code style={{ background: 'var(--bg-active)', color: 'var(--text-primary)', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', wordBreak: 'break-all' }}>
                       {recipientAddress || '0xcd0a2370f2dc12c1802707b7d9ab3fec891e3c02'}
                     </code>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', fontSize: '0.85rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Circle Transfer ID (UUID):</span>
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                      <code style={{ flex: 1, background: 'rgba(0,0,0,0.3)', padding: '6px 10px', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--accent)', wordBreak: 'break-all', fontFamily: 'var(--font-mono)' }}>
+                      <code style={{ flex: 1, background: 'var(--bg-active)', padding: '6px 10px', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--primary)', wordBreak: 'break-all', fontFamily: 'var(--font-mono)' }}>
                         {selectedReceipt.tx_hash}
                       </code>
                       <button 
@@ -433,8 +433,8 @@ export default function Leaderboard() {
                         }}
                         title="Copy Transfer ID"
                         style={{
-                          background: 'rgba(255,255,255,0.05)',
-                          border: '1px solid rgba(255,255,255,0.1)',
+                          background: 'var(--bg-card)',
+                          border: '1px solid var(--border)',
                           borderRadius: '6px',
                           padding: '6px 10px',
                           color: 'var(--text-secondary)',
@@ -473,7 +473,7 @@ export default function Leaderboard() {
                       padding: '0.8rem',
                       borderRadius: '50px',
                       background: 'transparent',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      border: '1px solid var(--border)',
                       color: 'var(--text-secondary)',
                       fontWeight: 'bold',
                       cursor: 'pointer'
@@ -491,7 +491,7 @@ export default function Leaderboard() {
                       borderRadius: '50px',
                       background: 'var(--primary)',
                       border: 'none',
-                      color: '#000',
+                      color: '#fff',
                       fontWeight: 'bold',
                       textAlign: 'center',
                       textDecoration: 'none',

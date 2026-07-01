@@ -36,20 +36,7 @@ export default function Header() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // Theme States
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  useEffect(() => {
-    const currentTheme = (localStorage.getItem('inktoll_theme') as 'light' | 'dark') || 'light';
-    setTheme(currentTheme);
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    localStorage.setItem('inktoll_theme', newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
-  };
 
   // Email OTP States
   const sdkRef = React.useRef<W3SSdk | null>(null);
@@ -340,41 +327,11 @@ export default function Header() {
     <header className="header">
       <div className="container header-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/" className="logo-section" style={{ textDecoration: 'none' }}>
-          <img src="/logo.png" alt="Inktoll Logo" style={{ height: '80px', objectFit: 'contain' }} />
+          <img src="/logo-dark.png" alt="Inktoll Logo" style={{ height: '80px', objectFit: 'contain' }} />
         </Link>
         
         {/* Desktop Navigation Group */}
         <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
-            style={{
-              background: 'var(--bg-active)',
-              border: '1px solid var(--border)',
-              cursor: 'pointer',
-              fontSize: '1.2rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              transition: 'all 0.2s',
-              color: 'var(--text-primary)',
-              outline: 'none'
-            }}
-            title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = 'var(--primary)';
-              e.currentTarget.style.transform = 'scale(1.05)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'var(--border)';
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
-          >
-            {theme === 'light' ? '🌙' : '☀️'}
-          </button>
           {pathname !== '/' && (
             <nav>
               <ul className="nav-links" style={{ marginBottom: 0 }}>
@@ -443,7 +400,7 @@ export default function Header() {
                     width: '8px', 
                     height: '8px', 
                     borderRadius: '50%', 
-                    background: walletType === 'metamask' ? '#f5a623' : '#10b981'
+                    background: 'var(--primary)'
                   }}></span>
                   {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
                   <span style={{ fontSize: '0.7rem' }}>▼</span>
@@ -487,7 +444,7 @@ export default function Header() {
                       style={{ 
                         textAlign: 'left', 
                         background: walletType === 'metamask' ? 'var(--bg-active)' : 'transparent',
-                        color: walletType === 'metamask' ? 'var(--accent)' : 'var(--text-primary)',
+                        color: walletType === 'metamask' ? 'var(--primary)' : 'var(--text-primary)',
                         border: 'none', 
                         padding: '0.4rem 0.6rem', 
                         cursor: 'pointer',
@@ -502,7 +459,7 @@ export default function Header() {
                       style={{ 
                         textAlign: 'left', 
                         background: walletType === 'passkey' ? 'var(--bg-active)' : 'transparent',
-                        color: walletType === 'passkey' ? 'var(--success)' : 'var(--text-primary)',
+                        color: walletType === 'passkey' ? 'var(--primary)' : 'var(--text-primary)',
                         border: 'none', 
                         padding: '0.4rem 0.6rem', 
                         cursor: 'pointer',
@@ -593,29 +550,6 @@ export default function Header() {
 
             <hr style={{ border: 'none', borderBottom: '1px solid var(--border)', margin: '0.5rem 0' }} />
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 0.75rem' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Theme Mode</span>
-              <button
-                onClick={toggleTheme}
-                style={{
-                  background: 'var(--bg-active)',
-                  border: '1px solid var(--border)',
-                  cursor: 'pointer',
-                  borderRadius: '50%',
-                  width: '36px',
-                  height: '36px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  outline: 'none'
-                }}
-              >
-                {theme === 'light' ? '🌙' : '☀️'}
-              </button>
-            </div>
-
-            <hr style={{ border: 'none', borderBottom: '1px solid var(--border)', margin: '0.5rem 0' }} />
-
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.25rem 0.75rem' }}>
               {walletAddress ? (
                 <>
@@ -624,7 +558,7 @@ export default function Header() {
                       width: '8px', 
                       height: '8px', 
                       borderRadius: '50%', 
-                      background: walletType === 'metamask' ? '#f5a623' : '#10b981'
+                      background: 'var(--primary)'
                     }}></span>
                     Connected: {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)} ({walletType})
                   </div>
@@ -758,10 +692,10 @@ export default function Header() {
                     textAlign: 'left',
                     transition: 'all 0.2s ease',
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.borderColor = '#3b82f6'}
+                  onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
                   onMouseOut={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
                 >
-                  <div style={{ marginRight: '1rem', color: '#3b82f6', background: '#eff6ff', padding: '0.6rem', borderRadius: '8px' }}>
+                  <div style={{ marginRight: '1rem', color: 'var(--primary)', background: '#eff6ff', padding: '0.6rem', borderRadius: '8px' }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
                       <path d="M2 4l10 8 10-8"></path>
@@ -792,10 +726,10 @@ export default function Header() {
                     textAlign: 'left',
                     transition: 'all 0.2s ease',
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.borderColor = '#3b82f6'}
+                  onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
                   onMouseOut={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
                 >
-                  <div style={{ marginRight: '1rem', color: '#3b82f6', background: '#eff6ff', padding: '0.6rem', borderRadius: '8px' }}>
+                  <div style={{ marginRight: '1rem', color: 'var(--primary)', background: '#eff6ff', padding: '0.6rem', borderRadius: '8px' }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                     </svg>
@@ -826,12 +760,12 @@ export default function Header() {
                     boxSizing: 'border-box'
                   }}
                 />
-                {emailStatus && <div style={{ fontSize: '0.8rem', color: '#ef4444' }}>{emailStatus}</div>}
+                {emailStatus && <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>{emailStatus}</div>}
                 <button 
                   onClick={handleRequestOtp}
                   style={{
                     padding: '0.75rem',
-                    background: '#3b82f6',
+                    background: 'var(--primary)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '8px',
@@ -851,12 +785,12 @@ export default function Header() {
             {authStep === 'otp_input' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'center' }}>
                 <p style={{ fontSize: '0.9rem', color: '#4b5563' }}>We sent an email to <b>{email}</b>. Please click Verify to enter the code.</p>
-                {emailStatus && <div style={{ fontSize: '0.8rem', color: '#ef4444' }}>{emailStatus}</div>}
+                {emailStatus && <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>{emailStatus}</div>}
                 <button 
                   onClick={handleVerifyOtp}
                   style={{
                     padding: '0.75rem',
-                    background: '#10b981',
+                    background: 'var(--primary)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '8px',
@@ -871,7 +805,7 @@ export default function Header() {
 
             {/* Creating Step */}
             {authStep === 'creating' && (
-              <div style={{ textAlign: 'center', padding: '2rem 0', color: '#3b82f6' }}>
+              <div style={{ textAlign: 'center', padding: '2rem 0', color: 'var(--primary)' }}>
                 <p>{emailStatus}</p>
                 <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
                   <svg className="animate-spin" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

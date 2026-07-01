@@ -60,10 +60,10 @@ export default function PasskeyConnector({ onSuccess }: PasskeyConnectorProps) {
   return (
     <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success)' }}>
+        <h4 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)' }}>
           <span>⚜️</span> Circle Modular Passkey Smart Account
         </h4>
-        <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--success)', padding: '2px 8px', borderRadius: '10px', fontWeight: 600 }}>
+        <span style={{ fontSize: '0.75rem', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '10px', fontWeight: 600 }}>
           ERC-6900 Gasless
         </span>
       </div>
@@ -96,7 +96,7 @@ export default function PasskeyConnector({ onSuccess }: PasskeyConnectorProps) {
 
       {step === 'biometric' && (
         <div style={{ textAlign: 'center', padding: '1.5rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
-          <div className="status-dot pulsing" style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(16,185,129,0.2)', border: '2px solid var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', boxShadow: '0 0 15px var(--success-glow)' }}>
+          <div className="status-dot pulsing" style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(16,185,129,0.2)', border: '2px solid var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', boxShadow: '0 0 15px var(--primary-glow)' }}>
             🔑
           </div>
           <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>Verify Biometrics</div>

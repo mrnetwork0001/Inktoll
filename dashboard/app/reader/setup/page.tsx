@@ -334,7 +334,7 @@ export default function ReaderSetup() {
       <main style={{ padding: '3rem 0' }}>
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {error && (
-            <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid var(--error)', borderRadius: '8px', color: 'var(--error)' }}>
+            <div style={{ padding: '1rem', background: 'var(--bg-active)', border: '1px solid var(--primary)', borderRadius: '8px', color: 'var(--primary)' }}>
               Error: {error}
             </div>
           )}
@@ -346,7 +346,7 @@ export default function ReaderSetup() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h3>AI Reader Agent</h3>
-                  <span style={{ fontSize: '0.8rem', display: 'inline-flex', gap: '0.4rem', alignItems: 'center', background: 'var(--success-glow)', color: 'var(--success)', padding: '4px 10px', borderRadius: '12px', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.8rem', display: 'inline-flex', gap: '0.4rem', alignItems: 'center', background: 'var(--primary-glow)', color: 'var(--primary)', padding: '4px 10px', borderRadius: '12px', fontWeight: 600 }}>
                     <span className="status-dot pulsing"></span> Active
                   </span>
                 </div>
@@ -584,8 +584,8 @@ export default function ReaderSetup() {
                     borderRadius: '8px', 
                     border: '1px solid var(--border)', 
                     cursor: 'pointer',
-                    background: custodyType === 'passkey' ? 'var(--success-glow)' : 'transparent',
-                    borderColor: custodyType === 'passkey' ? 'var(--success)' : 'var(--border)'
+                    background: custodyType === 'passkey' ? 'var(--primary-glow)' : 'transparent',
+                    borderColor: custodyType === 'passkey' ? 'var(--primary)' : 'var(--border)'
                   }}>
                     <input 
                       type="radio" 
@@ -613,7 +613,7 @@ export default function ReaderSetup() {
 
               {/* Show MetaMask Connect helper if browser wallet selected but none connected */}
               {custodyType === 'metamask' && !connectedAddress && (
-                <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', border: '1px solid var(--accent)' }}>
+                <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', border: '1px solid var(--primary)' }}>
                   <h4 style={{ margin: 0 }}>🦊 MetaMask Required</h4>
                   <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                     Please click "Connect Wallet" at the top right header to link your MetaMask or EVM account.
@@ -656,15 +656,15 @@ export default function ReaderSetup() {
                     text = logStr.replace('[Client]', '').trim();
                   } else if (logStr.startsWith('[ERROR]')) {
                     type = 'error';
-                    color = 'var(--error)';
+                    color = 'var(--primary)';
                     text = logStr.replace('[ERROR]', '').trim();
                   } else if (logStr.includes('Evaluating article:')) {
                     type = 'eval';
-                    color = '#a5b4fc';
+                    color = 'var(--text-primary)';
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.includes('Decision: BUY')) {
                     type = 'buy';
-                    color = 'var(--accent)';
+                    color = 'var(--primary)';
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.includes('Decision: SKIP')) {
                     type = 'skip';
@@ -672,11 +672,11 @@ export default function ReaderSetup() {
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.includes('Payment Succeeded!')) {
                     type = 'success';
-                    color = 'var(--success)';
+                    color = 'var(--primary)';
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.includes('Summary compiled:')) {
                     type = 'summary';
-                    color = '#34d399';
+                    color = 'var(--primary)';
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.startsWith('[Agent Run]')) {
                     type = 'agent';
@@ -735,7 +735,7 @@ export default function ReaderSetup() {
                             style={{ 
                               marginTop: '0.5rem', 
                               fontSize: '0.75rem', 
-                              background: '#040711', 
+                              background: 'var(--bg-card)', 
                               padding: '0.5rem', 
                               borderRadius: '4px', 
                               overflowX: 'auto',

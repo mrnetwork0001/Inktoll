@@ -111,7 +111,7 @@ export default function CreatorOnboard() {
               </div>
 
               {error && (
-                <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid var(--error)', borderRadius: '8px', color: 'var(--error)', fontSize: '0.9rem' }}>
+                <div style={{ padding: '1rem', background: 'var(--bg-active)', border: '1px solid var(--primary)', borderRadius: '8px', color: 'var(--primary)', fontSize: '0.9rem' }}>
                   ⚠️ {error}
                 </div>
               )}

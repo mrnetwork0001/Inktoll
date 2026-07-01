@@ -36,7 +36,7 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
   return (
     <div 
       style={{
-        background: '#040711',
+        background: 'var(--bg-card)',
         border: '1px solid var(--border)',
         borderRadius: '12px',
         padding: '1.5rem',
@@ -73,7 +73,7 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
             left: '50%',
             width: '2px',
             height: '150px',
-            background: 'linear-gradient(to top, rgba(245,166,35,0.8), rgba(245,166,35,0))',
+            background: 'var(--primary), var(--primary-glow))',
             transformOrigin: 'bottom center',
             animation: 'radar-sweep 4s linear infinite',
           }}
@@ -109,8 +109,8 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', zIndex: 2, position: 'relative' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', animation: 'pulse-ring 1.5s ease-out infinite' }} />
+          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)', animation: 'pulse-ring 1.5s ease-out infinite' }} />
             SEMANTIC RADAR SCAN
           </span>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
@@ -139,7 +139,7 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
               width: '44px',
               height: '44px',
               borderRadius: '50%',
-              background: 'radial-gradient(circle, var(--primary) 0%, var(--primary-dark) 100%)',
+              background: 'linear-gradient(135deg, var(--primary-glow) 0%, var(--primary-dark) 100%)',
               border: '2px solid var(--primary-light)',
               display: 'flex',
               alignItems: 'center',
@@ -171,13 +171,13 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
                   width: '32px',
                   height: '32px',
                   borderRadius: '50%',
-                  background: 'radial-gradient(circle, var(--accent) 0%, var(--primary-dark) 100%)',
+                  background: 'linear-gradient(135deg, var(--primary-glow) 0%, var(--primary-dark) 100%)',
                   border: '1px solid var(--accent-light)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '0.9rem',
-                  boxShadow: '0 0 8px var(--accent)',
+                  boxShadow: '0 0 8px var(--primary)',
                   position: 'relative'
                 }}
               >
@@ -191,7 +191,7 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
                     right: '-5px',
                     bottom: '-5px',
                     borderRadius: '50%',
-                    border: '1px solid var(--accent)',
+                    border: '1px solid var(--primary)',
                     animation: 'pulse-ring 2s cubic-bezier(0.215, 0.610, 0.355, 1.000) infinite',
                     pointerEvents: 'none'
                   }}
@@ -226,8 +226,8 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
                 left: '50%',
                 padding: '4px 8px',
                 borderRadius: '10px',
-                background: 'rgba(245, 166, 35, 0.2)',
-                border: '1px solid var(--accent)',
+                background: 'var(--primary-glow)',
+                border: '1px solid var(--primary)',
                 color: 'var(--accent-light)',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.65rem',
@@ -265,7 +265,7 @@ export default function CitationRadar({ citations }: CitationRadarProps) {
               <span style={{ fontWeight: 500, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '75%' }}>
                 • "{cit.title}"
               </span>
-              <span style={{ color: 'var(--accent)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+              <span style={{ color: 'var(--primary)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
                 +{cit.amount} USDC Paid
               </span>
             </div>

@@ -346,7 +346,7 @@ export default function ReaderSetup() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h3>AI Reader Agent</h3>
-                  <span style={{ fontSize: '0.8rem', display: 'inline-flex', gap: '0.4rem', alignItems: 'center', background: 'rgba(16,185,129,0.15)', color: 'var(--success)', padding: '4px 10px', borderRadius: '12px', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.8rem', display: 'inline-flex', gap: '0.4rem', alignItems: 'center', background: 'var(--success-glow)', color: 'var(--success)', padding: '4px 10px', borderRadius: '12px', fontWeight: 600 }}>
                     <span className="status-dot pulsing"></span> Active
                   </span>
                 </div>
@@ -355,26 +355,26 @@ export default function ReaderSetup() {
                   <div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Agent Wallet Address</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
-                      <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', wordBreak: 'break-all', background: 'rgba(0,0,0,0.3)', padding: '6px 10px', borderRadius: '6px', flexGrow: 1, border: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', wordBreak: 'break-all', background: 'var(--bg-secondary)', padding: '8px 12px', borderRadius: '8px', flexGrow: 1, border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
                         {status?.address}
                       </div>
                       <button 
                         className="btn btn-secondary" 
-                        style={{ padding: '6px 12px', fontSize: '0.8rem', minHeight: 'auto', marginBottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        style={{ padding: '8px 12px', fontSize: '0.8rem', minHeight: 'auto', marginBottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}
                         onClick={() => {
                           navigator.clipboard.writeText(status?.address || '');
                           showToast('Address copied to clipboard!', 'success');
                         }}
                         title="Copy address"
                       >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
                       </button>
                     </div>
                   </div>
-
+ 
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                     {status?.address && (
-                      <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', display: 'inline-flex', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+                      <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '8px', display: 'inline-flex', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', border: '1px solid var(--border)' }}>
                         <img 
                           src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${status.address}`}
                           alt="Wallet QR Code"
@@ -399,28 +399,29 @@ export default function ReaderSetup() {
                               marginBottom: 0,
                               lineHeight: 1,
                               borderRadius: '4px',
-                              background: faucetAllowed ? 'rgba(0,115,195,0.15)' : 'rgba(255,255,255,0.05)',
+                              background: faucetAllowed ? 'var(--primary-glow)' : 'var(--bg-secondary)',
                               borderColor: faucetAllowed ? 'var(--primary)' : 'var(--border)',
-                              color: faucetAllowed ? 'var(--primary-light)' : 'var(--text-muted)'
+                              color: faucetAllowed ? 'var(--primary)' : 'var(--text-muted)',
+                              fontWeight: 600
                             }}
                           >
-                            {claimingFaucet ? 'Claiming...' : faucetAllowed ? 'Claim 1 USDC' : `Cooldown: ${Math.floor(cooldownSeconds / 3600)}h ${Math.floor((cooldownSeconds % 3600) / 60)}m ${cooldownSeconds % 60}s`}
+                            {claimingFaucet ? 'Claiming...' : faucetAllowed ? 'Claim 1 USDC' : `Cooldown: ${Math.floor(cooldownSeconds / 3600)}h ${Math.floor((cooldownSeconds % 3600) / 60)}m`}
                           </button>
                         </div>
                         <div style={{ fontSize: '1.25rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
-                          ${status?.balanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>USDC</span>
+                          ${status?.balanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>USDC</span>
                         </div>
                       </div>
                       
                       <div>
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Circle Gateway Balance (Wrapped)</span>
-                        <div style={{ fontSize: '1.5rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
-                          ${status?.gatewayBalanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '0.85rem', color: 'var(--accent-light)' }}>USDC</span>
+                        <div style={{ fontSize: '1.5rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--primary)' }}>
+                          ${status?.gatewayBalanceUsdc?.toFixed(6) || '0.000000'} <span style={{ fontSize: '0.85rem', color: 'var(--primary)' }}>USDC</span>
                         </div>
                       </div>
                     </div>
                   </div>
-
+ 
                   <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.5rem' }}>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Withdraw Gateway Balance</span>
                     <form onSubmit={handleWithdraw} style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
@@ -429,7 +430,7 @@ export default function ReaderSetup() {
                         step="0.000001"
                         className="form-input" 
                         placeholder="Amount (USDC)"
-                        style={{ flexGrow: 1, padding: '6px 12px', fontSize: '0.85rem', minHeight: 'auto' }}
+                        style={{ flexGrow: 1, padding: '8px 12px', fontSize: '0.85rem', minHeight: 'auto' }}
                         value={withdrawAmount}
                         onChange={(e) => setWithdrawAmount(e.target.value)}
                         required
@@ -438,13 +439,13 @@ export default function ReaderSetup() {
                       <button 
                         type="submit" 
                         className="btn btn-secondary" 
-                        style={{ padding: '6px 16px', fontSize: '0.85rem', minHeight: 'auto', marginBottom: 0 }}
+                        style={{ padding: '8px 16px', fontSize: '0.85rem', minHeight: 'auto', marginBottom: 0, borderRadius: '8px' }}
                         disabled={withdrawing}
                       >
                         {withdrawing ? '...' : 'Withdraw'}
                       </button>
                     </form>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>
                       Reclaims Gateway balance back to your EOA wallet.
                     </span>
                   </div>
@@ -512,7 +513,7 @@ export default function ReaderSetup() {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-secondary">
+                <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
                   Save Preferences
                 </button>
               </form>
@@ -535,7 +536,7 @@ export default function ReaderSetup() {
                     borderRadius: '8px', 
                     border: '1px solid var(--border)', 
                     cursor: 'pointer',
-                    background: custodyType === 'managed' ? 'rgba(0,115,195,0.05)' : 'transparent',
+                    background: custodyType === 'managed' ? 'var(--primary-glow)' : 'transparent',
                     borderColor: custodyType === 'managed' ? 'var(--primary)' : 'var(--border)'
                   }}>
                     <input 
@@ -546,8 +547,8 @@ export default function ReaderSetup() {
                       onChange={() => handleCustodyChange('managed')}
                     />
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Inktoll Managed (Circle DCW)</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Background payments without prompts. Ideal for run loops.</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>Inktoll Managed (Circle DCW)</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Background payments without prompts. Ideal for run loops.</div>
                     </div>
                   </label>
 
@@ -559,8 +560,8 @@ export default function ReaderSetup() {
                     borderRadius: '8px', 
                     border: '1px solid var(--border)', 
                     cursor: 'pointer',
-                    background: custodyType === 'metamask' ? 'rgba(245,166,35,0.05)' : 'transparent',
-                    borderColor: custodyType === 'metamask' ? 'var(--accent)' : 'var(--border)'
+                    background: custodyType === 'metamask' ? 'var(--primary-glow)' : 'transparent',
+                    borderColor: custodyType === 'metamask' ? 'var(--primary)' : 'var(--border)'
                   }}>
                     <input 
                       type="radio" 
@@ -570,8 +571,8 @@ export default function ReaderSetup() {
                       onChange={() => handleCustodyChange('metamask')}
                     />
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Browser Wallet (MetaMask)</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Direct signature verification from your browser extension.</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>Browser Wallet (MetaMask)</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Direct signature verification from your browser extension.</div>
                     </div>
                   </label>
 
@@ -583,7 +584,7 @@ export default function ReaderSetup() {
                     borderRadius: '8px', 
                     border: '1px solid var(--border)', 
                     cursor: 'pointer',
-                    background: custodyType === 'passkey' ? 'rgba(16,185,129,0.05)' : 'transparent',
+                    background: custodyType === 'passkey' ? 'var(--success-glow)' : 'transparent',
                     borderColor: custodyType === 'passkey' ? 'var(--success)' : 'var(--border)'
                   }}>
                     <input 
@@ -594,8 +595,8 @@ export default function ReaderSetup() {
                       onChange={() => handleCustodyChange('passkey')}
                     />
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Device Passkey (Smart Account)</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Non-custodial biometrics. Gas-abstracted smart wallet.</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>Device Passkey (Smart Account)</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Non-custodial biometrics. Gas-abstracted smart wallet.</div>
                     </div>
                   </label>
                 </div>

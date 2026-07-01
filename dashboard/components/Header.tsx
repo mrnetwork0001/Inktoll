@@ -338,7 +338,7 @@ export default function Header() {
     <header className="header">
       <div className="container header-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/" className="logo-section" style={{ textDecoration: 'none' }}>
-          <img src={theme === 'dark' ? '/logo-dark.png' : '/logo.png'} alt="Inktoll Logo" style={{ height: '80px', objectFit: 'contain' }} />
+          <img src={theme === 'dark' ? '/logo-dark.png' : '/logo.png'} alt="Inktoll Logo" style={{ height: theme === 'dark' ? '65px' : '80px', objectFit: 'contain' }} />
         </Link>
         
         {/* Desktop Navigation Group */}
@@ -671,15 +671,16 @@ export default function Header() {
         >
           <div 
             style={{
-              background: '#ffffff',
-              borderRadius: '16px',
+              background: 'var(--bg-card)',
+              borderRadius: 'var(--radius-xl)',
               width: '90%',
               maxWidth: '400px',
               padding: '2rem 1.5rem',
               position: 'relative',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-              color: '#1a1a1a',
-              fontFamily: 'system-ui, -apple-system, sans-serif'
+              boxShadow: 'var(--shadow-hover)',
+              color: 'var(--text-primary)',
+              fontFamily: 'var(--font-sans)',
+              border: '1px solid var(--border)'
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -688,31 +689,36 @@ export default function Header() {
               onClick={() => setShowAuthModal(false)}
               style={{
                 position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                background: 'transparent',
-                border: 'none',
-                fontSize: '1.2rem',
-                color: '#6b7280',
+                top: '1.2rem',
+                right: '1.2rem',
+                background: 'var(--bg-glass)',
+                border: '1px solid var(--border)',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1rem',
+                color: 'var(--text-secondary)',
                 cursor: 'pointer'
               }}
+              onMouseOver={(e) => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--text-primary)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
             >
               ✕
             </button>
 
             {/* Icon */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M24 0L26.5 18.5L48 24L26.5 29.5L24 48L21.5 29.5L0 24L21.5 18.5L24 0Z" fill="currentColor" style={{color: '#2563eb'}} />
-                <circle cx="24" cy="24" r="3" fill="#ffffff" />
-              </svg>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+              <img src={theme === 'dark' ? '/logo-dark.png' : '/logo.png'} alt="Inktoll Logo" style={{ height: '48px', objectFit: 'contain' }} />
             </div>
 
             {/* Headers */}
-            <h2 style={{ textAlign: 'center', margin: '0 0 0.5rem 0', fontSize: '1.5rem', fontWeight: '700' }}>
+            <h2 style={{ textAlign: 'center', margin: '0 0 0.5rem 0', fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)' }}>
               Log in to Inktoll
             </h2>
-            <p style={{ textAlign: 'center', color: '#6b7280', margin: '0 0 2rem 0', fontSize: '0.95rem' }}>
+            <p style={{ textAlign: 'center', color: 'var(--text-secondary)', margin: '0 0 2rem 0', fontSize: '0.95rem' }}>
               Connect a wallet to hire agents and settle in USDC.
             </p>
 
@@ -734,27 +740,27 @@ export default function Header() {
                     alignItems: 'center',
                     width: '100%',
                     padding: '1rem',
-                    background: '#ffffff',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '12px',
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    borderRadius: 'var(--radius-lg)',
                     cursor: 'pointer',
                     textAlign: 'left',
-                    transition: 'all 0.2s ease',
+                    transition: 'all var(--transition-normal)'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
-                  onMouseOut={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.background = 'var(--bg-active)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'transparent'; }}
                 >
-                  <div style={{ marginRight: '1rem', color: 'var(--primary)', background: '#eff6ff', padding: '0.6rem', borderRadius: '8px' }}>
+                  <div style={{ marginRight: '1rem', color: 'var(--primary)', background: 'var(--bg-active)', padding: '0.6rem', borderRadius: '8px' }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
                       <path d="M2 4l10 8 10-8"></path>
                     </svg>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: '600', fontSize: '1rem', color: '#1f2937' }}>Email</div>
-                    <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>One-time code to your inbox. Gasless, no ...</div>
+                    <div style={{ fontWeight: '600', fontSize: '1rem', color: 'var(--text-primary)' }}>Email</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>One-time code to your inbox. Gasless.</div>
                   </div>
-                  <div style={{ color: '#9ca3af' }}>›</div>
+                  <div style={{ color: 'var(--text-muted)' }}>›</div>
                 </button>
 
                 {/* Passkey Option */}
@@ -768,26 +774,26 @@ export default function Header() {
                     alignItems: 'center',
                     width: '100%',
                     padding: '1rem',
-                    background: '#ffffff',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '12px',
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    borderRadius: 'var(--radius-lg)',
                     cursor: 'pointer',
                     textAlign: 'left',
-                    transition: 'all 0.2s ease',
+                    transition: 'all var(--transition-normal)'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
-                  onMouseOut={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                  onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--primary)'; e.currentTarget.style.background = 'var(--bg-active)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'transparent'; }}
                 >
-                  <div style={{ marginRight: '1rem', color: 'var(--primary)', background: '#eff6ff', padding: '0.6rem', borderRadius: '8px' }}>
+                  <div style={{ marginRight: '1rem', color: 'var(--primary)', background: 'var(--bg-active)', padding: '0.6rem', borderRadius: '8px' }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                     </svg>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: '600', fontSize: '1rem', color: '#1f2937' }}>Passkey</div>
-                    <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Face ID or fingerprint on this device. Gasl...</div>
+                    <div style={{ fontWeight: '600', fontSize: '1rem', color: 'var(--text-primary)' }}>Passkey</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Face ID or fingerprint. Gasless.</div>
                   </div>
-                  <div style={{ color: '#9ca3af' }}>›</div>
+                  <div style={{ color: 'var(--text-muted)' }}>›</div>
                 </button>
               </div>
             )}
@@ -803,7 +809,9 @@ export default function Header() {
                   style={{
                     padding: '0.75rem',
                     borderRadius: '8px',
-                    border: '1px solid #e5e7eb',
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-primary)',
+                    color: 'var(--text-primary)',
                     fontSize: '1rem',
                     width: '100%',
                     boxSizing: 'border-box'
@@ -812,19 +820,12 @@ export default function Header() {
                 {emailStatus && <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>{emailStatus}</div>}
                 <button 
                   onClick={handleRequestOtp}
-                  style={{
-                    padding: '0.75rem',
-                    background: 'var(--primary)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                  }}
+                  className="btn btn-primary"
+                  style={{ width: '100%' }}
                 >
                   Send One-Time Passcode
                 </button>
-                <button onClick={() => setAuthStep('options')} style={{ background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: '0.85rem' }}>
+                <button onClick={() => setAuthStep('options')} style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.85rem' }}>
                   ← Back
                 </button>
               </div>
@@ -833,19 +834,12 @@ export default function Header() {
             {/* OTP Verify Step */}
             {authStep === 'otp_input' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'center' }}>
-                <p style={{ fontSize: '0.9rem', color: '#4b5563' }}>We sent an email to <b>{email}</b>. Please click Verify to enter the code.</p>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>We sent an email to <b style={{color: 'var(--text-primary)'}}>{email}</b>. Please click Verify to enter the code.</p>
                 {emailStatus && <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>{emailStatus}</div>}
                 <button 
                   onClick={handleVerifyOtp}
-                  style={{
-                    padding: '0.75rem',
-                    background: 'var(--primary)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                  }}
+                  className="btn btn-primary"
+                  style={{ width: '100%' }}
                 >
                   Verify Code
                 </button>
@@ -866,8 +860,8 @@ export default function Header() {
             )}
 
             {/* Footer */}
-            <div style={{ marginTop: '2rem', textAlign: 'center', borderTop: '1px solid #f3f4f6', paddingTop: '1rem' }}>
-              <span style={{ fontSize: '0.7rem', fontWeight: '600', letterSpacing: '0.05em', color: '#9ca3af', fontFamily: 'monospace' }}>
+            <div style={{ marginTop: '2rem', textAlign: 'center', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: '600', letterSpacing: '0.05em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                 GASLESS ON ARC • SECURED BY CIRCLE
               </span>
             </div>

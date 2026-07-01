@@ -33,7 +33,7 @@ export default function Footer() {
           {/* Column 1: Brand */}
           <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-              <img src={theme === 'dark' ? '/logo-dark.png' : '/logo.png'} alt="Inktoll Logo" style={{ height: '90px', objectFit: 'contain' }} />
+              <img src={theme === 'dark' ? '/logo-dark.png' : '/logo.png'} alt="Inktoll Logo" style={{ height: theme === 'dark' ? '73px' : '90px', objectFit: 'contain' }} />
             </Link>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: '1.6', maxWidth: '300px', marginTop: '0.5rem' }}>
               Monetizing AI data consumption through instant USDC nanopayments and citation royalties.

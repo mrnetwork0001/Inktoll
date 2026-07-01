@@ -134,6 +134,136 @@ function PaymentFlowAnimation() {
   );
 }
 
+function TypewriterText({ words }: { words: string[] }) {
+  const [currentWordIdx, setCurrentWordIdx] = useState(0);
+  const [currentText, setCurrentText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const word = words[currentWordIdx];
+    
+    if (!isDeleting && currentText === word) {
+      const timeout = setTimeout(() => setIsDeleting(true), 2000);
+      return () => clearTimeout(timeout);
+    }
+    
+    if (isDeleting && currentText === '') {
+      setIsDeleting(false);
+      setCurrentWordIdx((prev) => (prev + 1) % words.length);
+      return;
+    }
+    
+    const typingSpeed = isDeleting ? 50 : 120;
+    const timeout = setTimeout(() => {
+      setCurrentText(word.substring(0, currentText.length + (isDeleting ? -1 : 1)));
+    }, typingSpeed);
+    
+    return () => clearTimeout(timeout);
+  }, [currentText, isDeleting, currentWordIdx, words]);
+
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', minWidth: '220px' }}>
+      <span style={{ 
+        background: 'var(--primary)', 
+        WebkitBackgroundClip: 'text', 
+        WebkitTextFillColor: 'transparent',
+      }}>
+        {currentText}
+      </span>
+      <motion.span
+        animate={{ opacity: [1, 0] }}
+        transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+        style={{ 
+          display: 'inline-block',
+          width: '5px',
+          height: '0.9em',
+          backgroundColor: 'var(--primary)',
+          marginLeft: '8px',
+          borderRadius: '2px'
+        }}
+      />
+    </span>
+  );
+}
+
+function HeroPillFlow() {
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIdx(prev => (prev + 1) % 4);
+    }, 1200);
+    return () => clearInterval(interval);
+  }, []);
+
+  const pills = [
+    {
+      label: 'Blog Import',
+      icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+    },
+    {
+      label: 'AI Agent Scan',
+      icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
+    },
+    {
+      label: 'Instant USDC',
+      icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'inherit' }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="6" x2="12" y2="18" /><path d="M17 9H12.5a3 3 0 1 0 0 6H17" /></svg>
+    }
+  ];
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+      {pills.map((pill, idx) => {
+        const isActive = activeIdx === idx;
+        const isPassed = activeIdx > idx && activeIdx !== 3;
+        
+        return (
+          <React.Fragment key={pill.label}>
+            <motion.div 
+              animate={{
+                borderColor: isActive ? 'var(--primary)' : 'var(--border)',
+                boxShadow: isActive ? '0 0 15px rgba(255, 128, 34, 0.4)' : 'var(--shadow-soft)',
+                color: isActive ? 'var(--primary)' : (isPassed ? 'var(--text-primary)' : 'var(--text-secondary)'),
+                scale: isActive ? 1.05 : 1,
+                y: isActive ? -2 : 0
+              }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              style={{ 
+                background: 'var(--bg-card)', 
+                border: '1px solid var(--border)', 
+                padding: '0.5rem 1rem', 
+                borderRadius: '50px', 
+                fontSize: '0.8rem', 
+                fontWeight: 600, 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.4rem', 
+                boxShadow: 'var(--shadow-soft)' 
+              }}
+            >
+              {pill.icon}
+              {pill.label}
+            </motion.div>
+            
+            {idx < pills.length - 1 && (
+              <motion.span 
+                animate={{
+                  color: (isActive || activeIdx === idx + 1) ? 'var(--primary)' : 'var(--text-muted)',
+                  x: isActive ? 3 : 0
+                }}
+                transition={{ duration: 0.3 }}
+                style={{ color: 'var(--text-muted)' }}
+              >
+                ➔
+              </motion.span>
+            )}
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -238,15 +368,9 @@ export default function LandingPage() {
                   letterSpacing: '-0.04em',
                   margin: 0
                 }}>
-                  Monetize Content in the <br />
-                  <span style={{ 
-                    background: 'var(--primary)', 
-                    WebkitBackgroundClip: 'text', 
-                    WebkitTextFillColor: 'transparent',
-                    fontWeight: 800
-                  }}>
-                    Agentic Economy
-                  </span>
+                  Get Paid When AI <br />
+                  <TypewriterText words={['Reads', 'Analyzes', 'Cites', 'Scrapes']} /> <br />
+                  Your Work
                 </h1>
               </div>
 
@@ -260,23 +384,7 @@ export default function LandingPage() {
                 Inktoll solves the AI copyright crisis. We allow autonomous agents to read and cite your content, paying you instant, gasless USDC royalties on Arc L1.
               </p>
 
-              {/* Progress/Pill Flow */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: 'var(--shadow-soft)' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary)' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
-                  Blog Import
-                </div>
-                <span style={{ color: 'var(--text-muted)' }}>➔</span>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: 'var(--shadow-soft)' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary)' }}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
-                  AI Agent Scan
-                </div>
-                <span style={{ color: 'var(--text-muted)' }}>➔</span>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: 'var(--shadow-soft)' }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary)' }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="6" x2="12" y2="18" /><path d="M17 9H12.5a3 3 0 1 0 0 6H17" /></svg>
-                  Instant USDC
-                </div>
-              </div>
+              <HeroPillFlow />
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
                 <Link href="/creator/dashboard" className="btn btn-primary" style={{ padding: '0.9rem 2.5rem', fontSize: '1rem', textDecoration: 'none' }}>

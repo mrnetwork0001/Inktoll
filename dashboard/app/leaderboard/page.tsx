@@ -165,7 +165,7 @@ export default function Leaderboard() {
           </div>
 
           {/* Table & Feed Two-Column Layout */}
-          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '2rem', alignItems: 'start' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8 items-start">
             
             {/* Left Column: Top Creators Leaderboard */}
             <div className="glass-card" style={{ padding: '1.5rem' }}>

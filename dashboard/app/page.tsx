@@ -49,6 +49,91 @@ function InteractiveGlassCard({ children, className, style, hoverScale = 1.02 }:
   );
 }
 
+function PaymentFlowAnimation() {
+  return (
+    <div className="payment-flow-viz" style={{ maxWidth: '800px', margin: '0 auto', background: 'var(--bg-primary)', border: '1px solid var(--border)', borderRadius: '16px', position: 'relative', overflow: 'hidden' }}>
+      
+      {/* 1. Animated traveling data pulse */}
+      <motion.div
+        animate={{ 
+          left: ["15%", "50%", "85%"], // Animate left property relative to container
+          opacity: [0, 1, 1, 0]
+        }}
+        transition={{
+          duration: 3,
+          ease: "linear",
+          repeat: Infinity,
+        }}
+        style={{
+          position: 'absolute',
+          top: '35px', // Exact center of the 70px icon (ignoring padding for a moment, wait, padding is 2rem = 32px. So 35px + 32px = 67px)
+          marginTop: '2rem', // Offset by container padding
+          transform: 'translateY(-50%)',
+          width: '16px',
+          height: '16px',
+          background: 'var(--primary)',
+          borderRadius: '50%',
+          boxShadow: '0 0 20px 8px var(--primary-glow)',
+          zIndex: 10
+        }}
+      />
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', padding: '2rem' }}>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '130px', position: 'relative', zIndex: 5 }}>
+          <motion.div 
+            animate={{ scale: [1, 1.1, 1] }} 
+            transition={{ duration: 3, repeat: Infinity, times: [0, 0.1, 1] }}
+            className="flow-node-icon" style={{ width: '70px', height: '70px', background: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
+          </motion.div>
+          <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Reader Agent</span>
+        </div>
+
+        <div style={{ flex: 1, height: '4px', background: 'var(--bg-active)', borderRadius: '2px', position: 'relative', marginTop: '33px' }}>
+           <motion.div 
+             animate={{ width: ["0%", "100%", "100%"] }} 
+             transition={{ duration: 3, repeat: Infinity, times: [0, 0.33, 1] }}
+             style={{ height: '100%', background: 'var(--primary)', borderRadius: '2px' }} 
+           />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '130px', position: 'relative', zIndex: 5 }}>
+          <motion.div 
+            animate={{ scale: [1, 1, 1.1, 1] }} 
+            transition={{ duration: 3, repeat: Infinity, times: [0, 0.33, 0.43, 1] }}
+            className="flow-node-icon" style={{ width: '70px', height: '70px', background: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}><rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" /></svg>
+          </motion.div>
+          <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Circle Paymaster</span>
+        </div>
+
+        <div style={{ flex: 1, height: '4px', background: 'var(--bg-active)', borderRadius: '2px', position: 'relative', marginTop: '33px' }}>
+           <motion.div 
+             animate={{ width: ["0%", "0%", "100%"] }} 
+             transition={{ duration: 3, repeat: Infinity, times: [0, 0.33, 0.66] }}
+             style={{ height: '100%', background: 'var(--primary)', borderRadius: '2px' }} 
+           />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '130px', position: 'relative', zIndex: 5 }}>
+          <motion.div 
+            animate={{ scale: [1, 1, 1.1, 1] }} 
+            transition={{ duration: 3, repeat: Infinity, times: [0, 0.66, 0.76, 1] }}
+            className="flow-node-icon" style={{ width: '70px', height: '70px', background: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+          </motion.div>
+          <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Creator Wallet</span>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -172,7 +257,7 @@ export default function LandingPage() {
                 maxWidth: '580px',
                 margin: 0
               }}>
-                Inktoll solves the AI copyright crisis through a two-layer monetization protocol settled on Circle Arc L1. We enable autonomous AI agents to read, evaluate, and cite high-quality content—while instantly paying creators in USDC gaslessly.
+                Inktoll solves the AI copyright crisis. We allow autonomous agents to read and cite your content, paying you instant, gasless USDC royalties on Arc L1.
               </p>
 
               {/* Progress/Pill Flow */}
@@ -487,32 +572,7 @@ export default function LandingPage() {
             <p style={{ maxWidth: '780px', margin: '0 auto 3.5rem auto', fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
               Nanopayments are facilitated via Circle Programmable API Wallets and settled on the stablecoin-native Arc Testnet. No ETH required—transactions are fully dollar-denominated.
             </p>
-            <div className="payment-flow-viz" style={{ maxWidth: '800px', margin: '0 auto', background: 'var(--bg-primary)', border: '1px solid var(--border)', borderRadius: '16px' }}>
-              <div className="flow-node active" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '130px' }}>
-                <div className="flow-node-icon" style={{ width: '70px', height: '70px' }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
-                </div>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Reader Agent</span>
-              </div>
-              <div className="flow-line" style={{ flex: 1 }}>
-                <div className="flow-line-active"></div>
-              </div>
-              <div className="flow-node active" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '130px' }}>
-                <div className="flow-node-icon" style={{ width: '70px', height: '70px' }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}><rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" /></svg>
-                </div>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Circle Paymaster</span>
-              </div>
-              <div className="flow-line" style={{ flex: 1 }}>
-                <div className="flow-line-active"></div>
-              </div>
-              <div className="flow-node active" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '130px' }}>
-                <div className="flow-node-icon" style={{ width: '70px', height: '70px' }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
-                </div>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Creator Wallet</span>
-              </div>
-            </div>
+            <PaymentFlowAnimation />
           </section>
 
           {/* 8. FAQ SECTION */}

@@ -2,20 +2,20 @@
 @import "tailwindcss";
 
 :root {
-  /* Official Inktoll Brand Design Tokens */
-  --primary: #E4C17D; /* Brand Gold */
-  --primary-glow: rgba(228, 193, 125, 0.15);
-  --primary-light: #f5d79e;
-  --primary-dark: #ccaa65;
+  /* Official Inktoll Brand Design Tokens (Nexora Dark Theme) */
+  --primary: #FF8022; /* Vibrant glowing orange for dark mode */
+  --primary-glow: rgba(255, 106, 0, 0.2);
+  --primary-light: #FF9944;
+  --primary-dark: #cc5500;
 
-  --brand-gold: #E4C17D;
+  --brand-gold: #E4C17D; /* Kept for legacy if needed, but primary is orange */
   --deep-ink: #0C1722;
 
-  --bg-primary: #0C1722; /* Deep Ink */
-  --bg-secondary: #111e2c; /* Slightly lighter Deep Ink */
-  --bg-card: #152535;
-  --bg-glass: rgba(21, 37, 53, 0.7);
-  --bg-active: rgba(228, 193, 125, 0.05);
+  --bg-primary: #0A0A0A; /* Deep dark void for modern Nexora feel */
+  --bg-secondary: #121212; 
+  --bg-card: rgba(20, 20, 20, 0.65); /* Translucent dark glass */
+  --bg-glass: rgba(10, 10, 10, 0.7);
+  --bg-active: rgba(255, 106, 0, 0.1); /* Vibrant orange active bg */
 
   --text-primary: #FFFFFF;
   --text-secondary: rgba(255, 255, 255, 0.7);
@@ -32,8 +32,8 @@
 
   /* Shadow tokens */
   --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
-  --shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(228, 193, 125, 0.05);
-  --shadow-button: 0 4px 14px 0 rgba(228, 193, 125, 0.15);
+  --shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(255, 106, 0, 0.1);
+  --shadow-button: 0 4px 14px 0 rgba(255, 106, 0, 0.2);
   --radius-xl: 16px;
   --radius-lg: 12px;
 }
@@ -75,7 +75,6 @@ html, body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   min-height: 100vh;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -171,10 +170,15 @@ a:hover {
 /* Navigation Header */
 .header {
   border-bottom: 1px solid var(--border);
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
   background: var(--bg-card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .header-container {

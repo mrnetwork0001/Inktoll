@@ -358,7 +358,7 @@ function CreatorDashboardInner() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
             <div>
               <h1 style={{ margin: 0, fontSize: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                🔮 Creator Dashboard
+                Creator Dashboard
               </h1>
               <p style={{ margin: '0.25rem 0 0 0', color: 'var(--text-secondary)' }}>
                 Manage your monetized blog feeds, payouts, and on-chain earnings.

@@ -35,6 +35,21 @@ export default function Header() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
+  // Theme States
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    const currentTheme = (localStorage.getItem('inktoll_theme') as 'light' | 'dark') || 'light';
+    setTheme(currentTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('inktoll_theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
+
   // Email OTP States
   const sdkRef = React.useRef<W3SSdk | null>(null);
   const [authStep, setAuthStep] = useState<'options' | 'email_input' | 'otp_input' | 'creating'>('options');
@@ -328,6 +343,36 @@ export default function Header() {
         </Link>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            style={{
+              background: 'var(--bg-active)',
+              border: '1px solid var(--border)',
+              cursor: 'pointer',
+              fontSize: '1.2rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              transition: 'all 0.2s',
+              color: 'var(--text-primary)',
+              outline: 'none'
+            }}
+            title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--primary)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border)';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
           {pathname !== '/' && (
             <nav>
               <ul className="nav-links" style={{ marginBottom: 0 }}>

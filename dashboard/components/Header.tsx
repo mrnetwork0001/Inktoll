@@ -338,7 +338,7 @@ export default function Header() {
     <>
       <div style={{ height: '81px', width: '100%' }}></div>
       <header className="header">
-        <div className="container header-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="header-container" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/" className="logo-section" style={{ textDecoration: 'none' }}>
           <img src={theme === 'dark' ? '/logo-dark.png' : '/logo.png'} alt="Inktoll Logo" style={{ height: theme === 'dark' ? '65px' : '80px', objectFit: 'contain' }} />
         </Link>

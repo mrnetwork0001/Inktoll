@@ -2,31 +2,33 @@
 @import "tailwindcss";
 
 :root {
-  /* Colors - Corporate Trust Light Theme (Default) */
-  --primary: #4F46E5; /* Indigo 600 */
-  --primary-glow: rgba(79, 70, 229, 0.15);
-  --primary-light: #6366F1; /* Indigo 500 */
-  --primary-dark: #3730A3; /* Indigo 800 */
+  /* Official Inktoll Brand Design Tokens */
+  --primary: #6C4CF6; /* Vibrant indigo/violet */
+  --primary-glow: rgba(108, 76, 246, 0.15);
+  --primary-light: #7257FF;
+  --primary-dark: #5A3EF2; /* Primary Hover */
 
-  --accent: #7C3AED; /* Violet 600 */
+  --accent: #7C3AED; /* Violet */
   --accent-glow: rgba(124, 58, 237, 0.15);
-  --accent-light: #8B5CF6; /* Violet 500 */
+  --accent-light: #8B5CF6;
 
-  --bg-primary: #F8FAFC; /* Slate 50 */
-  --bg-secondary: #F1F5F9; /* Slate 100 */
+  --brand-gold: #D8A441; /* Logo Gold */
+
+  --bg-primary: #F8F8FB; /* Brand off-white */
+  --bg-secondary: #F5F6FA; /* Soft neutral gray */
   --bg-card: #FFFFFF;
   --bg-glass: rgba(255, 255, 255, 0.65);
-  --bg-active: rgba(79, 70, 229, 0.05);
+  --bg-active: rgba(108, 76, 246, 0.05);
 
-  --text-primary: #0F172A; /* Slate 900 */
-  --text-secondary: #64748B; /* Slate 500 */
-  --text-muted: #94A3B8; /* Slate 400 */
+  --text-primary: #111827; /* Deep Navy */
+  --text-secondary: #667085; /* Muted Grey */
+  --text-muted: #9CA3AF;
 
-  --border: #E2E8F0; /* Slate 200 */
-  --border-hover: #CBD5E1; /* Slate 300 */
+  --border: #E5E7EB; /* Clean gray borders */
+  --border-hover: #D1D5DB;
 
-  --success: #10B981; /* Emerald 500 */
-  --success-glow: rgba(16, 185, 129, 0.15);
+  --success: #2ECC8A; /* Soft Emerald */
+  --success-glow: rgba(46, 204, 138, 0.15);
   --warning: #F59E0B;
   --error: #EF4444;
 
@@ -37,9 +39,9 @@
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Shadow tokens */
-  --shadow-soft: 0 4px 20px -2px rgba(79, 70, 229, 0.08);
-  --shadow-hover: 0 10px 25px -5px rgba(79, 70, 229, 0.12), 0 8px 10px -6px rgba(79, 70, 229, 0.08);
-  --shadow-button: 0 4px 14px 0 rgba(79, 70, 229, 0.25);
+  --shadow-soft: 0 4px 20px -2px rgba(108, 76, 246, 0.08);
+  --shadow-hover: 0 10px 25px -5px rgba(108, 76, 246, 0.12), 0 8px 10px -6px rgba(108, 76, 246, 0.08);
+  --shadow-button: 0 4px 14px 0 rgba(108, 76, 246, 0.25);
   --radius-xl: 16px;
   --radius-lg: 12px;
 }

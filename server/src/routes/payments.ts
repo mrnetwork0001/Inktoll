@@ -70,7 +70,7 @@ router.get('/', async (req, res) => {
       `).all(creatorId) as any[];
 
       const topAgents = topAgentsRaw.map((agent: any) => ({
-        name: \`Agent_\${agent.wallet.substring(2, 6).toUpperCase()}\`,
+        name: `Agent_${agent.wallet.substring(2, 6).toUpperCase()}`,
         spent: parseFloat(agent.spent.toFixed(6)),
         wallet: agent.wallet
       }));

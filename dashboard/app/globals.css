@@ -327,7 +327,6 @@ a:hover {
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(228, 193, 125, 0); }
 }
 
-/* Tables styling */
 .custom-table {
   width: 100%;
   border-collapse: collapse;
@@ -337,6 +336,7 @@ a:hover {
   padding: 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 .custom-table th {
   color: var(--text-secondary);
@@ -569,11 +569,11 @@ a:hover {
   top: 80px;
   left: 0;
   right: 0;
-  background: var(--bg-card);
+  background: var(--bg-primary);
   border-bottom: 1px solid var(--border);
   padding: 1.5rem;
   z-index: 1000;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   flex-direction: column;
   gap: 0.75rem;
   animation: slideDown 0.25s ease-out;

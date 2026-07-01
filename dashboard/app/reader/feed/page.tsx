@@ -93,6 +93,11 @@ export default function ReaderFeed() {
 
       const data = await res.json();
       setActiveArticle(data.article);
+      
+      // On mobile, scroll to the reader pane since it stacks below the feed
+      setTimeout(() => {
+        document.getElementById('article-reader-pane')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     } catch (err: any) {
       alert('Error: ' + err.message);
     } finally {
@@ -167,16 +172,19 @@ export default function ReaderFeed() {
 
             {/* Article Content Viewer Panel */}
             {activeArticle ? (
-              <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'sticky', top: '90px', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
-                  <div>
+              <div id="article-reader-pane" className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'sticky', top: '90px', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
+                <div className="flex flex-col-reverse sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[color:var(--border)] pb-4">
+                  <div className="min-w-0 w-full">
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Unlocked Content</span>
-                    <h2 style={{ fontSize: '1.5rem', margin: '0.25rem 0' }}>{activeArticle.title}</h2>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    <h2 className="text-xl sm:text-2xl m-0 mt-1 mb-2 truncate whitespace-normal">{activeArticle.title}</h2>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', wordBreak: 'break-all' }}>
                       Author Wallet: <code>{activeArticle.creator_wallet}</code>
                     </span>
                   </div>
-                  <button className="btn btn-secondary btn-sm" onClick={() => setActiveArticle(null)}>
+                  <button className="btn btn-secondary btn-sm self-end sm:self-auto shrink-0" onClick={() => {
+                    setActiveArticle(null);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}>
                     ✕ Close
                   </button>
                 </div>

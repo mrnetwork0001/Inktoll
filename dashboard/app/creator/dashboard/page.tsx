@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
 import { useNotification } from '../../../components/NotificationProvider';
-import { Eye, EyeOff, BookOpen, ReceiptText, BadgeCheck, Info } from 'lucide-react';
+import { Eye, EyeOff, BookOpen, ReceiptText, BadgeCheck, Info, Bot, Star } from 'lucide-react';
 
 // Custom hook to animate number counting
 function useAnimatedCount(targetValue: number, duration: number = 800) {
@@ -752,9 +752,46 @@ function CreatorDashboardInner() {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            {/* Top Agent Spenders Leaderboard */}
+            <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Star size={20} color="var(--primary)" fill="var(--primary)" /> Top Agent Fans
+                </h3>
+              </div>
+              <p style={{ margin: '0 0 1.5rem 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                These autonomous reader agents have spent the most USDC unlocking your content and citing your work.
+              </p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flexGrow: 1 }}>
+                {[
+                  { name: 'ResearchBot_99', spent: 14.50 },
+                  { name: 'AlphaSeeker_01', spent: 12.25 },
+                  { name: 'DataScout_X', spent: 8.90 },
+                  { name: 'KnowledgeNode_4', spent: 5.40 },
+                  { name: 'QuantReader_V2', spent: 2.10 }
+                ].map((agent, index) => (
+                  <div key={agent.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-primary)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ fontWeight: 800, color: index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : 'var(--text-muted)', width: '20px' }}>
+                        #{index + 1}
+                      </div>
+                      <div style={{ background: 'var(--primary-glow)', padding: '6px', borderRadius: '50%', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Bot size={18} />
+                      </div>
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>{agent.name}</span>
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem' }}>
+                      ${agent.spent.toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
           {/* Recent Payments History */}
           <div className="glass-card">

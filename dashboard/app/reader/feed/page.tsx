@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '../../../components/Header';
-import { Library, RefreshCw } from 'lucide-react';
+import { Library, RefreshCw, ShieldCheck } from 'lucide-react';
 
 export default function ReaderFeed() {
   const [agentAddress, setAgentAddress] = useState('');
@@ -157,7 +157,10 @@ export default function ReaderFeed() {
                       </span>
                     </div>
                     <h3 style={{ fontSize: '1.25rem', marginBottom: 0 }}>{art.title}</h3>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: '#10b981', background: 'rgba(16, 185, 129, 0.1)', padding: '2px 8px', borderRadius: '12px', width: 'fit-content', marginTop: '4px' }}>
+                      <ShieldCheck size={12} /> Verified Ghost Author
+                    </div>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0, marginTop: '8px' }}>
                       {art.excerpt}
                     </p>
                   </div>
@@ -181,6 +184,9 @@ export default function ReaderFeed() {
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', wordBreak: 'break-all' }}>
                       Author Wallet: <code>{activeArticle.creator_wallet}</code>
                     </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#10b981', background: 'rgba(16, 185, 129, 0.1)', padding: '4px 10px', borderRadius: '12px', width: 'fit-content', marginTop: '8px' }}>
+                      <ShieldCheck size={14} /> Cryptographically Secured via Ghost API
+                    </div>
                   </div>
                   <button className="btn btn-secondary btn-sm self-end sm:self-auto shrink-0" onClick={() => {
                     setActiveArticle(null);

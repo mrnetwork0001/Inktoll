@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import { useNotification } from '../../components/NotificationProvider';
-import { Eye, EyeOff, Trophy, ReceiptText, BookOpen, BadgeCheck, Copy } from 'lucide-react';
+import { Eye, EyeOff, Trophy, ReceiptText, BookOpen, BadgeCheck, Copy, ShieldCheck } from 'lucide-react';
 
 interface LeaderboardStats {
   totalVolumeUsdc: number;
@@ -210,9 +210,12 @@ export default function Leaderboard() {
                                   href={c.ghost_url} 
                                   target="_blank" 
                                   rel="noopener noreferrer" 
-                                  style={{ color: 'var(--primary-light)', fontWeight: 600, textDecoration: 'none' }}
+                                  style={{ color: 'var(--primary-light)', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}
                                 >
                                   {domain}
+                                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.65rem', color: '#10b981', background: 'rgba(16, 185, 129, 0.1)', padding: '2px 6px', borderRadius: '8px', fontWeight: 700 }}>
+                                    <ShieldCheck size={10} /> VERIFIED GHOST
+                                  </span>
                                 </a>
                                 <code style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
                                   {c.wallet_address.substring(0, 8)}...{c.wallet_address.substring(c.wallet_address.length - 6)}

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Sun, Moon, ChevronDown } from 'lucide-react';
 
 import { createPublicClient } from 'viem';
 import { arcTestnet } from 'viem/chains';
@@ -361,7 +362,7 @@ export default function Header() {
               marginBottom: 0
             }}
           >
-            {theme === 'dark' ? '☀️' : '🌙'}
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
           {pathname !== '/' && (
@@ -435,7 +436,7 @@ export default function Header() {
                     background: 'var(--primary)'
                   }}></span>
                   {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
-                  <span style={{ fontSize: '0.7rem' }}>▼</span>
+                  <ChevronDown size={14} style={{ opacity: 0.7 }} />
                 </button>
               ) : (
                 <button 
@@ -596,7 +597,7 @@ export default function Header() {
                 marginTop: '0.5rem'
               }}
             >
-              {theme === 'dark' ? '☀️ Switch to Light Mode' : '🌙 Switch to Dark Mode'}
+              {theme === 'dark' ? <><Sun size={18} /> Switch to Light Mode</> : <><Moon size={18} /> Switch to Dark Mode</>}
             </button>
 
             <hr style={{ border: 'none', borderBottom: '1px solid var(--border)', margin: '0.5rem 0' }} />

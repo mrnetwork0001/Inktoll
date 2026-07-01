@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '../../../components/Header';
+import { Library, RefreshCw } from 'lucide-react';
 
 export default function ReaderFeed() {
   const [agentAddress, setAgentAddress] = useState('');
@@ -129,9 +130,9 @@ export default function ReaderFeed() {
           )}
 
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h2 className="text-2xl sm:text-3xl m-0 font-extrabold">📚 Agent's Purchased Feed</h2>
+            <h2 className="text-2xl sm:text-3xl m-0 font-extrabold flex items-center gap-2"><Library size={28} color="var(--primary)" /> Agent's Purchased Feed</h2>
             <button className="btn btn-secondary btn-sm" onClick={fetchFeed}>
-              🔄 Refresh Feed
+              <RefreshCw size={14} style={{ display: 'inline', marginRight: '6px' }} /> Refresh Feed
             </button>
           </div>
 

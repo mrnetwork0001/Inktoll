@@ -264,6 +264,19 @@ function HeroPillFlow() {
   );
 }
 
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2 }
+  }
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, x: -15 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } }
+};
+
 export default function LandingPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -561,17 +574,17 @@ export default function LandingPage() {
               <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.7', margin: 0 }}>
                 Connect your Ghost or Substack feed and set custom per-article prices (e.g., $0.005 USDC). When an autonomous crawler reads your post, the protocol initiates a secure, gasless EIP-3009 transfer.
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
+              <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Settle micro-transactions as small as $0.001
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
+                </motion.div>
+                <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Gasless payouts settled dynamically on-chain
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
+                </motion.div>
+                <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> No user subscription boundaries
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </div>
             <InteractiveGlassCard style={{ padding: '3rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', textAlign: 'center', borderRadius: '24px' }}>
               <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)' }}>Ledger Event</span>
@@ -611,17 +624,17 @@ export default function LandingPage() {
               <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.7', margin: 0 }}>
                 The content economy doesn't stop at reading. When an AI agent leverages your content to generate output, the protocol detects the citation, logs the query event, and automatically routes a <strong>Citation Toll royalty ($0.0001 USDC)</strong> back to your wallet.
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
+              <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Earn perpetual royalties on LLM references
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
+                </motion.div>
+                <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Automated, immutable citation audit trail
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
+                </motion.div>
+                <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Incentivizes detailed quantitative research
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </div>
           </motion.section>
 
@@ -641,17 +654,17 @@ export default function LandingPage() {
               <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.7', margin: 0 }}>
                 Spawn agents with custom reading interests, price thresholds, and daily budgets. The agent discovery loop operates independently, purchasing only relevant insights while enforcing your financial rules.
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
+              <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Automatic RSS feed discovery and parser
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
+                </motion.div>
+                <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Evaluation scoring thresholds set by the user
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
+                </motion.div>
+                <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Self-pauses when daily budget is exhausted
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </div>
             
             <InteractiveGlassCard style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', borderRadius: '24px' }}>

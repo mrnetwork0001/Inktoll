@@ -66,7 +66,9 @@ export default function ReaderAsk() {
   }, []);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > 1) {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
   const handleSend = async (e: React.FormEvent) => {

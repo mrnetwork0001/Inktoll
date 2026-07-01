@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import { useNotification } from '../../components/NotificationProvider';
+import { Eye, EyeOff, Trophy, ReceiptText, BookOpen, BadgeCheck, Copy } from 'lucide-react';
 
 interface LeaderboardStats {
   totalVolumeUsdc: number;
@@ -126,7 +127,7 @@ export default function Leaderboard() {
                 outline: 'none'
               }}
             >
-              {showBalances ? '👁️ Hide My View' : '🙈 Show My View'}
+              {showBalances ? <><EyeOff size={16} /> Hide My View</> : <><Eye size={16} /> Show My View</>}
             </button>
           </div>
 
@@ -197,7 +198,7 @@ export default function Leaderboard() {
                       {creators.map((c, index) => {
                         const domain = getDomainName(c.ghost_url);
                         const isTop3 = index < 3;
-                        const rankMedals = ['🥇', '🥈', '🥉'];
+                        const rankMedals = [<Trophy key={1} size={18} color="#FFD700" style={{ display: 'inline' }} />, <Trophy key={2} size={18} color="#C0C0C0" style={{ display: 'inline' }} />, <Trophy key={3} size={18} color="#CD7F32" style={{ display: 'inline' }} />];
                         return (
                           <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
                             <td style={{ padding: '1rem 0.5rem', fontWeight: 600 }}>
@@ -380,7 +381,7 @@ export default function Leaderboard() {
                 </button>
 
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🧾</div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.5rem' }}><ReceiptText size={48} color="var(--text-primary)" /></div>
                   <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                     USDC Nanopayment Receipt
                   </h3>
@@ -393,7 +394,7 @@ export default function Leaderboard() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                     <span style={{ color: 'var(--text-secondary)' }}>Payment Type:</span>
                     <span style={{ fontWeight: 600, color: selectedReceipt.payment_type === 'read' ? 'var(--primary-light)' : 'var(--primary)' }}>
-                      {selectedReceipt.payment_type === 'read' ? '📚 Pay-Per-Read Fee' : '⚜️ Citation Toll'}
+                      {selectedReceipt.payment_type === 'read' ? <><BookOpen size={14} style={{ display: 'inline', marginRight: '4px' }} /> Pay-Per-Read Fee</> : <><BadgeCheck size={14} style={{ display: 'inline', marginRight: '4px' }} /> Citation Toll</>}
                     </span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
@@ -446,7 +447,7 @@ export default function Leaderboard() {
                           justifyContent: 'center'
                         }}
                       >
-                        📋 Copy
+                        <Copy size={14} style={{ marginRight: '4px' }} /> Copy
                       </button>
                     </div>
                   </div>

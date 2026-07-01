@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
 import { useNotification } from '../../../components/NotificationProvider';
+import { Eye, EyeOff, BookOpen, ReceiptText, BadgeCheck, Info } from 'lucide-react';
 
 // Custom hook to animate number counting
 function useAnimatedCount(targetValue: number, duration: number = 800) {
@@ -394,7 +395,7 @@ function CreatorDashboardInner() {
                 e.currentTarget.style.borderColor = 'var(--border)';
               }}
             >
-              {showBalances ? '👁️ Hide Balances' : '🙈 Show Balances'}
+              {showBalances ? <><EyeOff size={16} /> Hide Balances</> : <><Eye size={16} /> Show Balances</>}
             </button>
           </div>
 
@@ -404,7 +405,7 @@ function CreatorDashboardInner() {
             <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 All-Time Earnings
-                <span title="Cumulative USDC earned by your blog from purchases and citation tolls. This number only goes up." style={{ cursor: 'help', opacity: 0.6 }}>ℹ</span>
+                <span title="Cumulative USDC earned by your blog from purchases and citation tolls. This number only goes up." style={{ cursor: 'help', opacity: 0.6 }}><Info size={12} /></span>
               </span>
               <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {showBalances ? `$${animatedEarnings.toFixed(6)}` : '$ ••••••'}
@@ -416,7 +417,7 @@ function CreatorDashboardInner() {
             <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary-light)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 Claimable Balance
-                <span title="The claimable USDC balance sitting in your blog's custodial wallet right now. This decreases when you withdraw." style={{ cursor: 'help', opacity: 0.6 }}>ℹ</span>
+                <span title="The claimable USDC balance sitting in your blog's custodial wallet right now. This decreases when you withdraw." style={{ cursor: 'help', opacity: 0.6 }}><Info size={12} /></span>
               </span>
               <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--primary-light)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {showBalances ? `$${(stats?.balanceUsdc || 0).toFixed(6)}` : '$ ••••••'}
@@ -706,7 +707,7 @@ function CreatorDashboardInner() {
             <div className="glass-card" style={{ padding: '1.5rem' }}>
               <div style={{ marginBottom: '1rem' }}>
                 <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  📚 Monetized Content Hub
+                  <BookOpen size={20} color="var(--primary)" /> Monetized Content Hub
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                   Detailed earnings breakdown of articles scraped and evaluated by reader agents.
@@ -784,7 +785,7 @@ function CreatorDashboardInner() {
                             background: tx.payment_type === 'read' ? 'rgba(0,115,195,0.15)' : 'var(--primary-glow)',
                             color: tx.payment_type === 'read' ? 'var(--primary-light)' : 'var(--primary)'
                           }}>
-                            {tx.payment_type === 'read' ? '📚 Pay-Per-Read' : '⚜️ Citation Toll'}
+                            {tx.payment_type === 'read' ? <><BookOpen size={12} style={{ display: 'inline', marginRight: '4px' }} /> Pay-Per-Read</> : <><BadgeCheck size={12} style={{ display: 'inline', marginRight: '4px' }} /> Citation Toll</>}
                           </span>
                         </td>
                         <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: tx.payment_type === 'read' ? '#fff' : 'var(--primary)' }}>
@@ -898,7 +899,7 @@ function CreatorDashboardInner() {
               </button>
 
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🧾</div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.5rem' }}><ReceiptText size={48} color="var(--text-primary)" /></div>
                 <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                   USDC Nanopayment Receipt
                 </h3>
@@ -911,7 +912,7 @@ function CreatorDashboardInner() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Payment Type:</span>
                   <span style={{ fontWeight: 600, color: selectedReceipt.payment_type === 'read' ? 'var(--primary-light)' : 'var(--primary)' }}>
-                    {selectedReceipt.payment_type === 'read' ? '📚 Pay-Per-Read' : '⚜️ Citation Toll'}
+                    {selectedReceipt.payment_type === 'read' ? <><BookOpen size={14} style={{ display: 'inline', marginRight: '4px' }} /> Pay-Per-Read</> : <><BadgeCheck size={14} style={{ display: 'inline', marginRight: '4px' }} /> Citation Toll</>}
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>

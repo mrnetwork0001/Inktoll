@@ -274,7 +274,7 @@ const staggerContainer = {
 
 const staggerItem = {
   hidden: { opacity: 0, x: -15 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } }
+  visible: { opacity: 1, x: 0, transition: { duration: 0.4 } }
 };
 
 export default function LandingPage() {
@@ -676,7 +676,7 @@ export default function LandingPage() {
                 <motion.div 
                   initial={{ width: 0 }} 
                   whileInView={{ width: '45%' }} 
-                  transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
+                  transition={{ duration: 1.5, delay: 0.3 }}
                   style={{ height: '100%', background: 'var(--primary)' }}
                 ></motion.div>
               </div>

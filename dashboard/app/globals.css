@@ -38,6 +38,24 @@
   --radius-lg: 12px;
 }
 
+[data-theme="light"] {
+  --bg-primary: #FAF8F5; /* Parchment/Cream */
+  --bg-secondary: #F0EBE1;
+  --bg-card: #FFFFFF;
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --bg-active: rgba(228, 193, 125, 0.15); /* Slightly darker gold active bg */
+
+  --text-primary: #0C1722; /* Deep Ink */
+  --text-secondary: rgba(12, 23, 34, 0.7);
+  --text-muted: rgba(12, 23, 34, 0.4);
+
+  --border: rgba(12, 23, 34, 0.1);
+  --border-hover: rgba(12, 23, 34, 0.2);
+
+  --shadow-soft: 0 4px 20px -2px rgba(12, 23, 34, 0.08);
+  --shadow-hover: 0 10px 25px -5px rgba(12, 23, 34, 0.12), 0 8px 10px -6px rgba(228, 193, 125, 0.1);
+}
+
 /* Reset & Global Styles */
 * {
   box-sizing: border-box;

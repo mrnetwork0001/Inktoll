@@ -35,8 +35,19 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  
+  const [theme, setTheme] = useState('dark');
 
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('inktoll_theme') || 'dark';
+    setTheme(savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('inktoll_theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
 
   // Email OTP States
   const sdkRef = React.useRef<W3SSdk | null>(null);
@@ -327,11 +338,30 @@ export default function Header() {
     <header className="header">
       <div className="container header-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/" className="logo-section" style={{ textDecoration: 'none' }}>
-          <img src="/logo-dark.png" alt="Inktoll Logo" style={{ height: '80px', objectFit: 'contain' }} />
+          <img src={theme === 'dark' ? '/logo-dark.png' : '/logo.png'} alt="Inktoll Logo" style={{ height: '80px', objectFit: 'contain' }} />
         </Link>
         
         {/* Desktop Navigation Group */}
         <div className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <button 
+            onClick={toggleTheme}
+            style={{
+              background: 'transparent',
+              border: '1px solid var(--border)',
+              color: 'var(--text-primary)',
+              borderRadius: '50%',
+              width: '38px',
+              height: '38px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              marginBottom: 0
+            }}
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+
           {pathname !== '/' && (
             <nav>
               <ul className="nav-links" style={{ marginBottom: 0 }}>
@@ -547,6 +577,25 @@ export default function Header() {
             >
               Leaderboard
             </Link>
+
+            <button 
+              onClick={toggleTheme}
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+                borderRadius: '8px',
+                padding: '0.75rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                cursor: 'pointer',
+                textAlign: 'left',
+                marginTop: '0.5rem'
+              }}
+            >
+              {theme === 'dark' ? '☀️ Switch to Light Mode' : '🌙 Switch to Dark Mode'}
+            </button>
 
             <hr style={{ border: 'none', borderBottom: '1px solid var(--border)', margin: '0.5rem 0' }} />
 

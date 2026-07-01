@@ -4,7 +4,26 @@ import React from 'react';
 import Link from 'next/link';
 
 export default function Footer() {
+  const [theme, setTheme] = React.useState('dark');
 
+  React.useEffect(() => {
+    // Initial check
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    setTheme(currentTheme);
+
+    // Watch for changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          const newTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+          setTheme(newTheme);
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <footer style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', borderTop: '1px solid var(--border)', padding: '4rem 0', marginTop: 'auto' }}>
@@ -14,7 +33,7 @@ export default function Footer() {
           {/* Column 1: Brand */}
           <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-              <img src="/logo-dark.png" alt="Inktoll Logo" style={{ height: '90px', objectFit: 'contain' }} />
+              <img src={theme === 'dark' ? '/logo-dark.png' : '/logo.png'} alt="Inktoll Logo" style={{ height: '90px', objectFit: 'contain' }} />
             </Link>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: '1.6', maxWidth: '300px', marginTop: '0.5rem' }}>
               Monetizing AI data consumption through instant USDC nanopayments and citation royalties.

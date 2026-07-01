@@ -164,12 +164,10 @@ a:hover {
 /* Navigation Header */
 .header {
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(12, 23, 34, 0.85); /* Deep Ink with opacity for blur */
+  background: var(--bg-card);
 }
 
 .header-container {

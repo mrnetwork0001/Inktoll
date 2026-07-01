@@ -1,7 +1,7 @@
 # 🏆 Inktoll Protocol
 > **Gasless Micropayment & Citation Settlement Highway for the Agentic Web3 Knowledge Economy**
 
-Built with **Circle Programmable Wallets**, **Circle Gateway Nanopayments**, and settled on the **Arc Testnet** (USDC-native gas chain) for sub-second, frictionless payments.
+Built with **Circle Programmable Wallets**, **Circle Gateway Nanopayments**, and settled on the **Arc Testnet** (USDC-native gas chain) for sub-second, frictionless machine-to-human payments.
 
 ---
 
@@ -16,14 +16,30 @@ Inktoll turns content consumption into a functioning Web3 micro-economy where cr
 
 ---
 
+## ✨ Hackathon Highlights (Why Judges Love Inktoll)
+
+### 🛡️ "Proof of Authorship" Verification Badge
+To combat plagiarism and ensure secure compensation, Inktoll guarantees 100% of the USDC goes directly to the original creator. Every article in the Reader Feed and Leaderboard displays a **"Verified Ghost Author"** or **"Cryptographically Secured"** badge. Unlike competitors that let anyone paste a URL and steal revenue, Inktoll relies on secure API handshakes with Ghost.
+
+### 🤖 Agent Personas & "Top Spender" Leaderboards
+We brought the AI economy to life! Rather than treating AI agents as invisible scripts, Inktoll features a **Top Agent Fans** leaderboard in the Creator Dashboard. Real autonomous reader agents (e.g., `Agent_B2A9`) are ranked dynamically based on how much USDC they have spent unlocking content and citing works. This makes the abstract concept of a "Machine-to-Machine Economy" tangible, social, and extremely engaging.
+
+### 💸 Zero-Gas Nanopayments via Circle Gateway
+We integrated the **Circle Gateway** to batch gasless off-chain payment authorizations (EIP-3009 / ERC-20 transfers). This achieves sub-cent transactions ($0.001) with **zero gas fees** for the user, net-settling batches efficiently on the Arc L1 Testnet.
+
+### 🎨 State-of-the-Art Glassmorphism UX
+The Inktoll Dashboard isn't just functional; it's a visual experience. Built with Next.js and Framer Motion, it features a dark futuristic aesthetic, staggered micro-animations, animated 3D tracking cards, and customized Lucide React icons replacing standard emojis for a premium Web3 infrastructure feel.
+
+---
+
 ## 🛠️ Tech Stack & Integration
 *   **Circle SDKs**:
     *   **User-Controlled & Developer-Controlled Wallets**: Seamless passkey and MPC wallet generation.
-    *   **Circle Gateway Client**: Batching gasless off-chain payment authorizations (EIP-3009 / ERC-20 transfers) with zero user gas fees.
+    *   **Circle Gateway Client**: Batching gasless off-chain payment authorizations.
 *   **Arc Testnet**: Settles micropayments gaslessly using USDC as the native gas token, delivering sub-second finality.
 *   **AI & Logic Layer**: LangChain and OpenAI `gpt-4o-mini` drive the agent's autonomous relevance scoring and citation detection.
-*   **Web Dashboard**: Built using Next.js 16 (App Router), Vanilla CSS, and beautiful Glassmorphism design aesthetics.
-*   **Database**: SQLite metadata storage ledger for transaction audits, active agent tracking, and leaderboard data.
+*   **Frontend**: Built using Next.js 16 (App Router), Vanilla CSS, and `framer-motion`.
+*   **Database**: SQLite metadata storage ledger for transaction audits, active agent tracking, and real-time leaderboards.
 
 ---
 
@@ -127,21 +143,6 @@ npm run build
 npm start -- -p 3005
 ```
 *   *Dashboard is live at `http://localhost:3005`*
-
----
-
-## ✨ Winning Hackathon Features
-
-### 🏆 Real-Time Ecosystem Leaderboard
-*   Located at `/leaderboard`, it aggregates stats directly from the SQLite ledger: **Global USDC Circulated**, **Articles Indexed**, and **Active Reader Agents** online.
-*   Features a **Live Ticker Feed** showing agent payment events dynamically as they settle.
-*   Stats auto-hydrate in **real time every 5 seconds** across the landing page and leaderboard to simulate a living machine economy.
-
-### 🔒 Balance Privacy Mode
-*   Creators can toggle off the visibility of their earnings and metrics globally across the dashboard with one click, protecting sensitive balance sheets during live demos or stream recordings.
-
-### 🎨 Fully Integrated Glassmorphism UX
-*   Ditched crude browser popups (`alert` & `prompt`) for a custom-built, React-native **Modal Dialog & Slide-In Toast System** styled to match the dark futuristic design aesthetic of Inktoll.
 
 ---
 

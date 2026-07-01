@@ -635,3 +635,14 @@ a:hover {
     display: flex !important;
   }
 }
+
+/* Remove up/down spinner arrows on input[type=number] across the entire app */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}

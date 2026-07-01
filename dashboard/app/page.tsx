@@ -3,6 +3,51 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header';
+import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
+
+function InteractiveGlassCard({ children, className, style, hoverScale = 1.02 }: any) {
+  let mouseX = useMotionValue(0);
+  let mouseY = useMotionValue(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    let { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <motion.div
+      className={`glass-card ${className || ''}`}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ y: -5, scale: hoverScale, boxShadow: "0 25px 45px -10px var(--primary-glow)" }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      style={{ ...style, position: 'relative', overflow: 'hidden' }}
+    >
+      <motion.div
+        className="pointer-events-none absolute -inset-px"
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              400px circle at ${mouseX}px ${mouseY}px,
+              var(--primary-glow),
+              transparent 80%
+            )
+          `,
+          zIndex: 0,
+          borderRadius: 'inherit'
+        }}
+      />
+      <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', gap: style?.gap }}>
+        {children}
+      </div>
+    </motion.div>
+  );
+}
 
 export default function LandingPage() {
   const [stats, setStats] = useState<any>(null);
@@ -70,30 +115,20 @@ export default function LandingPage() {
       <Header />
       <main style={{ padding: '3rem 0', position: 'relative', overflow: 'hidden' }}>
         
-        {/* Soft Background Blur Orbs for Corporate Trust style */}
+        {/* Full-bleed 3D Glass Background Element (Nexora Aesthetic) */}
         <div style={{
           position: 'absolute',
-          top: '5%',
-          left: '10%',
-          width: '500px',
-          height: '500px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, var(--primary-glow) 0%, transparent 70%)',
-          filter: 'blur(130px)',
-          zIndex: -2,
-          pointerEvents: 'none'
-        }}></div>
-        <div style={{
-          position: 'absolute',
-          top: '30%',
-          right: '5%',
-          width: '600px',
-          height: '600px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, var(--primary-glow) 0%, transparent 70%)',
-          filter: 'blur(150px)',
-          zIndex: -2,
-          pointerEvents: 'none'
+          top: 0,
+          right: 0,
+          width: '60vw',
+          height: '120vh',
+          backgroundImage: 'url(/hero-3d.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'left center',
+          backgroundRepeat: 'no-repeat',
+          zIndex: -1,
+          maskImage: 'linear-gradient(to right, transparent, black 30%)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 30%)'
         }}></div>
 
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '8rem', paddingBottom: '4rem' }}>
@@ -109,29 +144,13 @@ export default function LandingPage() {
             {/* Left Column: Headline and Call-to-Action */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', textAlign: 'left' }}>
               <div>
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  background: 'var(--primary-glow)',
-                  color: 'var(--primary)',
-                  fontWeight: 600,
-                  fontSize: '0.75rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  padding: '6px 14px',
-                  borderRadius: '9999px',
-                  border: '1px solid var(--primary-glow)',
-                  marginBottom: '1.25rem'
-                }}>
-                  <span className="status-dot pulsing" style={{ width: '6px', height: '6px' }}></span> Built for Lepton Agents Hackathon
-                </span>
+
                 
                 <h1 style={{ 
-                  fontSize: 'clamp(2.5rem, 5vw, 4.25rem)', 
-                  lineHeight: '1.1', 
+                  fontSize: 'clamp(3rem, 7vw, 5.5rem)', 
+                  lineHeight: '1.05', 
                   fontWeight: 800, 
-                  letterSpacing: '-0.03em',
+                  letterSpacing: '-0.04em',
                   margin: 0
                 }}>
                   Monetize Content in the <br />
@@ -273,31 +292,31 @@ export default function LandingPage() {
           </section>
 
           {/* 2. ECOSYSTEM STATS GRID */}
-          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.75rem', marginTop: '-2rem' }}>
-            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
+          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1.25rem', marginTop: '-2rem' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Global USDC Volume</span>
-              <h3 style={{ fontSize: '2.25rem', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {loading ? '...' : `$${(stats?.totalVolumeUsdc || 0).toFixed(4)}`}
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Micro-settlements routed</span>
             </div>
-            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Articles Indexed</span>
-              <h3 style={{ fontSize: '2.25rem', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {loading ? '...' : (stats?.totalArticles || 0)}
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Feeds parsed by agent loop</span>
             </div>
-            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Active Reader Agents</span>
-              <h3 style={{ fontSize: '2.25rem', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {loading ? '...' : (stats?.activeAgents || 0)}
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Self-governed crawlers active</span>
             </div>
-            <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Settlement Layer</span>
-              <h3 style={{ fontSize: '1.75rem', margin: '0.75rem 0 0 0', color: 'var(--text-primary)', fontWeight: 800 }}>
+              <h3 style={{ fontSize: 'clamp(1.25rem, 3.5vw, 1.75rem)', margin: '0.75rem 0 0 0', color: 'var(--text-primary)', fontWeight: 800 }}>
                 Arc Testnet
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Gas-abstracted stablecoin L1</span>
@@ -305,17 +324,25 @@ export default function LandingPage() {
           </section>
 
           {/* 3. THE PROBLEM SECTION */}
-          <section id="features" className="glass-card" style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            textAlign: 'center', 
-            padding: '4rem 2rem', 
-            gap: '1.5rem', 
-            border: '1px solid var(--bg-active)', 
-            background: 'var(--primary), transparent)',
-            borderRadius: '24px'
-          }}>
+          <motion.section 
+            id="features" 
+            className="glass-card" 
+            initial={{ opacity: 0, y: 30 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true, margin: "-100px" }} 
+            transition={{ duration: 0.6 }}
+            style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              textAlign: 'center', 
+              padding: '4rem 2rem', 
+              gap: '1.5rem', 
+              border: '1px solid var(--bg-active)', 
+              background: 'var(--primary), transparent)',
+              borderRadius: '24px'
+            }}
+          >
             <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-active)', padding: '1rem', borderRadius: '50%', color: 'var(--bg-active)' }}>
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="2" x2="12" y2="22" /><line x1="5" y1="7" x2="19" y2="7" /><path d="M5 9c0 3 1.5 5 5 5s5-2 5-5M19 9c0 3-1.5 5-5 5s-5-2-5-5" /></svg>
             </span>
@@ -323,10 +350,16 @@ export default function LandingPage() {
             <p style={{ fontSize: '1.15rem', color: 'var(--text-secondary)', maxWidth: '800px', lineHeight: '1.7', margin: 0 }}>
               Large Language Models scrape content continuously for free. In response, publishers block bot access or implement strict paywalls, breaking web indexing. <strong>Inktoll builds an cooperative economy:</strong> AI reader agents get complete access to read, while creators receive instant, gasless royalties.
             </p>
-          </section>
+          </motion.section>
 
           {/* 4. LAYER 1: PAY-PER-READ */}
-          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}>
+          <motion.section 
+            initial={{ opacity: 0, y: 30 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true, margin: "-100px" }} 
+            transition={{ duration: 0.6 }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}
+          >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div style={{ background: 'var(--primary-glow)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
@@ -347,19 +380,25 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-            <div className="glass-card" style={{ padding: '3rem', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '1.25rem', textAlign: 'center', borderRadius: '24px' }}>
+            <InteractiveGlassCard style={{ padding: '3rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', textAlign: 'center', borderRadius: '24px' }}>
               <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)' }}>Ledger Event</span>
               <div style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--primary)', fontFamily: 'var(--font-mono)' }}>+ $0.005 USDC</div>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>
                 Agent <strong>"FinanceEvaluator"</strong> unlocked access to article: <br />
                 <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>"The Future of AI Settlement Nodes"</span>
               </p>
-            </div>
-          </section>
+            </InteractiveGlassCard>
+          </motion.section>
 
           {/* 5. LAYER 2: CITATION TOLLS */}
-          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}>
-            <div className="glass-card" style={{ padding: '2.5rem', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '1.25rem', borderRadius: '24px', border: '1px solid var(--primary-glow)' }}>
+          <motion.section 
+            initial={{ opacity: 0, y: 30 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true, margin: "-100px" }} 
+            transition={{ duration: 0.6 }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}
+          >
+            <InteractiveGlassCard style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', borderRadius: '24px', border: '1px solid var(--primary-glow)' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Semantic Output</div>
               <p style={{ fontStyle: 'italic', color: 'var(--text-primary)', fontSize: '0.95rem', lineHeight: '1.6', margin: 0 }}>
                 "As analyzed in recent decentralization literature, content monetization models must shift from monthly aggregates to sub-cent queries..."
@@ -369,7 +408,7 @@ export default function LandingPage() {
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Citation Toll Routed:</span>
                 <span style={{ color: 'var(--primary)', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>+ $0.0001 USDC</span>
               </div>
-            </div>
+            </InteractiveGlassCard>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div style={{ background: 'var(--primary-glow)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
@@ -391,10 +430,16 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* 6. FOR READERS: AUTONOMOUS BUDGETS */}
-          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}>
+          <motion.section 
+            initial={{ opacity: 0, y: 30 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true, margin: "-100px" }} 
+            transition={{ duration: 0.6 }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}
+          >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div style={{ background: 'var(--primary-glow)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
@@ -416,20 +461,25 @@ export default function LandingPage() {
               </div>
             </div>
             
-            <div className="glass-card" style={{ padding: '2.5rem', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', gap: '1.5rem', borderRadius: '24px' }}>
+            <InteractiveGlassCard style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', borderRadius: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Daily Spending Cap</span>
                 <span style={{ fontWeight: 800, fontSize: '1.25rem', fontFamily: 'var(--font-mono)', color: 'var(--primary)' }}>$1.00 USDC</span>
               </div>
               <div style={{ height: '10px', background: 'var(--bg-primary)', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                <div style={{ height: '100%', width: '45%', background: 'var(--primary)' }}></div>
+                <motion.div 
+                  initial={{ width: 0 }} 
+                  whileInView={{ width: '45%' }} 
+                  transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
+                  style={{ height: '100%', background: 'var(--primary)' }}
+                ></motion.div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                 <span>$0.45 Spent (90 Articles)</span>
                 <span>$0.55 Remaining</span>
               </div>
-            </div>
-          </section>
+            </InteractiveGlassCard>
+          </motion.section>
 
           {/* 7. INTERACTIVE PAYMENT FLOW */}
           <section className="glass-card" style={{ textAlign: 'center', padding: '4rem 2rem', borderRadius: '24px' }}>

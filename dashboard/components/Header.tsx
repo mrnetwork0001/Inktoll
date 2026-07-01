@@ -397,7 +397,7 @@ export default function Header() {
                     href="/reader/setup" 
                     className={`nav-link ${isActive('/reader/setup') ? 'active' : ''}`}
                   >
-                    🤖 Agent Settings
+                    Agent Settings
                   </Link>
                 </li>
                 <li>
@@ -413,7 +413,7 @@ export default function Header() {
                     href="/leaderboard" 
                     className={`nav-link ${isActive('/leaderboard') ? 'active' : ''}`}
                   >
-                    🏆 Leaderboard
+                    Leaderboard
                   </Link>
                 </li>
               </ul>
@@ -457,7 +457,7 @@ export default function Header() {
                   }}
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
-                  🦊 Connect Wallet
+                  Connect Wallet
                 </button>
               )}
 

@@ -5,6 +5,47 @@ import Header from '../../../components/Header';
 import PasskeyConnector from '../../../components/PasskeyConnector';
 import { useNotification } from '../../../components/NotificationProvider';
 
+const getTimelineIcon = (type: string, color: string) => {
+  switch (type) {
+    case 'client':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>
+      );
+    case 'error':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></svg>
+      );
+    case 'eval':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+      );
+    case 'buy':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="6" x2="12" y2="18" /><path d="M17 9H12.5a3 3 0 1 0 0 6H17" /></svg>
+      );
+    case 'skip':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 4 15 12 5 20 5 4" /><line x1="19" y1="5" x2="19" y2="19" /></svg>
+      );
+    case 'success':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+      );
+    case 'summary':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>
+      );
+    case 'agent':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
+      );
+    default:
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+      );
+  }
+};
+
 export default function ReaderSetup() {
   const { showAlert, showPrompt, showToast } = useNotification();
   const [status, setStatus] = useState<any>(null);
@@ -292,10 +333,9 @@ export default function ReaderSetup() {
       <Header />
       <main style={{ padding: '3rem 0' }}>
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          
           {error && (
             <div style={{ padding: '1rem', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid var(--error)', borderRadius: '8px', color: 'var(--error)' }}>
-              ⚠️ {error}
+              Error: {error}
             </div>
           )}
 
@@ -305,7 +345,7 @@ export default function ReaderSetup() {
             <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h3>🤖 AI Reader Agent</h3>
+                  <h3>AI Reader Agent</h3>
                   <span style={{ fontSize: '0.8rem', display: 'inline-flex', gap: '0.4rem', alignItems: 'center', background: 'rgba(16,185,129,0.15)', color: 'var(--success)', padding: '4px 10px', borderRadius: '12px', fontWeight: 600 }}>
                     <span className="status-dot pulsing"></span> Active
                   </span>
@@ -320,13 +360,14 @@ export default function ReaderSetup() {
                       </div>
                       <button 
                         className="btn btn-secondary" 
-                        style={{ padding: '6px 12px', fontSize: '0.8rem', minHeight: 'auto', marginBottom: 0 }}
+                        style={{ padding: '6px 12px', fontSize: '0.8rem', minHeight: 'auto', marginBottom: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         onClick={() => {
                           navigator.clipboard.writeText(status?.address || '');
                           showToast('Address copied to clipboard!', 'success');
                         }}
+                        title="Copy address"
                       >
-                        📋
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
                       </button>
                     </div>
                   </div>
@@ -363,7 +404,7 @@ export default function ReaderSetup() {
                               color: faucetAllowed ? 'var(--primary-light)' : 'var(--text-muted)'
                             }}
                           >
-                            {claimingFaucet ? 'Claiming...' : faucetAllowed ? '🚰 Claim 1 USDC' : `⏳ Cooldown: ${Math.floor(cooldownSeconds / 3600)}h ${Math.floor((cooldownSeconds % 3600) / 60)}m ${cooldownSeconds % 60}s`}
+                            {claimingFaucet ? 'Claiming...' : faucetAllowed ? 'Claim 1 USDC' : `Cooldown: ${Math.floor(cooldownSeconds / 3600)}h ${Math.floor((cooldownSeconds % 3600) / 60)}m ${cooldownSeconds % 60}s`}
                           </button>
                         </div>
                         <div style={{ fontSize: '1.25rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -424,14 +465,14 @@ export default function ReaderSetup() {
                   onClick={handleRunAgent}
                   disabled={running}
                 >
-                  {running ? 'Running...' : '🚀 Start Loop'}
+                  {running ? 'Running...' : 'Start Loop'}
                 </button>
               </div>
             </div>
 
             {/* Profile Settings Form */}
             <div className="glass-card">
-              <h3>⚙️ Agent Preferences</h3>
+              <h3>Agent Preferences</h3>
               <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '1rem' }}>
                 <div className="form-group">
                   <label className="form-label">Reader Interests (Comma separated)</label>
@@ -480,7 +521,7 @@ export default function ReaderSetup() {
             {/* Wallet Custody Card */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <h3>⚜️ Wallet Custody Model</h3>
+                <h3>Wallet Custody Model</h3>
                 <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                   Choose how your autonomous reader agent signs and pays article tolls.
                 </p>
@@ -505,7 +546,7 @@ export default function ReaderSetup() {
                       onChange={() => handleCustodyChange('managed')}
                     />
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>🤖 Inktoll Managed (Circle DCW)</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Inktoll Managed (Circle DCW)</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Background payments without prompts. Ideal for run loops.</div>
                     </div>
                   </label>
@@ -529,7 +570,7 @@ export default function ReaderSetup() {
                       onChange={() => handleCustodyChange('metamask')}
                     />
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>🦊 Browser Wallet (MetaMask)</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Browser Wallet (MetaMask)</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Direct signature verification from your browser extension.</div>
                     </div>
                   </label>
@@ -553,7 +594,7 @@ export default function ReaderSetup() {
                       onChange={() => handleCustodyChange('passkey')}
                     />
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>⚜️ Device Passkey (Smart Account)</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Device Passkey (Smart Account)</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Non-custodial biometrics. Gas-abstracted smart wallet.</div>
                     </div>
                   </label>
@@ -605,48 +646,39 @@ export default function ReaderSetup() {
               {runLogs.length > 0 ? (
                 runLogs.map((logStr, idx) => {
                   let type = 'info';
-                  let icon = 'ℹ️';
                   let color = 'var(--text-secondary)';
                   let text = logStr;
 
                   if (logStr.startsWith('[Client]')) {
                     type = 'client';
-                    icon = '💻';
                     color = 'var(--primary-light)';
                     text = logStr.replace('[Client]', '').trim();
                   } else if (logStr.startsWith('[ERROR]')) {
                     type = 'error';
-                    icon = '❌';
                     color = 'var(--error)';
                     text = logStr.replace('[ERROR]', '').trim();
                   } else if (logStr.includes('Evaluating article:')) {
                     type = 'eval';
-                    icon = '🔍';
                     color = '#a5b4fc';
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.includes('Decision: BUY')) {
                     type = 'buy';
-                    icon = '🪙';
                     color = 'var(--accent)';
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.includes('Decision: SKIP')) {
                     type = 'skip';
-                    icon = '⏩';
                     color = 'var(--text-muted)';
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.includes('Payment Succeeded!')) {
                     type = 'success';
-                    icon = '✅';
                     color = 'var(--success)';
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.includes('Summary compiled:')) {
                     type = 'summary';
-                    icon = '📝';
                     color = '#34d399';
                     text = logStr.replace('[Agent Run]', '').trim();
                   } else if (logStr.startsWith('[Agent Run]')) {
                     type = 'agent';
-                    icon = '🤖';
                     color = 'var(--primary-light)';
                     text = logStr.replace('[Agent Run]', '').trim();
                   }
@@ -674,13 +706,12 @@ export default function ReaderSetup() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontSize: '0.9rem',
                           zIndex: 2,
                           flexShrink: 0,
                           boxShadow: idx === runLogs.length - 1 ? `0 0 10px ${color}` : 'none'
                         }}
                       >
-                        {icon}
+                        {getTimelineIcon(type, color)}
                       </div>
 
                       {/* Step Card Content */}

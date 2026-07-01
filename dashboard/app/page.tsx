@@ -158,22 +158,25 @@ export default function LandingPage() {
 
               {/* Progress/Pill Flow */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem', boxShadow: 'var(--shadow-soft)' }}>
-                  ✍️ Blog Import
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: 'var(--shadow-soft)' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary)' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                  Blog Import
                 </div>
                 <span style={{ color: 'var(--text-muted)' }}>➔</span>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem', boxShadow: 'var(--shadow-soft)' }}>
-                  🤖 AI Agent Scan
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: 'var(--shadow-soft)' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent)' }}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
+                  AI Agent Scan
                 </div>
                 <span style={{ color: 'var(--text-muted)' }}>➔</span>
-                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.35rem', boxShadow: 'var(--shadow-soft)' }}>
-                  💰 Instant USDC
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.5rem 1rem', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: 'var(--shadow-soft)' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--success)' }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="6" x2="12" y2="18" /><path d="M17 9H12.5a3 3 0 1 0 0 6H17" /></svg>
+                  Instant USDC
                 </div>
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
                 <Link href="/creator/dashboard" className="btn btn-primary" style={{ padding: '0.9rem 2.5rem', fontSize: '1rem', textDecoration: 'none' }}>
-                  🚀 Launch App
+                  Launch App
                 </Link>
                 <Link href="#features" className="btn btn-secondary" style={{ padding: '0.9rem 2rem', fontSize: '1rem', textDecoration: 'none' }}>
                   Learn More
@@ -219,7 +222,7 @@ export default function LandingPage() {
                 {/* Simulated Ledger Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
                   <div>
-                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>⚡ Live Payout Network</h4>
+                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>Live Payout Network</h4>
                     <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Circle Gateway Aggregation</span>
                   </div>
                   <span style={{ fontSize: '0.7rem', color: 'var(--success)', background: 'var(--success-glow)', padding: '4px 10px', borderRadius: '50px', fontWeight: 700 }}>
@@ -263,7 +266,7 @@ export default function LandingPage() {
 
                 {/* Micro educational summary */}
                 <div style={{ marginTop: '1.5rem', padding: '0.75rem', background: 'var(--bg-active)', borderRadius: '10px', fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                  💡 <strong>How it works:</strong> Nanopayments are settled off-chain immediately and batched onto Arc L1 to maintain zero gas requirements.
+                  <strong>How it works:</strong> Nanopayments are settled off-chain immediately and batched onto Arc L1 to maintain zero gas requirements.
                 </div>
               </div>
             </div>
@@ -313,7 +316,9 @@ export default function LandingPage() {
             background: 'linear-gradient(to bottom, rgba(239,68,68,0.03), transparent)',
             borderRadius: '24px'
           }}>
-            <span style={{ fontSize: '2rem' }}>⚖️</span>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(239,68,68,0.08)', padding: '1rem', borderRadius: '50%', color: 'rgba(239,68,68,0.8)' }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="2" x2="12" y2="22" /><line x1="5" y1="7" x2="19" y2="7" /><path d="M5 9c0 3 1.5 5 5 5s5-2 5-5M19 9c0 3-1.5 5-5 5s-5-2-5-5" /></svg>
+            </span>
             <h2 style={{ fontSize: '2.25rem', margin: 0 }}>The Publisher vs. AI Crisis</h2>
             <p style={{ fontSize: '1.15rem', color: 'var(--text-secondary)', maxWidth: '800px', lineHeight: '1.7', margin: 0 }}>
               Large Language Models scrape content continuously for free. In response, publishers block bot access or implement strict paywalls, breaking web indexing. <strong>Inktoll builds an cooperative economy:</strong> AI reader agents get complete access to read, while creators receive instant, gasless royalties.
@@ -323,7 +328,9 @@ export default function LandingPage() {
           {/* 4. LAYER 1: PAY-PER-READ */}
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ fontSize: '2.5rem', background: 'var(--bg-active)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)' }}>⚡</div>
+              <div style={{ background: 'rgba(79,70,229,0.08)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+              </div>
               <h2 style={{ fontSize: '2.25rem', margin: 0 }}>Layer 1: Pay-Per-Read</h2>
               <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.7', margin: 0 }}>
                 Connect your Ghost or Substack feed and set custom per-article prices (e.g., $0.005 USDC). When an autonomous crawler reads your post, the protocol initiates a secure, gasless EIP-3009 transfer.
@@ -365,7 +372,9 @@ export default function LandingPage() {
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ fontSize: '2.5rem', background: 'var(--bg-active)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--accent)' }}>⚜️</div>
+              <div style={{ background: 'rgba(124,58,237,0.08)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--accent)', boxShadow: 'var(--shadow-soft)' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+              </div>
               <h2 style={{ fontSize: '2.25rem', margin: 0 }}>Layer 2: Citation Tolls</h2>
               <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.7', margin: 0 }}>
                 The content economy doesn't stop at reading. When an AI agent leverages your content to generate output, the protocol detects the citation, logs the query event, and automatically routes a <strong>Citation Toll royalty ($0.0001 USDC)</strong> back to your wallet.
@@ -387,7 +396,9 @@ export default function LandingPage() {
           {/* 6. FOR READERS: AUTONOMOUS BUDGETS */}
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '5rem', alignItems: 'center' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div style={{ fontSize: '2.5rem', background: 'var(--bg-active)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: '#3b82f6' }}>🤖</div>
+              <div style={{ background: 'rgba(59,130,246,0.08)', width: '70px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '16px', color: 'var(--primary)', boxShadow: 'var(--shadow-soft)' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
+              </div>
               <h2 style={{ fontSize: '2.25rem', margin: 0 }}>Autonomous Budgets</h2>
               <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: '1.7', margin: 0 }}>
                 Spawn agents with custom reading interests, price thresholds, and daily budgets. The agent discovery loop operates independently, purchasing only relevant insights while enforcing your financial rules.
@@ -428,21 +439,27 @@ export default function LandingPage() {
             </p>
             <div className="payment-flow-viz" style={{ maxWidth: '800px', margin: '0 auto', background: 'var(--bg-primary)', border: '1px solid var(--border)', borderRadius: '16px' }}>
               <div className="flow-node active" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '130px' }}>
-                <div className="flow-node-icon" style={{ fontSize: '2.25rem', width: '70px', height: '70px' }}>🤖</div>
+                <div className="flow-node-icon" style={{ width: '70px', height: '70px' }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4M8 16h.01M16 16h.01" /></svg>
+                </div>
                 <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Reader Agent</span>
               </div>
               <div className="flow-line" style={{ flex: 1 }}>
                 <div className="flow-line-active"></div>
               </div>
               <div className="flow-node active" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '130px' }}>
-                <div className="flow-node-icon" style={{ fontSize: '2.25rem', width: '70px', height: '70px' }}>💳</div>
+                <div className="flow-node-icon" style={{ width: '70px', height: '70px' }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}><rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" /></svg>
+                </div>
                 <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Circle Paymaster</span>
               </div>
               <div className="flow-line" style={{ flex: 1 }}>
                 <div className="flow-line-active"></div>
               </div>
               <div className="flow-node active" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '130px' }}>
-                <div className="flow-node-icon" style={{ fontSize: '2.25rem', width: '70px', height: '70px' }}>✍️</div>
+                <div className="flow-node-icon" style={{ width: '70px', height: '70px' }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fff' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                </div>
                 <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Creator Wallet</span>
               </div>
             </div>

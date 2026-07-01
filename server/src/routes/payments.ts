@@ -58,6 +58,23 @@ router.get('/', async (req, res) => {
         LIMIT 20
       `).all(creatorId) as any[];
 
+      // Top Agent Spenders
+      const topAgentsRaw = db.prepare(`
+        SELECT p.reader_agent_id as wallet, COALESCE(SUM(p.amount_usdc), 0) as spent
+        FROM payments p
+        JOIN articles a ON p.article_id = a.id
+        WHERE a.creator_id = ? AND p.status = 'settled'
+        GROUP BY p.reader_agent_id
+        ORDER BY spent DESC
+        LIMIT 5
+      `).all(creatorId) as any[];
+
+      const topAgents = topAgentsRaw.map((agent: any) => ({
+        name: \`Agent_\${agent.wallet.substring(2, 6).toUpperCase()}\`,
+        spent: parseFloat(agent.spent.toFixed(6)),
+        wallet: agent.wallet
+      }));
+
       stats = {
         role: 'creator',
         walletAddress: creator.wallet_address,
@@ -70,6 +87,7 @@ router.get('/', async (req, res) => {
         totalEarningsUsdc: parseFloat((readRev.total + citationRev.total).toFixed(6)),
         articles,
         history,
+        topAgents,
       };
     } else if (agentWallet) {
       const balance = await getWalletBalance(agentWallet as string);

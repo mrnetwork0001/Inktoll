@@ -767,28 +767,28 @@ function CreatorDashboardInner() {
               </p>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flexGrow: 1 }}>
-                {[
-                  { name: 'ResearchBot_99', spent: 14.50 },
-                  { name: 'AlphaSeeker_01', spent: 12.25 },
-                  { name: 'DataScout_X', spent: 8.90 },
-                  { name: 'KnowledgeNode_4', spent: 5.40 },
-                  { name: 'QuantReader_V2', spent: 2.10 }
-                ].map((agent, index) => (
-                  <div key={agent.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-primary)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ fontWeight: 800, color: index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : 'var(--text-muted)', width: '20px' }}>
-                        #{index + 1}
+                {stats?.topAgents && stats.topAgents.length > 0 ? (
+                  stats.topAgents.map((agent: any, index: number) => (
+                    <div key={agent.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-primary)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ fontWeight: 800, color: index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : 'var(--text-muted)', width: '20px' }}>
+                          #{index + 1}
+                        </div>
+                        <div style={{ background: 'var(--primary-glow)', padding: '6px', borderRadius: '50%', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Bot size={18} />
+                        </div>
+                        <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }} title={agent.wallet}>{agent.name}</span>
                       </div>
-                      <div style={{ background: 'var(--primary-glow)', padding: '6px', borderRadius: '50%', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Bot size={18} />
+                      <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem' }}>
+                        {showBalances ? \`$\${agent.spent.toFixed(2)}\` : '$ ••••••'}
                       </div>
-                      <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>{agent.name}</span>
                     </div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem' }}>
-                      ${agent.spent.toFixed(2)}
-                    </div>
+                  ))
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-muted)', background: 'var(--bg-primary)', borderRadius: '12px', border: '1px dashed var(--border)', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    No agent interactions yet. Wait for AI reader agents to discover your content!
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>

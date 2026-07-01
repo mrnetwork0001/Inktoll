@@ -123,14 +123,14 @@ export default function ReaderFeed() {
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2>📚 Agent's Purchased Feed</h2>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h2 className="text-2xl sm:text-3xl m-0 font-extrabold">📚 Agent's Purchased Feed</h2>
             <button className="btn btn-secondary btn-sm" onClick={fetchFeed}>
               🔄 Refresh Feed
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: activeArticle ? '1fr 1.2fr' : '1fr', gap: '2rem', alignItems: 'start' }}>
+          <div className={`grid gap-8 items-start ${activeArticle ? 'grid-cols-1 lg:grid-cols-[1fr_1.2fr]' : 'grid-cols-1'}`}>
             
             {/* Articles List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

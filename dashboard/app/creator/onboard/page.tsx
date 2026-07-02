@@ -12,6 +12,8 @@ export default function CreatorOnboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
+
   const handleConnect = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -57,110 +59,129 @@ export default function CreatorOnboard() {
       <Header />
       <main style={{ padding: '4rem 0' }}>
         <div className="container" style={{ maxWidth: '600px' }}>
-          <div className="glass-card">
-            <h2 style={{ marginBottom: '0.5rem' }}>✍️ Onboard Your Blog</h2>
-            <p style={{ marginBottom: '2rem', fontSize: '0.95rem' }}>
-              Connect your Ghost publication to start earning USDC. We will generate a Circle Programmable Wallet for you, import your articles, and wrap them with an autonomous x402 paywall.
-            </p>
-
-            <form onSubmit={handleConnect} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div className="form-group">
-                <label className="form-label">Ghost Blog URL</label>
-                <input
-                  type="url"
-                  className="form-input"
-                  placeholder="https://your-blog.ghost.io"
-                  value={ghostUrl}
-                  onChange={(e) => setGhostUrl(e.target.value)}
-                  required
-                />
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Tip: Use <code>https://mock-blog.com</code> to run in demo/offline mode.
-                </span>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Content API Key (Read-Only)</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="43ec8b9..."
-                  value={ghostApiKey}
-                  onChange={(e) => setGhostApiKey(e.target.value)}
-                />
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Leave empty if using the mock URL.
-                </span>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Default Price per Article (USDC)</label>
-                <input
-                  type="number"
-                  step="0.0001"
-                  min="0.0001"
-                  max="1.0"
-                  className="form-input"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  required
-                />
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Pricing typically ranges from $0.001 to $0.05 USDC per read.
-                </span>
-              </div>
-
-              {error && (
-                <div style={{ padding: '1rem', background: 'var(--bg-active)', border: '1px solid var(--primary)', borderRadius: '8px', color: 'var(--primary)', fontSize: '0.9rem' }}>
-                  ⚠️ {error}
-                </div>
-              )}
-
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Connecting & Syncing...' : 'Connect Blog & Import Posts'}
-              </button>
-            </form>
-          </div>
-          <div className="glass-card" style={{ marginTop: '2rem' }}>
-            <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-blocks"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3"/></svg>
-              Integrations Roadmap
-            </h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-              Ghost is our primary supported platform for the hackathon. Support for other major content networks is actively being built.
-            </p>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+          
+          {!selectedPlatform ? (
+            <div className="glass-card">
+              <h2 style={{ marginBottom: '0.5rem' }}>Select Your Content Platform</h2>
+              <p style={{ marginBottom: '2rem', fontSize: '0.95rem', color: 'var(--text-muted)' }}>
+                Connect your existing blog to Inktoll. We will import your articles and wrap them in an autonomous x402 paywall for AI agents.
+              </p>
               
-              {/* WordPress Card */}
-              <div style={{ padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.7, position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                  COMING SOON
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                
+                {/* Ghost Card (Active) */}
+                <div 
+                  onClick={() => setSelectedPlatform('ghost')}
+                  style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--primary)', background: 'var(--bg-active)', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 20px rgba(255, 128, 34, 0.1)' }}
+                  onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                  onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>Ghost</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Connect via Content API</div>
                 </div>
-                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.2rem', marginTop: '0.5rem' }}>WordPress</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>WP REST API v2</div>
-              </div>
 
-              {/* Substack Card */}
-              <div style={{ padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.7, position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                  COMING SOON
+                {/* WordPress Card (Coming Soon) */}
+                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.6, position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                    COMING SOON
+                  </div>
+                  <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>WordPress</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>WP REST API v2</div>
                 </div>
-                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.2rem', marginTop: '0.5rem' }}>Substack</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>RSS Syndication</div>
-              </div>
 
-              {/* Medium Card */}
-              <div style={{ padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.7, position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                  COMING SOON
+                {/* Substack Card (Coming Soon) */}
+                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.6, position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                    COMING SOON
+                  </div>
+                  <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>Substack</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>RSS Syndication</div>
                 </div>
-                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.2rem', marginTop: '0.5rem' }}>Medium</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Medium API</div>
-              </div>
 
+                {/* Medium Card (Coming Soon) */}
+                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.6, position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                    COMING SOON
+                  </div>
+                  <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>Medium</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Medium API</div>
+                </div>
+
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="glass-card">
+              <button 
+                onClick={() => setSelectedPlatform(null)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', padding: 0 }}
+              >
+                ← Back to Platforms
+              </button>
+              
+              <h2 style={{ marginBottom: '0.5rem' }}>✍️ Onboard Your Ghost Blog</h2>
+              <p style={{ marginBottom: '2rem', fontSize: '0.95rem' }}>
+                Connect your Ghost publication to start earning USDC. We will generate a Circle Programmable Wallet for you, import your articles, and wrap them with an autonomous x402 paywall.
+              </p>
+
+              <form onSubmit={handleConnect} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div className="form-group">
+                  <label className="form-label">Ghost Blog URL</label>
+                  <input
+                    type="url"
+                    className="form-input"
+                    placeholder="https://your-blog.ghost.io"
+                    value={ghostUrl}
+                    onChange={(e) => setGhostUrl(e.target.value)}
+                    required
+                  />
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Tip: Use <code>https://mock-blog.com</code> to run in demo/offline mode.
+                  </span>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Content API Key (Read-Only)</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="43ec8b9..."
+                    value={ghostApiKey}
+                    onChange={(e) => setGhostApiKey(e.target.value)}
+                  />
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Leave empty if using the mock URL.
+                  </span>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Default Price per Article (USDC)</label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    min="0.0001"
+                    max="1.0"
+                    className="form-input"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    required
+                  />
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Pricing typically ranges from $0.001 to $0.05 USDC per read.
+                  </span>
+                </div>
+
+                {error && (
+                  <div style={{ padding: '1rem', background: 'var(--bg-active)', border: '1px solid var(--primary)', borderRadius: '8px', color: 'var(--primary)', fontSize: '0.9rem' }}>
+                    ⚠️ {error}
+                  </div>
+                )}
+
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? 'Connecting & Syncing...' : 'Connect Ghost Blog & Import Posts'}
+                </button>
+              </form>
+            </div>
+          )}
         </div>
       </main>
     </>

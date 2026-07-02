@@ -719,10 +719,10 @@ export default function Header() {
 
             {/* Headers */}
             <h2 style={{ textAlign: 'center', margin: '0 0 0.5rem 0', fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)' }}>
-              Log in to Inktoll
+              Access the Network
             </h2>
             <p style={{ textAlign: 'center', color: 'var(--text-secondary)', margin: '0 0 2rem 0', fontSize: '0.95rem' }}>
-              Connect a wallet to hire agents and settle in USDC.
+              Create a secure, gasless smart account to instantly stream USDC.
             </p>
 
             {/* Options List */}
@@ -755,13 +755,13 @@ export default function Header() {
                 >
                   <div style={{ marginRight: '1rem', color: 'var(--primary)', background: 'var(--bg-active)', padding: '0.6rem', borderRadius: '8px' }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
-                      <path d="M2 4l10 8 10-8"></path>
+                      <circle cx="12" cy="12" r="4"/>
+                      <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/>
                     </svg>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: '600', fontSize: '1rem', color: 'var(--text-primary)' }}>Email</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>One-time code to your inbox. Gasless.</div>
+                    <div style={{ fontWeight: '600', fontSize: '1rem', color: 'var(--text-primary)' }}>Magic Link (Email)</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Secure OTP verification. No crypto knowledge required.</div>
                   </div>
                   <div style={{ color: 'var(--text-muted)' }}>›</div>
                 </button>
@@ -789,12 +789,20 @@ export default function Header() {
                 >
                   <div style={{ marginRight: '1rem', color: 'var(--primary)', background: 'var(--bg-active)', padding: '0.6rem', borderRadius: '8px' }}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                      <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+                      <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+                      <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+                      <path d="M2 12a10 10 0 0 1 18-6"/>
+                      <path d="M2 16h.01"/>
+                      <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+                      <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/>
+                      <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+                      <path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>
                     </svg>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: '600', fontSize: '1rem', color: 'var(--text-primary)' }}>Passkey</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Face ID or fingerprint. Gasless.</div>
+                    <div style={{ fontWeight: '600', fontSize: '1rem', color: 'var(--text-primary)' }}>Biometric Passkey</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Instant device-native authentication.</div>
                   </div>
                   <div style={{ color: 'var(--text-muted)' }}>›</div>
                 </button>
@@ -865,7 +873,7 @@ export default function Header() {
             {/* Footer */}
             <div style={{ marginTop: '2rem', textAlign: 'center', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
               <span style={{ fontSize: '0.7rem', fontWeight: '600', letterSpacing: '0.05em', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                GASLESS ON ARC • SECURED BY CIRCLE
+                POWERED BY CIRCLE SMART ACCOUNTS
               </span>
             </div>
           </div>

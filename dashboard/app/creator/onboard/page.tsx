@@ -108,6 +108,10 @@ export default function CreatorOnboard() {
                 </div>
 
               </div>
+              
+              <div style={{ marginTop: '2rem', textAlign: 'center', fontStyle: 'italic', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                For the current hackathon sprint, Ghost is our fully supported integration. We are actively building integrations for WordPress, Substack, and Medium to onboard more creators into the Machine-to-Machine economy.
+              </div>
             </div>
           ) : (
             <div className="glass-card">

@@ -152,9 +152,15 @@ export default function CreatorOnboard() {
                     value={ghostApiKey}
                     onChange={(e) => setGhostApiKey(e.target.value)}
                   />
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    Leave empty if using the mock URL.
-                  </span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginTop: '0.25rem' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      Leave empty if using the mock URL.
+                    </span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      Your key is securely encrypted. We only request Read-Only access to index your public articles. We cannot edit or delete your content.
+                    </span>
+                  </div>
                 </div>
 
                 <div className="form-group">

@@ -16,7 +16,7 @@ Inktoll turns content consumption into a functioning Web3 micro-economy where cr
 
 ---
 
-## ✨ Hackathon Highlights (Why Judges Love Inktoll)
+## ✨ Key Innovations (Hackathon Highlights)
 
 ### 🛡️ "Proof of Authorship" Verification Badge
 To combat plagiarism and ensure secure compensation, Inktoll guarantees 100% of the USDC goes directly to the original creator. Every article in the Reader Feed and Leaderboard displays a **"Verified Ghost Author"** or **"Cryptographically Secured"** badge. Unlike competitors that let anyone paste a URL and steal revenue, Inktoll relies on secure API handshakes with Ghost.

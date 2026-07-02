@@ -121,6 +121,46 @@ export default function CreatorOnboard() {
               </button>
             </form>
           </div>
+          <div className="glass-card" style={{ marginTop: '2rem' }}>
+            <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-blocks"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3"/></svg>
+              Integrations Roadmap
+            </h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+              Ghost is our primary supported platform for the hackathon. Support for other major content networks is actively being built.
+            </p>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+              
+              {/* WordPress Card */}
+              <div style={{ padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.7, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                  COMING SOON
+                </div>
+                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.2rem', marginTop: '0.5rem' }}>WordPress</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>WP REST API v2</div>
+              </div>
+
+              {/* Substack Card */}
+              <div style={{ padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.7, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                  COMING SOON
+                </div>
+                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.2rem', marginTop: '0.5rem' }}>Substack</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>RSS Syndication</div>
+              </div>
+
+              {/* Medium Card */}
+              <div style={{ padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.7, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                  COMING SOON
+                </div>
+                <div style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.2rem', marginTop: '0.5rem' }}>Medium</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Medium API</div>
+              </div>
+
+            </div>
+          </div>
         </div>
       </main>
     </>

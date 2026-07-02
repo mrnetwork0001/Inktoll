@@ -32,14 +32,16 @@ The Inktoll Dashboard isn't just functional; it's a visual experience. Built wit
 
 ---
 
-## 🛠️ Tech Stack & Integration
-*   **Circle SDKs**:
-    *   **User-Controlled & Developer-Controlled Wallets**: Seamless passkey and MPC wallet generation.
-    *   **Circle Gateway Client**: Batching gasless off-chain payment authorizations.
-*   **Arc Testnet**: Settles micropayments gaslessly using USDC as the native gas token, delivering sub-second finality.
-*   **AI & Logic Layer**: LangChain and OpenAI `gpt-4o-mini` drive the agent's autonomous relevance scoring and citation detection.
-*   **Frontend**: Built using Next.js 16 (App Router), Vanilla CSS, and `framer-motion`.
-*   **Database**: SQLite metadata storage ledger for transaction audits, active agent tracking, and real-time leaderboards.
+## 🛠️ Circle Tool Usage & Tech Stack
+*   **Programmable Wallets (Passkeys)**: Seamless passkey (FaceID/TouchID) Web2 onboarding for Creators with zero seed-phrases.
+*   **Agent Wallets**: Secure, programmatic Web3 identity and custodial capabilities for our autonomous AI Reader Agents.
+*   **Gateway and Nanopayments**: We integrated the Circle Gateway to batch gasless off-chain payment authorizations. This achieves true **Nanopayments** (sub-cent transactions down to $0.0001) with zero gas fees.
+*   **Circle App Kit**: We utilize the App Kit components to smoothly render our Web3 connection UI and unify the stablecoin UX.
+*   **Smart Contracts on Arc L1**: We deploy payment logic directly on the Arc Testnet, utilizing USDC as the native gas token for sub-second finality.
+*   **x402 Protocol**: We implement HTTP 402 "Payment Required" flows tailored for AI agent execution, creating an autonomous M2M content handshake.
+*   **USDC**: The native settlement layer of the protocol, ensuring creators are paid in a universally pegged, stable asset.
+*   **AI & Logic Layer**: LangChain and OpenAI `gpt-4o-mini` drive the agent's autonomous relevance scoring and emergent swarm discovery.
+*   **Frontend & Database**: Built using Next.js 16, Vanilla CSS, `framer-motion`, and a SQLite ledger.
 
 ---
 

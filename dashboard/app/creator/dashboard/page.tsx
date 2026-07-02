@@ -333,10 +333,10 @@ function CreatorDashboardInner() {
         <Header />
         <main className="container" style={{ padding: '4rem 0', textAlign: 'center', maxWidth: '600px' }}>
           <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', alignItems: 'center' }}>
-            <h2>⚠️ No Blog Connected</h2>
-            <p>You must connect a Ghost blog to access the creator earnings dashboard.</p>
+            <h2>⚠️ No Content Platform Connected</h2>
+            <p>You must connect a content platform to access the creator earnings dashboard.</p>
             <button className="btn btn-primary" onClick={() => router.push('/creator/onboard')}>
-              Connect My Blog Now
+              Connect My Content Platform Now
             </button>
           </div>
         </main>

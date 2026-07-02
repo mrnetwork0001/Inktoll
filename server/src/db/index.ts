@@ -97,6 +97,7 @@ export function initDatabase() {
   dbInstance.exec(schema.CREATE_READER_AGENTS_TABLE);
   dbInstance.exec(schema.CREATE_EMBEDDINGS_TABLE);
   dbInstance.exec(schema.CREATE_CITATIONS_TABLE);
+  dbInstance.exec(schema.CREATE_AGENT_GOSSIP_SIGNALS_TABLE);
 
   // Automated migration from JSON DB if it exists
   const jsonPath = dbPath.replace('.db', '.json');

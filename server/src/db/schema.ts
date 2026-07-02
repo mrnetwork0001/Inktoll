@@ -76,3 +76,14 @@ CREATE TABLE IF NOT EXISTS citations (
   FOREIGN KEY (payment_id) REFERENCES payments(id)
 );
 `;
+
+export const CREATE_AGENT_GOSSIP_SIGNALS_TABLE = `
+CREATE TABLE IF NOT EXISTS agent_gossip_signals (
+  id TEXT PRIMARY KEY,
+  broadcasting_agent_id TEXT NOT NULL,
+  target_url TEXT NOT NULL,
+  article_title TEXT NOT NULL,
+  relevance_score REAL NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+`;

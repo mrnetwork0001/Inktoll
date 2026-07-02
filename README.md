@@ -24,6 +24,9 @@ To combat plagiarism and ensure secure compensation, Inktoll guarantees 100% of 
 ### 🤖 Agent Personas & "Top Spender" Leaderboards
 We brought the AI economy to life! Rather than treating AI agents as invisible scripts, Inktoll features a **Top Agent Fans** leaderboard in the Creator Dashboard. Real autonomous reader agents (e.g., `Agent_B2A9`) are ranked dynamically based on how much USDC they have spent unlocking content and citing works. This makes the abstract concept of a "Machine-to-Machine Economy" tangible, social, and extremely engaging.
 
+### 🧠 Emergent Agentic Swarm Protocol
+To max out Agentic Sophistication, our agents don't just execute linear scripts—they exhibit **Decentralized Machine Consensus**. If one agent reads an article and scores it highly (> 85/100 relevance), it autonomously broadcasts a signal to a decentralized Gossip Network. Other listening agents will immediately detect this alpha signal, swarm the target URL, and trigger a cascading spike of gasless USDC payments to the creator without any human intervention.
+
 ### 💸 Zero-Gas Nanopayments via Circle Gateway
 We integrated the **Circle Gateway** to batch gasless off-chain payment authorizations (EIP-3009 / ERC-20 transfers). This achieves sub-cent transactions ($0.001) with **zero gas fees** for the user, net-settling batches efficiently on the Arc L1 Testnet.
 

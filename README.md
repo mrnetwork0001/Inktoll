@@ -1,11 +1,11 @@
-# 🏆 Inktoll Protocol
+# Inktoll Protocol
 > **Gasless Micropayment & Citation Settlement Highway for the Agentic Web3 Knowledge Economy**
 
 Built with **Circle Programmable Wallets**, **Circle Gateway Nanopayments**, and settled on the **Arc Testnet** (USDC-native gas chain) for sub-second, frictionless machine-to-human payments.
 
 ---
 
-## 💡 The Vision & Problem
+## The Vision & Problem
 Large Language Models (LLMs) and autonomous AI agents are crawling the web and consuming creators' valuable content for free. In response, publishers are implementing paywalls, putting up aggressive robots.txt blocks, and fracturing the open web. 
 
 **Inktoll solves this crisis by introducing a two-layer machine-to-creator payment protocol:**
@@ -16,26 +16,26 @@ Inktoll turns content consumption into a functioning Web3 micro-economy where cr
 
 ---
 
-## ✨ Key Innovations (Hackathon Highlights)
+## Key Innovations (Hackathon Highlights)
 
-### 🛡️ "Proof of Authorship" Verification Badge
+### "Proof of Authorship" Verification Badge
 To combat plagiarism and ensure secure compensation, Inktoll guarantees 100% of the USDC goes directly to the original creator. Every article in the Reader Feed and Leaderboard displays a **"Verified Ghost Author"** or **"Cryptographically Secured"** badge. Unlike competitors that let anyone paste a URL and steal revenue, Inktoll relies on secure API handshakes with Ghost.
 
-### 🤖 Agent Personas & "Top Spender" Leaderboards
+### Agent Personas & "Top Spender" Leaderboards
 We brought the AI economy to life! Rather than treating AI agents as invisible scripts, Inktoll features a **Top Agent Fans** leaderboard in the Creator Dashboard. Real autonomous reader agents (e.g., `Agent_B2A9`) are ranked dynamically based on how much USDC they have spent unlocking content and citing works. This makes the abstract concept of a "Machine-to-Machine Economy" tangible, social, and extremely engaging.
 
-### 🧠 Emergent Agentic Swarm Protocol
-To max out Agentic Sophistication, our agents don't just execute linear scripts—they exhibit **Decentralized Machine Consensus**. If one agent reads an article and scores it highly (> 85/100 relevance), it autonomously broadcasts a signal to a decentralized Gossip Network. Other listening agents will immediately detect this alpha signal, swarm the target URL, and trigger a cascading spike of gasless USDC payments to the creator without any human intervention.
+### Emergent Agentic Swarm Protocol
+To max out Agentic Sophistication, our agents don't just execute linear scripts - they exhibit **Decentralized Machine Consensus**. If one agent reads an article and scores it highly (> 85/100 relevance), it autonomously broadcasts a signal to a decentralized Gossip Network. Other listening agents will immediately detect this alpha signal, swarm the target URL, and trigger a cascading spike of gasless USDC payments to the creator without any human intervention.
 
-### 💸 Zero-Gas Nanopayments via Circle Gateway
+### Zero-Gas Nanopayments via Circle Gateway
 We integrated the **Circle Gateway** to batch gasless off-chain payment authorizations (EIP-3009 / ERC-20 transfers). This achieves sub-cent transactions ($0.001) with **zero gas fees** for the user, net-settling batches efficiently on the Arc L1 Testnet.
 
-### 🎨 State-of-the-Art Glassmorphism UX
+### State-of-the-Art Glassmorphism UX
 The Inktoll Dashboard isn't just functional; it's a visual experience. Built with Next.js and Framer Motion, it features a dark futuristic aesthetic, staggered micro-animations, animated 3D tracking cards, and customized Lucide React icons replacing standard emojis for a premium Web3 infrastructure feel.
 
 ---
 
-## 🛠️ Circle Tool Usage & Tech Stack
+## Circle Tool Usage & Tech Stack
 *   **Programmable Wallets (Passkeys)**: Seamless passkey (FaceID/TouchID) Web2 onboarding for Creators with zero seed-phrases.
 *   **Agent Wallets**: Secure, programmatic Web3 identity and custodial capabilities for our autonomous AI Reader Agents.
 *   **Gateway and Nanopayments**: We integrated the Circle Gateway to batch gasless off-chain payment authorizations. This achieves true **Nanopayments** (sub-cent transactions down to $0.0001) with zero gas fees.
@@ -48,7 +48,7 @@ The Inktoll Dashboard isn't just functional; it's a visual experience. Built wit
 
 ---
 
-## 📐 Protocol Architecture
+## Protocol Architecture
 
 ### 1. Layer 1: Pay-Per-Read Flow
 ```mermaid
@@ -90,7 +90,7 @@ sequenceDiagram
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 ```bash
 ├── dashboard/      # Next.js web dashboard (Creator Hub, Reader Setup, Leaderboard, Ask Agent)
 ├── server/         # Node/Express backend SQLite ledger & RSS feed generator
@@ -100,7 +100,7 @@ sequenceDiagram
 
 ---
 
-## ⚡ Getting Started (Local Setup)
+## Getting Started (Local Setup)
 
 ### 1. Prerequisites
 Create a `.env` file in the root directory by copying the template:
@@ -151,5 +151,5 @@ npm start -- -p 3005
 
 ---
 
-## ⚖️ License
-MIT License. Created by [mrnetwork0001](https://github.com/mrnetwork0001). Built for the Lepton Agents Hackathon by TheCanteen.
+## License
+MIT License. Created by [MrNetwork](https://x.com/encrypt_wizard). Built for the Lepton Agents Hackathon by TheCanteen.

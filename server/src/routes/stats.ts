@@ -86,6 +86,7 @@ router.get('/leaderboard', async (req, res) => {
         totalArticles: totalArticlesResult.count,
         activeAgents: activeAgentsResult.count,
         totalCreators: totalCreatorsResult.count,
+        protocolRevenue: totalVolumeResult.total * 0.01,
       },
       creators,
       activity

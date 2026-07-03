@@ -527,6 +527,13 @@ export default function LandingPage() {
               </h3>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Publishers earning USDC</span>
             </div>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Protocol Revenue</span>
+              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+                {loading ? '...' : `$${(stats?.protocolRevenue || 0).toFixed(4)}`}
+              </h3>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>1% Withdrawal Fee</span>
+            </div>
           </section>
 
           {/* 3. THE PROBLEM SECTION */}

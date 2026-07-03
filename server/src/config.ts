@@ -16,6 +16,7 @@ export const config = {
     gatewayUrl: process.env.CIRCLE_GATEWAY_URL || 'https://gateway-api-testnet.circle.com',
     walletSetId: process.env.CIRCLE_WALLET_SET_ID || '',
     entitySecret: process.env.CIRCLE_ENTITY_SECRET || '',
+    treasuryAddress: process.env.CIRCLE_TREASURY_ADDRESS || '0x0000000000000000000000000000000000001011',
   },
   arc: {
     rpcUrl: process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network',

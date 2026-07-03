@@ -811,7 +811,15 @@ function CreatorDashboardInner() {
                   {stats?.history && stats.history.length > 0 ? (
                     stats.history.slice((logsPage - 1) * 10, logsPage * 10).map((tx: any) => (
                       <tr key={tx.id}>
-                        <td>{new Date(tx.created_at).toLocaleTimeString()}</td>
+                        <td style={{ whiteSpace: 'nowrap' }}>
+                          {new Intl.DateTimeFormat('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: true
+                          }).format(new Date(tx.created_at.includes('T') ? tx.created_at : tx.created_at.replace(' ', 'T') + 'Z'))}
+                        </td>
                         <td>{tx.article_title}</td>
                         <td>
                           <span style={{ 

@@ -143,12 +143,19 @@ export async function processWithdrawal(fromAddress: string, toAddress: string, 
     throw new Error('USDC token not found in wallet on Arc Testnet');
   }
 
+  const feeAmount = parseFloat((withdrawAmount * 0.01).toFixed(6));
+  const creatorAmount = parseFloat((withdrawAmount - feeAmount).toFixed(6));
+  const treasuryAddress = config.circle.treasuryAddress || '0x0000000000000000000000000000000000001011';
+
+  console.log(`[Wallet Service] Splitting withdrawal: ${creatorAmount} USDC to creator, ${feeAmount} USDC to treasury`);
+
+  // 1. Transfer to Creator (99%)
   const transferResponse = await client.createTransaction({
     walletId: walletId,
     tokenAddress: usdcToken.token.tokenAddress,
     blockchain: config.arc.blockchainName as any,
     destinationAddress: toAddress,
-    amounts: [withdrawAmount.toString()],
+    amounts: [creatorAmount.toString()],
     fee: {
       type: 'level',
       config: { feeLevel: 'MEDIUM' },
@@ -157,7 +164,27 @@ export async function processWithdrawal(fromAddress: string, toAddress: string, 
 
   const txId = transferResponse.data?.id;
   if (!txId) {
-    throw new Error('Failed to initiate live transfer on Circle');
+    throw new Error('Failed to initiate live transfer to creator on Circle');
+  }
+
+  // 2. Transfer to Treasury (1%) - Fire and forget
+  if (feeAmount > 0) {
+    try {
+      await client.createTransaction({
+        walletId: walletId,
+        tokenAddress: usdcToken.token.tokenAddress,
+        blockchain: config.arc.blockchainName as any,
+        destinationAddress: treasuryAddress,
+        amounts: [feeAmount.toString()],
+        fee: {
+          type: 'level',
+          config: { feeLevel: 'MEDIUM' },
+        },
+      });
+      console.log(`[Wallet Service] Treasury fee transfer (${feeAmount} USDC) initiated successfully.`);
+    } catch (e: any) {
+      console.error(`[Wallet Service] Failed to send treasury fee:`, e.message);
+    }
   }
 
   console.log(`[Wallet Service] Real Arc Testnet withdrawal transaction initiated: ${txId}`);

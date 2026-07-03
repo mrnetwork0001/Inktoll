@@ -8,11 +8,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/proxy/backend/:path*",
-        destination: "http://38.49.216.120:3001/:path*",
+        destination: "http://38.49.216.120/backend/:path*",
       },
       {
         source: "/proxy/agent/:path*",
-        destination: "http://38.49.216.120:3002/:path*",
+        destination: "http://38.49.216.120/agent/:path*",
       }
     ];
   }

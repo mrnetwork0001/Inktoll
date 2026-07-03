@@ -31,18 +31,18 @@ export function loadProfile(userId: string): Promise<ReaderProfile> {
   });
 }
 
-export function saveProfile(userId: string, profile: ReaderProfile, agentAddress: string = '', agentPrivateKey: string = ''): Promise<void> {
+export function saveProfile(userId: string, profile: ReaderProfile, agentAddress: string = '', walletId: string = ''): Promise<void> {
   return new Promise((resolve, reject) => {
     db.run(`
-      INSERT INTO AgentProfiles (userId, interests, maxPricePerArticle, dailyBudgetUsdc, agentAddress, agentPrivateKey)
+      INSERT INTO AgentProfiles (userId, interests, maxPricePerArticle, dailyBudgetUsdc, agentAddress, walletId)
       VALUES (?, ?, ?, ?, ?, ?)
       ON CONFLICT(userId) DO UPDATE SET
         interests=excluded.interests,
         maxPricePerArticle=excluded.maxPricePerArticle,
         dailyBudgetUsdc=excluded.dailyBudgetUsdc,
         agentAddress=CASE WHEN excluded.agentAddress != '' THEN excluded.agentAddress ELSE agentAddress END,
-        agentPrivateKey=CASE WHEN excluded.agentPrivateKey != '' THEN excluded.agentPrivateKey ELSE agentPrivateKey END
-    `, [userId, JSON.stringify(profile.interests), profile.maxPricePerArticle, profile.dailyBudgetUsdc, agentAddress, agentPrivateKey], (err) => {
+        walletId=CASE WHEN excluded.walletId != '' THEN excluded.walletId ELSE walletId END
+    `, [userId, JSON.stringify(profile.interests), profile.maxPricePerArticle, profile.dailyBudgetUsdc, agentAddress, walletId], (err) => {
       if (err) {
         console.error('[Profile] Error saving profile:', err);
         reject(err);

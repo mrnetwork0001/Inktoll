@@ -262,6 +262,9 @@ function CreatorDashboardInner() {
       if (amt > stats.balanceUsdc) {
         throw new Error(`Insufficient balance. You cannot withdraw more than your wallet balance of ${stats.balanceUsdc} USDC.`);
       }
+      if (stats.balanceUsdc - amt < 0.01) {
+        throw new Error('Please leave at least a 0.01 USDC buffer in your balance to cover network gas fees.');
+      }
 
       const res = await fetch(`${API_URL}/api/creators/withdraw`, {
         method: 'POST',

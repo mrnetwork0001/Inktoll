@@ -36,10 +36,9 @@ The Inktoll Dashboard isn't just functional; it's a visual experience. Built wit
 ---
 
 ## Circle Tool Usage & Tech Stack
-*   **Programmable Wallets (Passkeys)**: Seamless passkey (FaceID/TouchID) Web2 onboarding for Creators with zero seed-phrases.
-*   **Agent Wallets**: Secure, programmatic Web3 identity and custodial capabilities for our autonomous AI Reader Agents.
-*   **Gateway and Nanopayments**: We integrated the Circle Gateway to batch gasless off-chain payment authorizations. This achieves true **Nanopayments** (sub-cent transactions down to $0.0001) with zero gas fees.
-*   **Circle App Kit**: We utilize the App Kit components to smoothly render our Web3 connection UI and unify the stablecoin UX.
+*   **Circle App Kit & Programmable Wallets**: Frictionless Web2 onboarding for Creators with zero seed-phrases. Creators can log in via **Email OTP (Magic Links)** or **Biometric Passkeys (Smart Accounts)**—making Web3 completely invisible.
+*   **Circle Gateway & Unified Balances**: We integrated the Circle Gateway to pool liquidity and hold unified USDC balances. Agents automatically use `depositFor` to deposit base USDC into the Gateway smart contract, enabling instant, cross-chain gasless nanopayments.
+*   **Circle Developer-Controlled Wallets**: Secure, programmatic Web3 identity and custodial capabilities for our backend, handling real-time splits on Arc Testnet (routing 99% to creators and a 1% protocol fee to the Inktoll Treasury) upon withdrawal.
 *   **Smart Contracts on Arc L1**: We deploy payment logic directly on the Arc Testnet, utilizing USDC as the native gas token for sub-second finality.
 *   **x402 Protocol**: We implement HTTP 402 "Payment Required" flows tailored for AI agent execution, creating an autonomous M2M content handshake.
 *   **USDC**: The native settlement layer of the protocol, ensuring creators are paid in a universally pegged, stable asset.
@@ -148,6 +147,14 @@ npm run build
 npm start -- -p 3005
 ```
 *   *Dashboard is live at `http://localhost:3005`*
+
+### 5. Production Deployment (VPS)
+We include an `ecosystem.config.js` file for seamless production deployments on a VPS.
+```bash
+npm install -g pm2
+pm2 start ecosystem.config.js
+```
+*This spins up both the Backend Server and Autonomous Agent Loop as robust background daemons keeping them online 24/7.*
 
 ---
 

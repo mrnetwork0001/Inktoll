@@ -521,11 +521,11 @@ export default function LandingPage() {
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Self-governed crawlers active</span>
             </div>
             <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Settlement Layer</span>
-              <h3 style={{ fontSize: 'clamp(1.25rem, 3.5vw, 1.75rem)', margin: '0.75rem 0 0 0', color: 'var(--text-primary)', fontWeight: 800 }}>
-                Arc Testnet
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total Creators</span>
+              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+                {loading ? '...' : (stats?.totalCreators || 0)}
               </h3>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Gas-abstracted stablecoin L1</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Publishers earning USDC</span>
             </div>
           </section>
 

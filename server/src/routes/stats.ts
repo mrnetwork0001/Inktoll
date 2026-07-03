@@ -25,6 +25,11 @@ router.get('/leaderboard', async (req, res) => {
       WHERE is_active = 1
     `).get() as any;
 
+    const totalCreatorsResult = db.prepare(`
+      SELECT COUNT(*) as count 
+      FROM creators
+    `).get() as any;
+
     // 2. Fetch Top Creators
     const creators = db.prepare(`
       SELECT 
@@ -80,6 +85,7 @@ router.get('/leaderboard', async (req, res) => {
         totalVolumeUsdc: totalVolumeResult.total,
         totalArticles: totalArticlesResult.count,
         activeAgents: activeAgentsResult.count,
+        totalCreators: totalCreatorsResult.count,
       },
       creators,
       activity

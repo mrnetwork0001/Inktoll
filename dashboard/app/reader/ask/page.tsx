@@ -167,8 +167,11 @@ export default function ReaderAsk() {
                         borderRadius: '8px',
                         fontSize: '0.85rem' 
                       }}>
-                        <div style={{ fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.5rem' }}>
-                          <span>⚜️</span> CITATION TOLLS TRANSACTION DETAILS
+                        <div style={{ fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.25rem' }}>
+                          <span>💡</span> Transparent Citation
+                        </div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                          I answered using my general knowledge, but I automatically paid USDC to the creators below because their premium articles were highly relevant to my answer.
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           {msg.citations.map((cit: any, index: number) => {

@@ -1,10 +1,9 @@
 import { loadEmbeddingsIndex, generateMockEmbedding } from './tools/summarize.js';
-import { getOrCreateAgentWallet } from './tools/pay.js';
+import { getOrCreateAgentWallet, getCircleClient } from './tools/pay.js';
 import { loadHistory } from './budget.js';
 import { OpenAI } from 'openai';
 import { ethers } from 'ethers';
 import crypto from 'crypto';
-import { GatewayClient } from '@circle-fin/x402-batching/client';
 
 export interface CitationMatch {
   articleId: string;
@@ -98,35 +97,10 @@ export async function triggerCitationTolls(
   const agentWallet = await getOrCreateAgentWallet(userId);
   const results: any[] = [];
 
-  // Auto-wrap any ERC-20 USDC balance into the Circle Gateway before paying citation tolls
+  // Auto-wrap is disabled for Developer-Controlled Wallets as it requires smart contract execution via Circle API.
+  // We assume the Gateway balance is funded or that we only do off-chain signatures for the demo.
   if (matches.length > 0) {
-    try {
-      console.log(`[Citation Toll] Checking on-chain EOA balance for: ${agentWallet.address}...`);
-      const client = new GatewayClient({
-        chain: (process.env.ARC_CHAIN_NAME as any) || 'arcTestnet',
-        privateKey: agentWallet.privateKey as `0x${string}`,
-      });
-      const { balance, formatted } = await client.getUsdcBalance();
-      console.log(`[Citation Toll] EOA Wallet Balance = ${formatted} USDC`);
-      
-      if (balance > 0n) {
-        const gasBuffer = ethers.parseUnits("0.02", 6);
-        if (balance <= gasBuffer) {
-          console.log(`[Citation Toll] EOA balance (${formatted} USDC) is too low to cover the gas buffer (0.02 USDC). Skipping auto-wrap.`);
-        } else {
-          const depositAmountBig = balance - gasBuffer;
-          const depositAmountStr = ethers.formatUnits(depositAmountBig, 6);
-          console.log(`[Citation Toll] Auto-wrapping detected: EOA has ${formatted} USDC. Depositing ${depositAmountStr} USDC (leaving 0.02 USDC buffer for gas) to Circle Gateway...`);
-          const depositRes = await client.deposit(depositAmountStr);
-          console.log(`[Citation Toll] Deposit complete! TX Hash: ${depositRes.depositTxHash}`);
-        }
-        
-        // Wait a brief moment for the transaction to settle on-chain
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-      }
-    } catch (balanceErr: any) {
-      console.warn(`[Citation Toll] Failed balance check/auto-wrap:`, balanceErr.message);
-    }
+    console.log(`[Citation Toll] Developer-Controlled Wallet detected: ${agentWallet.address}. Skipping auto-wrap, assuming Gateway is funded.`);
   }
 
   for (const match of matches) {
@@ -169,7 +143,31 @@ export async function triggerCitationTolls(
         nonce: nonce
       };
 
-      const signature = await agentWallet.signTypedData(domain, types, typedValue);
+      const typedData = {
+        types: {
+          EIP712Domain: [
+            { name: 'name', type: 'string' },
+            { name: 'version', type: 'string' },
+            { name: 'chainId', type: 'uint256' },
+            { name: 'verifyingContract', type: 'address' }
+          ],
+          ...types
+        },
+        primaryType: 'TransferWithAuthorization',
+        domain,
+        message: typedValue
+      };
+
+      const client = getCircleClient();
+      console.log(`[Citation Toll] Requesting signature from Circle Secure Enclave...`);
+      const signRes = await client.signTypedData({
+        walletId: agentWallet.id,
+        data: JSON.stringify(typedData)
+      });
+
+      let signature = signRes.data?.signature;
+
+      if (!signature) throw new Error('Failed to retrieve signature');
 
       // Post citation payment to server
       const response = await fetch(`${apiUrl}/api/citations`, {

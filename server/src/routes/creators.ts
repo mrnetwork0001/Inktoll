@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
       // Insert creator
       db.prepare(`
         INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc, owner_address)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `).run(
         creatorId,
         ghostUrl,

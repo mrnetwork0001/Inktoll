@@ -30,16 +30,7 @@ export async function submitGatewayPayment(
   auth: SettleAuthorization,
   sdkPayload?: any
 ): Promise<{ txHash: string; status: 'settled' | 'pending' }> {
-  const isMock = auth.signature.startsWith('mock-');
-  
-  if (isMock) {
-    console.log('[Gateway Service] [MOCK] Bypassing Circle Gateway settlement for mock payment');
-    return {
-      txHash: '0xmock_' + crypto.randomUUID().replace(/-/g, ''),
-      status: 'settled',
-    };
-  }
-
+  // All signatures must be real and processed by the Facilitator.
   console.log(`[Gateway Service] [REAL] Submitting payment to Circle Gateway:
     From: ${auth.fromAddress}
     To: ${auth.toAddress}
@@ -96,8 +87,14 @@ export async function submitGatewayPayment(
   }
 
   console.log('[Gateway Service] Settling via Circle Gateway Facilitator API...');
-  const settleResult = await facilitator.settle(paymentPayload, paymentRequirements);
-  console.log(`[Gateway Service] Real payment settlement response:`, settleResult);
+  let settleResult: any;
+  try {
+    settleResult = await facilitator.settle(paymentPayload, paymentRequirements);
+    console.log(`[Gateway Service] Real payment settlement response:`, settleResult);
+  } catch (error: any) {
+    console.error('[Gateway Service] Error settling with Facilitator:', error, error.response?.data, error.details);
+    throw new Error(`Circle Gateway Facilitator settlement failed: ${error.response?.data?.message || error.message || 'Unknown error'}`);
+  }
 
   if (settleResult.success === false || settleResult.errorReason) {
     throw new Error(`Circle Gateway Facilitator settlement failed: ${settleResult.errorReason || 'Unknown error'}`);

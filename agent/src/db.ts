@@ -28,7 +28,7 @@ export const db = new sqlite3.Database(dbPath, (err) => {
           maxPricePerArticle REAL,
           dailyBudgetUsdc REAL,
           agentAddress TEXT,
-          agentPrivateKey TEXT
+          walletId TEXT
         )
       `);
 

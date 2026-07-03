@@ -81,13 +81,22 @@ app.get('/api/agent/status', async (req, res) => {
     // Fetch Circle Gateway balance
     let gatewayBalance = 0.00;
     try {
-      const { GatewayClient } = await import('@circle-fin/x402-batching/client');
-      const client = new GatewayClient({
-        chain: (process.env.ARC_CHAIN_NAME as any) || 'arcTestnet',
-        privateKey: wallet.privateKey as `0x${string}`,
+      let GATEWAY_API_URL = process.env.CIRCLE_GATEWAY_URL || 'https://gateway-api-testnet.circle.com/v1';
+      if (!GATEWAY_API_URL.endsWith('/v1')) GATEWAY_API_URL += '/v1';
+      const balanceRes = await fetch(`${GATEWAY_API_URL}/balances`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: 'USDC',
+          sources: [
+            { domain: 26, depositor: wallet.address } // Domain 26 is Arc Testnet
+          ]
+        })
       });
-      const balances = await client.getBalances();
-      gatewayBalance = Number(balances.gateway.formattedAvailable);
+      if (balanceRes.ok) {
+        const data = await balanceRes.json();
+        gatewayBalance = parseFloat(data.balances[0].balance);
+      }
     } catch (err) {
       console.warn('[Agent Status] Failed to fetch gateway balance:', (err as any).message);
     }
@@ -226,6 +235,15 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
         const tx = await usdcContract.transfer(wallet.address, ethers.parseUnits("1.0", 6));
         await tx.wait();
         console.log(`[Faucet] Transfer succeeded: ${tx.hash}`);
+
+        // Automatically deposit to Gateway for unified balance
+        try {
+          const { autoDepositToGateway } = await import('./tools/gatewayDeposit.js');
+          await autoDepositToGateway(wallet.address, "0.95");
+        } catch (gatewayErr: any) {
+          console.error('[Faucet] Gateway auto-deposit failed:', gatewayErr.message);
+          // Even if gateway deposit fails, the user still got the base USDC, so we proceed
+        }
 
         // Update last claimed timestamp in database
         db.run(`

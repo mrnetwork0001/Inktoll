@@ -833,7 +833,7 @@ function CreatorDashboardInner() {
                             {tx.payment_type === 'read' ? <><BookOpen size={12} style={{ display: 'inline', marginRight: '4px' }} /> Pay-Per-Read</> : <><BadgeCheck size={12} style={{ display: 'inline', marginRight: '4px' }} /> Citation Toll</>}
                           </span>
                         </td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: tx.payment_type === 'read' ? '#fff' : 'var(--primary)' }}>
+                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: tx.payment_type === 'read' ? 'var(--text-primary)' : 'var(--primary)' }}>
                           {showBalances ? `$${tx.amount_usdc}` : '$ ••••••'}
                         </td>
                         <td>

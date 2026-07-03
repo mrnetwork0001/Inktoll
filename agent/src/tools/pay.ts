@@ -11,7 +11,8 @@ export interface PayResult {
   error?: string;
 }
 
-import { initiateDeveloperControlledWalletsClient } from '@circle-fin/developer-controlled-wallets';
+import circleSdk from '@circle-fin/developer-controlled-wallets';
+const { initiateDeveloperControlledWalletsClient } = circleSdk;
 
 let circleClient: any = null;
 export function getCircleClient() {

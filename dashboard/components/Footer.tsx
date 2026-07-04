@@ -67,7 +67,7 @@ export default function Footer() {
           {/* Column 4: Resources */}
           <div style={{ flex: '1 1 150px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <h4 style={{ color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>Resources</h4>
-            <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.color='var(--primary)'} onMouseOut={(e) => e.currentTarget.style.color='var(--text-secondary)'}>Docs</a>
+            <Link href="/docs" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.color='var(--primary)'} onMouseOut={(e) => e.currentTarget.style.color='var(--text-secondary)'}>Docs</Link>
             <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.color='var(--primary)'} onMouseOut={(e) => e.currentTarget.style.color='var(--text-secondary)'}>Contracts</a>
             <a href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.2s ease' }} onMouseOver={(e) => e.currentTarget.style.color='var(--primary)'} onMouseOut={(e) => e.currentTarget.style.color='var(--text-secondary)'}>Inktoll Router</a>
           </div>

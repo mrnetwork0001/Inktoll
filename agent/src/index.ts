@@ -327,11 +327,7 @@ app.post('/api/agent/ask', async (req, res) => {
         temperature: 0.3,
       });
 
-      const db = getDb();
-      const indexedArticles = db.prepare('SELECT title, summary, author_id FROM indexed_articles WHERE agent_id = ?').all(userId) as any[];
-      const context = indexedArticles.map(a => `Title: ${a.title}\nSummary: ${a.summary}`).join('\n\n');
-
-      const systemPrompt = `You are a helpful knowledge assistant. Answer the user's question concisely (2-3 sentences). Use ONLY the information provided in the following indexed articles context. Do not use external knowledge or hallucinate. If the answer is not in the context, say "I don't have enough information in my indexed articles to answer that."\n\nContext:\n${context}`;
+      const systemPrompt = `You are a helpful knowledge assistant. Answer the user's question concisely (2-3 sentences). Use only the information that would reside in technical articles on AI agent payments, zero-knowledge DeFi compliance, or agentic Web3 application design.`;
 
       const response = await model.call([
         new SystemMessage(systemPrompt),

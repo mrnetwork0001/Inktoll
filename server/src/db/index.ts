@@ -94,6 +94,14 @@ export function initDatabase() {
 
   dbInstance.exec(schema.CREATE_ARTICLES_TABLE);
   dbInstance.exec(schema.CREATE_PAYMENTS_TABLE);
+
+  try {
+    dbInstance.exec("ALTER TABLE payments ADD COLUMN gateway_synced INTEGER DEFAULT 0");
+    console.log("[DB] Added gateway_synced column to payments table.");
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
   dbInstance.exec(schema.CREATE_READER_AGENTS_TABLE);
   dbInstance.exec(schema.CREATE_EMBEDDINGS_TABLE);
   dbInstance.exec(schema.CREATE_CITATIONS_TABLE);

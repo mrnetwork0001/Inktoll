@@ -7,6 +7,8 @@ import { Library, RefreshCw, ShieldCheck } from 'lucide-react';
 export default function ReaderFeed() {
   const [agentAddress, setAgentAddress] = useState('');
   const [purchased, setPurchased] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -105,6 +107,8 @@ export default function ReaderFeed() {
       setFetchingArticle(false);
     }
   };
+  const totalPages = Math.ceil(purchased.length / itemsPerPage);
+  const currentArticles = purchased.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (loading) {
     return (
@@ -140,8 +144,8 @@ export default function ReaderFeed() {
             
             {/* Articles List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {purchased.length > 0 ? (
-                purchased.map((art: any) => (
+              {currentArticles.length > 0 ? (
+                currentArticles.map((art: any) => (
                   <div 
                     key={art.id} 
                     className={`glass-card ${activeArticle?.ghost_slug === art.ghost_slug ? 'gradient-border-hover' : ''}`}
@@ -170,6 +174,35 @@ export default function ReaderFeed() {
                   <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
                     No purchased articles in feed. Start the agent in the Control Panel to discover and buy articles autonomously!
                   </p>
+                </div>
+              )}
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
+                  <button 
+                    className="btn btn-secondary btn-sm"
+                    disabled={currentPage === 1}
+                    onClick={() => {
+                      setCurrentPage(prev => Math.max(prev - 1, 1));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  >
+                    Previous
+                  </button>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button 
+                    className="btn btn-secondary btn-sm"
+                    disabled={currentPage === totalPages}
+                    onClick={() => {
+                      setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  >
+                    Next
+                  </button>
                 </div>
               )}
             </div>

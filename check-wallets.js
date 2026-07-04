@@ -69,8 +69,16 @@ function getSqliteData(dbPath, sql, params = []) {
 async function main() {
   console.log('=== Inktoll Wallet Diagnosis & Faucet Tool ===\n');
 
-  const serverDb = path.join(__dirname, 'server/data/inktoll.db');
-  const agentDb = path.join(__dirname, 'agent/data/agent.db');
+  let serverDb = path.join(__dirname, 'server/data/inktoll.db');
+  let agentDb = path.join(__dirname, 'agent/data/agent.db');
+
+  // Fallback to root data folder if not found in folder-specific paths
+  if (!fs.existsSync(serverDb) && fs.existsSync(path.join(__dirname, 'data/inktoll.db'))) {
+    serverDb = path.join(__dirname, 'data/inktoll.db');
+  }
+  if (!fs.existsSync(agentDb) && fs.existsSync(path.join(__dirname, 'data/agent.db'))) {
+    agentDb = path.join(__dirname, 'data/agent.db');
+  }
 
   let creators = [];
   let agents = [];

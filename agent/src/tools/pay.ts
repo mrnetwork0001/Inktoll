@@ -52,6 +52,24 @@ export async function getOrCreateAgentWallet(userId: string): Promise<{ id: stri
 
         console.log(`[Agent Wallet] Generated new agent wallet for ${userId}: ${wallet.address}`);
         
+        try {
+          console.log(`[Agent Wallet] Requesting automatic testnet funds from Circle Faucet...`);
+          await fetch(`https://api.circle.com/v1/faucet/drips`, {
+            method: 'POST',
+            headers: { 
+              'Authorization': `Bearer ${process.env.CIRCLE_API_KEY}`, 
+              'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({
+              address: wallet.address,
+              blockchain: (process.env.ARC_BLOCKCHAIN_NAME as any) || 'ARC-TESTNET',
+              usdc: true
+            })
+          });
+        } catch (faucetErr: any) {
+          console.error(`[Agent Wallet] Failed to request faucet funds:`, faucetErr.message);
+        }
+
         db.run(`
           INSERT INTO AgentProfiles (userId, interests, maxPricePerArticle, dailyBudgetUsdc, agentAddress, walletId)
           VALUES (?, '["AI agent payments", "Web3 machine economy", "stablecoin-native L1", "Zero knowledge proofs", "DeFi privacy"]', 0.05, 1.00, ?, ?)

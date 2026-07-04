@@ -371,22 +371,17 @@ function CreatorDashboardInner() {
 
   const handleSyncGateway = async () => {
     if (!creatorId || syncingGateway || !stats) return;
-    const amountToWithdraw = stats.totalEarningsUsdc - (stats.balanceUsdc || 0);
-    if (amountToWithdraw <= 0.01) {
-      showToast('No new earnings in the Gateway to sync.', 'info');
-      return;
-    }
     setSyncingGateway(true);
     try {
       showToast('Syncing Gateway balance... this may take 30-60 seconds on-chain.', 'info');
       const res = await fetch(`${API_URL}/api/creators/sync-gateway`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ creatorId, amount: amountToWithdraw.toFixed(6) })
+        body: JSON.stringify({ creatorId })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to sync gateway');
-      showToast(`Success! Pulled ${amountToWithdraw.toFixed(6)} USDC from Gateway.`, 'success');
+      showToast(`Success! Pulled ${data.amount.toFixed(6)} USDC from Gateway.`, 'success');
       await fetchStats(true);
     } catch (err: any) {
       console.error(err);

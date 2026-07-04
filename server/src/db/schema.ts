@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS payments (
   payment_type TEXT NOT NULL,
   tx_hash TEXT,
   status TEXT DEFAULT 'pending',
+  gateway_synced INTEGER DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (article_id) REFERENCES articles(id)
 );

@@ -145,9 +145,9 @@ router.post('/withdraw', async (req, res) => {
 });
 
 router.post('/sync-gateway', async (req, res) => {
-  const { creatorId, amount } = req.body;
-  if (!creatorId || !amount) {
-    return res.status(400).json({ error: 'creatorId and amount are required' });
+  const { creatorId } = req.body;
+  if (!creatorId) {
+    return res.status(400).json({ error: 'creatorId is required' });
   }
 
   const db = getDb();
@@ -157,10 +157,31 @@ router.post('/sync-gateway', async (req, res) => {
       return res.status(404).json({ error: 'Creator not found' });
     }
 
-    const { withdrawFromGateway } = await import('../services/wallet.js');
-    const txHash = await withdrawFromGateway(creator.wallet_address, amount.toString());
+    const unsyncedRow = db.prepare(`
+      SELECT COALESCE(SUM(amount_usdc), 0) as amount 
+      FROM payments 
+      WHERE article_id IN (SELECT id FROM articles WHERE creator_id = ?) 
+        AND status = 'settled' 
+        AND gateway_synced = 0
+    `).get(creatorId) as any;
 
-    return res.json({ success: true, txHash });
+    const amount = parseFloat(unsyncedRow.amount);
+    if (amount <= 0.000000) {
+      return res.status(400).json({ error: 'No new earnings in the Gateway to sync.' });
+    }
+
+    const { withdrawFromGateway } = await import('../services/wallet.js');
+    const txHash = await withdrawFromGateway(creator.wallet_address, amount.toFixed(6));
+
+    db.prepare(`
+      UPDATE payments 
+      SET gateway_synced = 1 
+      WHERE article_id IN (SELECT id FROM articles WHERE creator_id = ?) 
+        AND status = 'settled' 
+        AND gateway_synced = 0
+    `).run(creatorId);
+
+    return res.json({ success: true, txHash, amount });
   } catch (error: any) {
     console.error(`[Gateway Sync] Error: ${error.message}`);
     return res.status(500).json({ error: error.message });

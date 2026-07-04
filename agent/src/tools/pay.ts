@@ -158,7 +158,6 @@ export async function payAndFetchArticle(
       message: typedValue
     };
 
-    const circle = getCircleClient();
     console.log(`[Pay Tool] Requesting signature from Circle Secure Enclave...`);
     const signRes = await circle.signTypedData({
       walletId: agentWallet.id,

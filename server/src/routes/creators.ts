@@ -195,7 +195,13 @@ router.post('/sync-gateway', async (req, res) => {
       const { withdrawFromGateway } = await import('../services/wallet.js');
       txHash = await withdrawFromGateway(creator.wallet_address, amount.toFixed(6));
     } catch (withdrawError: any) {
-      if (withdrawError.message.includes('FAILED') || withdrawError.message.includes('Insufficient')) {
+      const errMsg = withdrawError.message || '';
+      if (errMsg.toLowerCase().includes('insufficient') || errMsg.includes('asset amount')) {
+        return res.status(400).json({ 
+          error: `Your Custodial Storage Wallet (${creator.wallet_address}) does not have enough gas (USDC on Arc) to cover the network transaction fee. Please visit https://faucet.circle.com, select 'Arc Testnet', and request faucet funds for address ${creator.wallet_address} to get gas, then try again.`
+        });
+      }
+      if (errMsg.includes('FAILED')) {
         return res.status(400).json({ 
           error: 'Gateway Unified Balance has not finished settling on the Arc Testnet yet. Please wait about 30-60 seconds for the network to batch your funds, then try again.' 
         });

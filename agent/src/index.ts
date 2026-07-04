@@ -94,7 +94,7 @@ app.get('/api/agent/status', async (req, res) => {
         })
       });
       if (balanceRes.ok) {
-        const data = await balanceRes.json();
+        const data: any = await balanceRes.json();
         gatewayBalance = parseFloat(data.balances[0].balance);
       }
     } catch (err) {
@@ -152,7 +152,7 @@ app.post('/api/agent/withdraw', async (req, res) => {
     const { GatewayClient } = await import('@circle-fin/x402-batching/client');
     const client = new GatewayClient({
       chain: (process.env.ARC_CHAIN_NAME as any) || 'arcTestnet',
-      privateKey: wallet.privateKey as `0x${string}`,
+      privateKey: (wallet as any).privateKey as `0x${string}`, // Typecast to bypass since Developer Wallets don't expose private keys
     });
 
     console.log(`[Agent Withdrawal] Withdrawing ${amount} USDC to ${recipient}...`);

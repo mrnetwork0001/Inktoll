@@ -105,6 +105,21 @@ async function main() {
     console.warn(`Agents DB not found at: ${agentDb}`);
   }
 
+  // Fallback: Read agents from the server's database (reader_agents table)
+  if (fs.existsSync(serverDb)) {
+    try {
+      const serverAgents = await getSqliteData(serverDb, 'SELECT id, wallet_address FROM reader_agents');
+      serverAgents.forEach(sa => {
+        // Only add if not already found in agentDb
+        if (!agents.some(a => a.agentAddress.toLowerCase() === sa.wallet_address.toLowerCase())) {
+          agents.push({ userId: sa.id, agentAddress: sa.wallet_address });
+        }
+      });
+    } catch (e) {
+      console.error('Error reading reader_agents from server DB:', e.message);
+    }
+  }
+
   console.log(`Found ${creators.length} Creators and ${agents.length} Agents in databases.\n`);
 
   const allAddresses = [];

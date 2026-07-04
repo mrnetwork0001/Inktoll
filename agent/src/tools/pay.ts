@@ -100,6 +100,18 @@ export async function payAndFetchArticle(
     const articleUrl = `${apiUrl}/api/articles/${slug}`;
     console.log(`[Pay Tool] Paying for article: ${articleUrl}`);
 
+    const circle = getCircleClient();
+    if (!circle) throw new Error('Circle Client not initialized');
+
+    console.log(`[Pay Tool] Checking balance for agent wallet ${agentWallet.address}...`);
+    const balanceResponse = await circle.getWalletTokenBalance({ id: agentWallet.id });
+    const usdcToken = balanceResponse.data?.tokenBalances?.find((t: any) => t.token?.symbol === 'USDC');
+    const currentBalance = usdcToken ? parseFloat(usdcToken.amount) : 0;
+    
+    if (currentBalance < price) {
+      throw new Error(`Insufficient funds: Agent wallet has ${currentBalance} USDC, but needs ${price} USDC. Waiting for testnet faucet drip to arrive...`);
+    }
+
     const nonce = '0x' + crypto.randomBytes(32).toString('hex');
     const deadline = Math.floor(Date.now() / 1000) + 86400 * 365;
     const value = ethers.parseUnits(price.toString(), 6);

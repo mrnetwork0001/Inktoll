@@ -170,8 +170,18 @@ router.post('/sync-gateway', async (req, res) => {
       return res.status(400).json({ error: 'No new earnings in the Gateway to sync.' });
     }
 
-    const { withdrawFromGateway } = await import('../services/wallet.js');
-    const txHash = await withdrawFromGateway(creator.wallet_address, amount.toFixed(6));
+    let txHash: string;
+    try {
+      const { withdrawFromGateway } = await import('../services/wallet.js');
+      txHash = await withdrawFromGateway(creator.wallet_address, amount.toFixed(6));
+    } catch (withdrawError: any) {
+      if (withdrawError.message.includes('FAILED') || withdrawError.message.includes('Insufficient')) {
+        return res.status(400).json({ 
+          error: 'Gateway Unified Balance has not finished settling on the Arc Testnet yet. Please wait about 30-60 seconds for the network to batch your funds, then try again.' 
+        });
+      }
+      throw withdrawError;
+    }
 
     db.prepare(`
       UPDATE payments 

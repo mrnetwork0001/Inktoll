@@ -27,6 +27,25 @@ router.post('/', async (req, res) => {
       // Provision Circle wallet
       const wallet = await createCircleWallet(creatorId, 'creator');
 
+      // Request Faucet Funds for Gas
+      try {
+        console.log(`[Creator] Requesting faucet funds (gas) for new wallet ${wallet.address}...`);
+        await fetch(`https://api.circle.com/v1/faucet/drips`, {
+          method: 'POST',
+          headers: { 
+            'Authorization': `Bearer ${config.circle.apiKey}`, 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({
+            address: wallet.address,
+            blockchain: (config.arc.blockchainName as any) || 'ARC-TESTNET',
+            usdc: true
+          })
+        });
+      } catch (faucetErr: any) {
+        console.error(`[Creator] Failed to request faucet gas funds:`, faucetErr.message);
+      }
+
       // Insert creator
       db.prepare(`
         INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc, owner_address)

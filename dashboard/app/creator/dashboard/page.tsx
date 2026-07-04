@@ -381,7 +381,22 @@ function CreatorDashboardInner() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to sync gateway');
-      showToast(`Success! Pulled ${data.amount.toFixed(6)} USDC from Gateway.`, 'success');
+      showToast(
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          <div>Success! Pulled {data.amount.toFixed(6)} USDC from Gateway.</div>
+          {data.txHash && (
+            <a 
+              href={`https://testnet.arcscan.app/tx/${data.txHash}`} 
+              target="_blank" 
+              rel="noreferrer"
+              style={{ color: 'var(--primary)', textDecoration: 'underline', fontSize: '0.85rem' }}
+            >
+              View Transaction
+            </a>
+          )}
+        </div>, 
+        'success'
+      );
       await fetchStats(true);
     } catch (err: any) {
       console.error(err);

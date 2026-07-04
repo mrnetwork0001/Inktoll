@@ -17,14 +17,15 @@ interface PromptOptions {
 
 interface Toast {
   id: string;
-  message: string;
+  message: React.ReactNode;
   type: 'success' | 'error' | 'info';
 }
 
 interface NotificationContextType {
   showAlert: (message: string, options?: AlertOptions) => Promise<void>;
   showPrompt: (message: string, options?: PromptOptions) => Promise<string | null>;
-  showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
+  showToast: (message: React.ReactNode, type?: 'success' | 'error' | 'info') => void;
+  dismissToast: (id: string) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -88,16 +89,22 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     if (promptResolver) promptResolver(null);
   };
 
-  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+  const showToast = (message: React.ReactNode, type: 'success' | 'error' | 'info' = 'info') => {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, message, type }]);
+    
+    // Auto-dismiss after 6 seconds so user has time to click the link
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    }, 6000);
+  };
+
+  const dismissToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
   return (
-    <NotificationContext.Provider value={{ showAlert, showPrompt, showToast }}>
+    <NotificationContext.Provider value={{ showAlert, showPrompt, showToast, dismissToast }}>
       {children}
 
       {/* 1. Alert Modal */}
@@ -278,7 +285,21 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
             <span style={{ fontSize: '1.1rem' }}>
               {toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : 'ℹ️'}
             </span>
-            <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{toast.message}</span>
+            <span style={{ fontWeight: 600, fontSize: '0.9rem', flex: 1 }}>{toast.message}</span>
+            <button 
+              onClick={() => dismissToast(toast.id)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                fontSize: '1.2rem',
+                padding: '0 0 0 0.5rem',
+                lineHeight: 1
+              }}
+            >
+              &times;
+            </button>
           </div>
         ))}
       </div>

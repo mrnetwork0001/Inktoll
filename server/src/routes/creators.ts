@@ -4,6 +4,7 @@ import { createCircleWallet } from '../services/wallet.js';
 import { fetchGhostArticles } from '../services/ghost.js';
 import crypto from 'crypto';
 import { ethers } from 'ethers';
+import { config } from '../config.js';
 
 const router = Router();
 

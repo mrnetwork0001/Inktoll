@@ -424,6 +424,14 @@ export default function Header() {
                     Leaderboard
                   </Link>
                 </li>
+                <li>
+                  <Link 
+                    href="/docs" 
+                    className={`nav-link ${isActive('/docs') ? 'active' : ''}`}
+                  >
+                    Docs
+                  </Link>
+                </li>
               </ul>
             </nav>
           )}
@@ -595,6 +603,13 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Leaderboard
+            </Link>
+            <Link 
+              href="/docs" 
+              className={`nav-link ${isActive('/docs') ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Docs
             </Link>
 
             <button 

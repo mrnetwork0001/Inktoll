@@ -183,6 +183,69 @@ router.post('/bind', async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 });
+router.post('/:creatorId/sync', async (req, res) => {
+  const { creatorId } = req.params;
+  const db = getDb();
+  try {
+    const creator = db.prepare('SELECT * FROM creators WHERE id = ?').get(creatorId) as any;
+    if (!creator) {
+      return res.status(404).json({ error: 'Creator not found' });
+    }
+
+    const posts = await fetchGhostArticles(creator.ghost_url, creator.ghost_api_key);
+    let importedCount = 0;
+
+    for (const post of posts) {
+      if (!post.ghost_slug || !post.title) continue;
+
+      const textOnly = post.excerpt || post.full_html?.replace(/<[^>]*>/g, ' ') || '';
+      const words = textOnly.trim().split(/\s+/);
+      const previewText = words.slice(0, 200).join(' ') + (words.length > 200 ? '...' : '');
+
+      const articleId = crypto.createHash('md5').update(`${creatorId}:${post.ghost_slug}`).digest('hex');
+
+      const existing = db.prepare('SELECT id FROM articles WHERE id = ?').get(articleId);
+
+      if (!existing) {
+        db.prepare(`
+          INSERT INTO articles (id, creator_id, ghost_slug, title, excerpt, preview_text, full_html, word_count, price_usdc, published_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+          articleId,
+          creatorId,
+          post.ghost_slug,
+          post.title,
+          post.excerpt || '',
+          previewText,
+          post.full_html || '',
+          words.length,
+          creator.default_price_usdc,
+          post.published_at || new Date().toISOString()
+        );
+        importedCount++;
+      } else {
+        db.prepare(`
+          UPDATE articles
+          SET title = ?, excerpt = ?, preview_text = ?, full_html = ?, word_count = ?, published_at = ?
+          WHERE id = ?
+        `).run(
+          post.title,
+          post.excerpt || '',
+          previewText,
+          post.full_html || '',
+          words.length,
+          post.published_at || new Date().toISOString(),
+          articleId
+        );
+      }
+    }
+
+    return res.json({ success: true, articlesImported: importedCount });
+  } catch (error: any) {
+    console.error(`[Creators Sync] Error: ${error.message}`);
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 router.get('/lookup', (req, res) => {
   const { wallet } = req.query;

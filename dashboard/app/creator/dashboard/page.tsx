@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
 import { useNotification } from '../../../components/NotificationProvider';
-import { Eye, EyeOff, BookOpen, ReceiptText, BadgeCheck, Info, Bot, Star } from 'lucide-react';
+import { Eye, EyeOff, BookOpen, ReceiptText, BadgeCheck, Info, Bot, Star, RefreshCw } from 'lucide-react';
 
 // Custom hook to animate number counting
 function useAnimatedCount(targetValue: number, duration: number = 800) {
@@ -67,6 +67,7 @@ function CreatorDashboardInner() {
   const [showBalances, setShowBalances] = useState<boolean>(true);
   const [logsPage, setLogsPage] = useState<number>(1);
   const [selectedReceipt, setSelectedReceipt] = useState<any | null>(null);
+  const [syncing, setSyncing] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -346,6 +347,22 @@ function CreatorDashboardInner() {
       </>
     );
   }
+  const handleSync = async () => {
+    if (!creatorId || syncing) return;
+    setSyncing(true);
+    try {
+      const res = await fetch(`${API_URL}/api/creators/${creatorId}/sync`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to sync feed');
+      showToast(`Successfully imported ${data.articlesImported} new articles from Ghost!`, 'success');
+      await fetchStats(true);
+    } catch (err: any) {
+      console.error(err);
+      showToast(err.message, 'error');
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   return (
     <>
@@ -708,13 +725,24 @@ function CreatorDashboardInner() {
 
             {/* Right Column: Monetized Content Hub */}
             <div className="glass-card" style={{ padding: '1.5rem' }}>
-              <div style={{ marginBottom: '1rem' }}>
-                <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <BookOpen size={20} color="var(--primary)" /> Monetized Content Hub
-                </h3>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  Detailed earnings breakdown of articles scraped and evaluated by reader agents.
-                </p>
+              <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <BookOpen size={20} color="var(--primary)" /> Monetized Content Hub
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    Detailed earnings breakdown of articles scraped and evaluated by reader agents.
+                  </p>
+                </div>
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={handleSync}
+                  disabled={syncing}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '6px 12px', fontSize: '0.8rem', minHeight: 'auto', marginBottom: 0 }}
+                >
+                  <RefreshCw size={14} className={syncing ? 'spin' : ''} />
+                  {syncing ? 'Syncing...' : 'Sync Feed'}
+                </button>
               </div>
 
               <div style={{ overflowX: 'auto' }}>

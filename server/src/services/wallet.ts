@@ -60,8 +60,8 @@ export async function getWalletBalance(address: string): Promise<number> {
   const db = getDb();
   let walletId = '';
   
-  // Find creator wallet ID
-  const creator = db.prepare('SELECT wallet_id FROM creators WHERE wallet_address = ?').get(address) as any;
+  // Find creator wallet ID (case-insensitive comparison)
+  const creator = db.prepare('SELECT wallet_id FROM creators WHERE LOWER(wallet_address) = LOWER(?)').get(address) as any;
   if (creator) {
     walletId = creator.wallet_id;
   }
@@ -286,12 +286,12 @@ export async function withdrawFromGateway(address: string, amountUsdcStr: string
     
     const db = getDb();
     
-    // Find any agent that paid this creator recently
+    // Find any agent that paid this creator recently (using case-insensitive LOWER() comparison)
     const payment = db.prepare(`
       SELECT reader_agent_id FROM payments 
-      WHERE article_id IN (SELECT id FROM articles WHERE creator_id = (SELECT id FROM creators WHERE wallet_address = ?))
+      WHERE article_id IN (SELECT id FROM articles WHERE creator_id = (SELECT id FROM creators WHERE LOWER(wallet_address) = LOWER(?)))
       LIMIT 1
-    `).get(address.toLowerCase()) as any;
+    `).get(address) as any;
     
     let agentAddress = '';
     if (payment) {

@@ -57,7 +57,7 @@ function CreatorDashboardInner() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [withdrawing, setWithdrawing] = useState(false);
-  const [withdrawSuccess, setWithdrawSuccess] = useState('');
+  const [withdrawSuccess, setWithdrawSuccess] = useState<{message: string, txHash?: string, url?: string} | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<string>('');
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   const [connectedType, setConnectedType] = useState<string>('managed');
@@ -246,7 +246,7 @@ function CreatorDashboardInner() {
   const handleWithdraw = async () => {
     if (!stats?.walletAddress || stats.balanceUsdc <= 0) return;
     setWithdrawing(true);
-    setWithdrawSuccess('');
+    setWithdrawSuccess(null);
     setError('');
 
     try {
@@ -284,7 +284,11 @@ function CreatorDashboardInner() {
       }
       
       const data = await res.json();
-      setWithdrawSuccess(`Success! Withdrew ${amt} USDC to ${dest.substring(0, 10)}... (Tx: ${data.txHash.substring(0, 16)}...)`);
+      setWithdrawSuccess({
+        message: `Success! Withdrew ${amt} USDC to ${dest.substring(0, 10)}... (Tx: ${data.txHash.substring(0, 16)}...)`,
+        txHash: data.txHash,
+        url: `https://testnet.arcscan.app/tx/${data.txHash}`
+      });
       setWithdrawAmount('');
       await fetchStats();
     } catch (err: any) {
@@ -741,8 +745,21 @@ function CreatorDashboardInner() {
                 )}
                 
                 {withdrawSuccess && (
-                  <div style={{ padding: '0.5rem 0.75rem', background: 'var(--primary-glow)', border: '1px solid var(--primary)', borderRadius: '6px', color: 'var(--primary)', fontSize: '0.75rem', marginTop: '0.5rem' }}>
-                    {withdrawSuccess}
+                  <div style={{ padding: '0.5rem 0.75rem', background: 'var(--primary-glow)', border: '1px solid var(--primary)', borderRadius: '6px', color: 'var(--primary)', fontSize: '0.75rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      {withdrawSuccess.message}
+                      {withdrawSuccess.url && (
+                        <span style={{ marginLeft: '0.5rem' }}>
+                          <a href={withdrawSuccess.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', textDecoration: 'underline', fontWeight: 600 }}>View on Explorer</a>
+                        </span>
+                      )}
+                    </div>
+                    <button 
+                      onClick={() => setWithdrawSuccess(null)}
+                      style={{ background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', padding: '0 4px', fontSize: '1rem', lineHeight: 1 }}
+                    >
+                      &times;
+                    </button>
                   </div>
                 )}
                 {faucetSuccess && (

@@ -327,7 +327,7 @@ export async function withdrawFromGateway(address: string, amountUsdcStr: string
       destinationAddress: address,
       amounts: [amountUsdcStr],
       fee: { type: "level", config: { feeLevel: "MEDIUM" } },
-      tokenId: USDC_ADDRESS
+      tokenAddress: USDC_ADDRESS
     });
     
     if (!transferTx.data?.id) throw new Error("Fallback transfer failed to initialize.");

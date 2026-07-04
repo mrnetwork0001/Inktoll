@@ -144,6 +144,29 @@ router.post('/withdraw', async (req, res) => {
   }
 });
 
+router.post('/sync-gateway', async (req, res) => {
+  const { creatorId, amount } = req.body;
+  if (!creatorId || !amount) {
+    return res.status(400).json({ error: 'creatorId and amount are required' });
+  }
+
+  const db = getDb();
+  try {
+    const creator = db.prepare('SELECT * FROM creators WHERE id = ?').get(creatorId) as any;
+    if (!creator) {
+      return res.status(404).json({ error: 'Creator not found' });
+    }
+
+    const { withdrawFromGateway } = await import('../services/wallet.js');
+    const txHash = await withdrawFromGateway(creator.wallet_address, amount.toString());
+
+    return res.json({ success: true, txHash });
+  } catch (error: any) {
+    console.error(`[Gateway Sync] Error: ${error.message}`);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 router.post('/bind', async (req, res) => {
   const { creatorId, walletAddress, message, signature } = req.body;
 

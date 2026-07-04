@@ -235,3 +235,48 @@ export async function requestFaucetFunds(address: string, type: 'creator' | 'age
     balanceUsdc: nextBal,
   };
 }
+
+export async function withdrawFromGateway(address: string, amountUsdcStr: string): Promise<string> {
+  const client = getCircleClient();
+  if (!client) throw new Error('Circle Client not initialized');
+
+  const GATEWAY_WALLET_ADDRESS = config.arc.verifyingContract || "0x0077777d7EBA4688BDeF3E311b846F25870A19B9";
+  const USDC_ADDRESS = config.arc.usdcAddress || "0x3600000000000000000000000000000000000000";
+  const BLOCKCHAIN = config.arc.blockchainName as any || "ARC-TESTNET";
+
+  const [whole, decimal = ""] = amountUsdcStr.split(".");
+  const parsedAmount = (whole || "0") + (decimal + "000000").slice(0, 6);
+
+  console.log(`[Gateway Sync] Withdrawing ${amountUsdcStr} USDC from Gateway to EOA ${address}...`);
+  const withdrawTx = await client.createContractExecutionTransaction({
+    walletAddress: address,
+    blockchain: BLOCKCHAIN,
+    contractAddress: GATEWAY_WALLET_ADDRESS,
+    abiFunctionSignature: "withdraw(address,uint256)",
+    abiParameters: [USDC_ADDRESS, parsedAmount],
+    fee: { type: "level", config: { feeLevel: "MEDIUM" } },
+  });
+
+  if (!withdrawTx.data?.id) throw new Error("Withdraw Tx failed to initialize.");
+
+  const txId = withdrawTx.data.id;
+  let state = 'INITIATED';
+  let txHash = '';
+
+  for (let i = 0; i < 20; i++) {
+    await new Promise(r => setTimeout(r, 1500));
+    const txResponse = await client.getTransaction({ id: txId });
+    const tx = txResponse.data?.transaction;
+    state = tx?.state || 'INITIATED';
+    txHash = tx?.txHash || '';
+    if (state === 'COMPLETE' || state === 'FAILED' || state === 'DENIED' || state === 'CANCELLED') {
+      break;
+    }
+  }
+
+  if (state !== 'COMPLETE' && state !== 'CONFIRMED') {
+    throw new Error(`Gateway withdraw failed with state: ${state}`);
+  }
+
+  return txHash || `tx-${txId}`;
+}

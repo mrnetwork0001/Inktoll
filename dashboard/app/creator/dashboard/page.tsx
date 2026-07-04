@@ -68,6 +68,7 @@ function CreatorDashboardInner() {
   const [logsPage, setLogsPage] = useState<number>(1);
   const [selectedReceipt, setSelectedReceipt] = useState<any | null>(null);
   const [syncing, setSyncing] = useState(false);
+  const [syncingGateway, setSyncingGateway] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -364,6 +365,33 @@ function CreatorDashboardInner() {
     }
   };
 
+  const handleSyncGateway = async () => {
+    if (!creatorId || syncingGateway || !stats) return;
+    const amountToWithdraw = stats.totalEarningsUsdc - (stats.balanceUsdc || 0);
+    if (amountToWithdraw <= 0.01) {
+      showToast('No new earnings in the Gateway to sync.', 'info');
+      return;
+    }
+    setSyncingGateway(true);
+    try {
+      showToast('Syncing Gateway balance... this may take 30-60 seconds on-chain.', 'info');
+      const res = await fetch(`${API_URL}/api/creators/sync-gateway`, { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ creatorId, amount: amountToWithdraw.toFixed(6) })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to sync gateway');
+      showToast(`Success! Pulled ${amountToWithdraw.toFixed(6)} USDC from Gateway.`, 'success');
+      await fetchStats(true);
+    } catch (err: any) {
+      console.error(err);
+      showToast(err.message, 'error');
+    } finally {
+      setSyncingGateway(false);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -434,11 +462,23 @@ function CreatorDashboardInner() {
             </div>
 
             {/* 2. Claimable Wallet Balance */}
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary-light)' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                Claimable Balance
-                <span title="The claimable USDC balance sitting in your blog's custodial wallet right now. This decreases when you withdraw." style={{ cursor: 'help', opacity: 0.6 }}><Info size={12} /></span>
-              </span>
+            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary-light)', position: 'relative' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  Claimable Balance
+                  <span title="The claimable USDC balance sitting in your blog's custodial wallet right now. This decreases when you withdraw." style={{ cursor: 'help', opacity: 0.6 }}><Info size={12} /></span>
+                </span>
+                <button 
+                  onClick={handleSyncGateway} 
+                  disabled={syncingGateway}
+                  className="btn btn-secondary btn-sm" 
+                  style={{ padding: '4px 8px', fontSize: '0.7rem', minHeight: 'auto', marginBottom: 0 }}
+                  title="Pull funds from Gateway Unified Balance into your wallet"
+                >
+                  <RefreshCw size={12} style={{ display: 'inline', marginRight: '4px' }} className={syncingGateway ? 'spin' : ''} />
+                  {syncingGateway ? 'Syncing...' : 'Sync Gateway'}
+                </button>
+              </div>
               <h3 style={{ fontSize: '1.75rem', margin: '0.5rem 0 0 0', color: 'var(--primary-light)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
                 {showBalances ? `$${(stats?.balanceUsdc || 0).toFixed(6)}` : '$ ••••••'}
               </h3>

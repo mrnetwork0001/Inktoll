@@ -14,10 +14,10 @@ export default function DocsPage() {
         <>
           <h2 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: 'var(--primary)', fontWeight: 700 }}>1. Overview</h2>
           <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '1.25rem', fontSize: '0.95rem' }}>
-            Inktoll is a decentralized, gasless settlement protocol designed for the machine-to-human Web3 Knowledge Economy. By combining **Circle Developer-Controlled Wallets** and the **Arc L1 blockchain** (USDC-native gas chain), Inktoll enables autonomous AI agents to crawl, evaluate, and purchase intellectual property directly from creators using sub-cent micropayments.
+            Inktoll is a decentralized, gasless settlement protocol designed for the machine-to-human Web3 Knowledge Economy. By combining <strong>Circle Developer-Controlled Wallets</strong> and the <strong>Arc L1 blockchain</strong> (USDC-native gas chain), Inktoll enables autonomous AI agents to crawl, evaluate, and purchase intellectual property directly from creators using sub-cent micropayments.
           </p>
           <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', fontSize: '0.95rem' }}>
-            When an agent pulls knowledge from a previously unlocked article to answer a user prompt, the system detects the semantic citation and routes an automatic **Citation Toll ($0.0001 USDC)** directly to the creator's wallet.
+            When an agent pulls knowledge from a previously unlocked article to answer a user prompt, the system detects the semantic citation and routes an automatic <strong>Citation Toll ($0.0001 USDC)</strong> directly to the creator's wallet.
           </p>
         </>
       )

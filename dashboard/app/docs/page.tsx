@@ -162,8 +162,8 @@ export default function DocsPage() {
                 padding: '0.85rem 1.25rem',
                 borderRadius: '10px',
                 border: '1px solid var(--border)',
-                background: 'var(--bg-active)',
-                color: 'var(--text)',
+                background: 'var(--bg-card)',
+                color: 'var(--text-primary)',
                 fontSize: '0.95rem',
                 outline: 'none',
                 cursor: 'pointer',
@@ -172,7 +172,7 @@ export default function DocsPage() {
               }}
             >
               {sections.map((sec, index) => (
-                <option key={sec.id} value={index} style={{ background: '#1c1c1e', color: 'var(--text)' }}>
+                <option key={sec.id} value={index} style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                   {sec.title}
                 </option>
               ))}

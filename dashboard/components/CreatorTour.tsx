@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Joyride, Step, CallBackProps, STATUS } from 'react-joyride';
+import { Joyride, Step, STATUS } from 'react-joyride';
 
 interface CreatorTourProps {
   run: boolean;
@@ -48,7 +48,7 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
     }
   ];
 
-  const handleJoyrideCallback = (data: CallBackProps) => {
+  const handleJoyrideCallback = (data: any) => {
     const { status, type, action } = data;
     const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
     
@@ -70,7 +70,7 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
       continuous={true}
       showSkipButton={true}
       showProgress={true}
-      callback={handleJoyrideCallback}
+      onEvent={handleJoyrideCallback}
       options={{
         skipScroll: true,
         buttons: ['back', 'skip', 'primary']

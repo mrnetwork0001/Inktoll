@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
 import { useNotification } from '../../../components/NotificationProvider';
-import { Eye, EyeOff, BookOpen, ReceiptText, BadgeCheck, Info, Bot, Star, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, BookOpen, ReceiptText, BadgeCheck, Info, Bot, Star, RefreshCw, HelpCircle } from 'lucide-react';
+import CreatorTour from '../../../components/CreatorTour';
 
 // Custom hook to animate number counting
 function useAnimatedCount(targetValue: number, duration: number = 800) {
@@ -58,6 +59,7 @@ function CreatorDashboardInner() {
   const [error, setError] = useState('');
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState<{message: string, txHash?: string, url?: string} | null>(null);
+  const [runTour, setRunTour] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState<string>('');
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   const [connectedType, setConnectedType] = useState<string>('managed');
@@ -408,6 +410,7 @@ function CreatorDashboardInner() {
 
   return (
     <>
+      <CreatorTour run={runTour} onFinish={() => setRunTour(false)} />
       <Header />
       <main style={{ padding: '3rem 0' }}>
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -428,7 +431,29 @@ function CreatorDashboardInner() {
               </p>
             </div>
             
-            <button
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <button
+                onClick={() => setRunTour(true)}
+                style={{
+                  background: 'var(--primary-glow)',
+                  border: '1px solid var(--primary)',
+                  borderRadius: '6px',
+                  padding: '6px 12px',
+                  fontSize: '0.8rem',
+                  color: 'var(--primary)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontWeight: 600,
+                  transition: 'all 0.2s',
+                  outline: 'none'
+                }}
+              >
+                <HelpCircle size={16} /> Guide
+              </button>
+              
+              <button
               onClick={() => {
                 const nextVal = !showBalances;
                 setShowBalances(nextVal);
@@ -459,12 +484,13 @@ function CreatorDashboardInner() {
             >
               {showBalances ? <><EyeOff size={16} /> Hide Balances</> : <><Eye size={16} /> Show Balances</>}
             </button>
+            </div>
           </div>
 
           {/* Top Row KPI Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
             {/* 1. All-Time Accumulated Earnings */}
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
+            <div className="glass-card tour-total-earnings" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                 All-Time Earnings
                 <span title="Cumulative USDC earned by your blog from purchases and citation tolls. This number only goes up." style={{ cursor: 'help', opacity: 0.6 }}><Info size={12} /></span>
@@ -476,7 +502,7 @@ function CreatorDashboardInner() {
             </div>
 
             {/* 2. Claimable Wallet Balance */}
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary-light)', position: 'relative' }}>
+            <div className="glass-card tour-claimable-balance" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary-light)', position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                   Claimable Balance
@@ -485,7 +511,7 @@ function CreatorDashboardInner() {
                 <button 
                   onClick={handleSyncGateway} 
                   disabled={syncingGateway}
-                  className="btn btn-secondary btn-sm" 
+                  className="btn btn-secondary btn-sm tour-sync-gateway" 
                   style={{ padding: '4px 8px', fontSize: '0.7rem', minHeight: 'auto', marginBottom: 0 }}
                   title="Pull funds from Gateway Unified Balance into your wallet"
                 >
@@ -522,7 +548,7 @@ function CreatorDashboardInner() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem', alignItems: 'start' }}>
             
             {/* Left Column: Wallet & Settlement Hub */}
-            <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div className="glass-card tour-settlement-hub" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div>
                 <h3 style={{ margin: '0 0 0.4rem 0', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-primary)' }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--primary)' }}>
@@ -791,7 +817,7 @@ function CreatorDashboardInner() {
             </div>
 
             {/* Right Column: Monetized Content Hub */}
-            <div className="glass-card" style={{ padding: '1.5rem' }}>
+            <div className="glass-card tour-monetized-hub" style={{ padding: '1.5rem' }}>
               <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

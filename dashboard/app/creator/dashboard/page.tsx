@@ -375,7 +375,7 @@ function CreatorDashboardInner() {
     if (!creatorId || syncingGateway || !stats) return;
     setSyncingGateway(true);
     try {
-      showToast('Syncing Gateway balance... this may take 30-60 seconds on-chain.', 'info');
+      showToast('Syncing Gateway balance... this may take 30-60 seconds onchain.', 'info');
       const res = await fetch(`${API_URL}/api/creators/sync-gateway`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -427,7 +427,7 @@ function CreatorDashboardInner() {
                 Creator Dashboard
               </h1>
               <p style={{ margin: '0.25rem 0 0 0', color: 'var(--text-secondary)' }}>
-                Manage your monetized blog feeds, payouts, and on-chain earnings.
+                Manage your monetized blog feeds, payouts, and onchain earnings.
               </p>
             </div>
             
@@ -1149,7 +1149,7 @@ function CreatorDashboardInner() {
                 borderRadius: '8px',
                 padding: '0.75rem 1rem'
               }}>
-                💡 <strong>Circle x402 Nanopayment Batching:</strong> To achieve sub-cent transactions with <strong>zero gas fees</strong>, Inktoll batches transfer signatures off-chain. Individual payments are net-settled in batch transactions on-chain.
+                💡 <strong>Circle x402 Nanopayment Batching:</strong> To achieve sub-cent transactions with <strong>zero gas fees</strong>, Inktoll batches transfer signatures off-chain. Individual payments are net-settled in batch transactions onchain.
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>

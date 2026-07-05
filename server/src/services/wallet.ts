@@ -247,7 +247,7 @@ export async function withdrawFromGateway(address: string, amountUsdcStr: string
   const [whole, decimal = ""] = amountUsdcStr.split(".");
   const parsedAmount = (whole || "0") + (decimal + "000000").slice(0, 6);
 
-  console.log(`[Gateway Sync] Attempting on-chain Gateway withdrawal of ${amountUsdcStr} USDC to EOA ${address}...`);
+  console.log(`[Gateway Sync] Attempting onchain Gateway withdrawal of ${amountUsdcStr} USDC to EOA ${address}...`);
   
   try {
     const withdrawTx = await client.createContractExecutionTransaction({

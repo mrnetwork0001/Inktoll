@@ -68,7 +68,7 @@ async function runTests() {
 
   // 5. Test Agent Wallet & Nanopayments
   // Skip mock agent balance updates because the app is fully integrated with live Circle APIs on Arc Testnet.
-  console.log('[Test] Skipping simulated mock agent balance testing to use real on-chain validations.');
+  console.log('[Test] Skipping simulated mock agent balance testing to use real onchain validations.');
 
   console.log('=== Backend Integration Verification PASSED! ===');
   process.exit(0);

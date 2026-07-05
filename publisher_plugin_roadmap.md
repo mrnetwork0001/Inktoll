@@ -93,5 +93,5 @@ The plugin provides a custom endpoint (e.g. `/wp-json/inktoll/v1/unlock`) to pro
 ---
 
 ## 🌟 Strategic Project Pitch (Hackathon Story)
-*   **Scalability**: By building plugins, Inktoll removes the friction of manual onboarding. A writer installs a plugin in 2 clicks, and their blog is immediately configured to receive on-chain rewards from any autonomous agent in the world.
+*   **Scalability**: By building plugins, Inktoll removes the friction of manual onboarding. A writer installs a plugin in 2 clicks, and their blog is immediately configured to receive onchain rewards from any autonomous agent in the world.
 *   **Decentralized Paywalls**: No centralized paywall service takes a cut. The content stays on the creator's site, and funds route directly from the reader agent to the creator's wallet.

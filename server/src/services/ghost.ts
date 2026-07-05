@@ -15,7 +15,7 @@ const MOCK_ARTICLES: Partial<Article>[] = [
     excerpt: 'An in-depth look at how ZK-SNARKs and membership proofs are reshaping compliance and privacy in decentralized finance.',
     full_html: `<p>An in-depth look at how ZK-SNARKs and membership proofs are reshaping compliance and privacy in decentralized finance.</p>
 <p>In traditional finance, privacy is the default, and compliance is managed off-chain. In DeFi, everything is public, which poses massive frontrunning risks and makes proprietary trading impossible. Zero-knowledge proofs (ZKPs) solve this by allowing users to prove they comply with regulations (like being a non-US citizen or a qualified investor) without revealing their identity or balance.</p>
-<p>As ZK technology matures, we are seeing the emergence of hybrid platforms that combine on-chain transparency with off-chain zero-knowledge computations. This balance is critical for institutional adoption of blockchain systems.</p>`,
+<p>As ZK technology matures, we are seeing the emergence of hybrid platforms that combine onchain transparency with off-chain zero-knowledge computations. This balance is critical for institutional adoption of blockchain systems.</p>`,
   },
   {
     ghost_slug: 'agentic-web3-applications',

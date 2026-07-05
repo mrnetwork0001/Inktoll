@@ -465,7 +465,7 @@ export default function Leaderboard() {
                   borderRadius: '8px',
                   padding: '0.75rem 1rem'
                 }}>
-                  💡 <strong>Circle x402 Nanopayment Batching:</strong> To achieve sub-cent transactions with <strong>zero gas fees</strong>, Inktoll batches transfer signatures off-chain. Individual payments are net-settled in batch transactions on-chain.
+                  💡 <strong>Circle x402 Nanopayment Batching:</strong> To achieve sub-cent transactions with <strong>zero gas fees</strong>, Inktoll batches transfer signatures off-chain. Individual payments are net-settled in batch transactions onchain.
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>

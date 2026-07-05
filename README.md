@@ -79,7 +79,7 @@ sequenceDiagram
     LLM-->>Agent: Score relevance (0-100) & decision
     Note over Agent: Relevance score exceeds threshold?
     Agent->>Gateway: 3. Sign EIP-3009 gasless authorization
-    Gateway->>Chain: 4. Batch & settle transfer on-chain
+    Gateway->>Chain: 4. Batch & settle transfer onchain
     Chain-->>Creator: 5. Transmit per-article USDC payment
     Chain-->>Agent: 6. Settle tx & unlock full content
 ```

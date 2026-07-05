@@ -12,14 +12,14 @@ async function main() {
 
   try {
     const creatorBal = await usdc.balanceOf(creatorAddress);
-    console.log('Creator USDC on-chain Balance:', ethers.formatUnits(creatorBal, 6), 'USDC');
+    console.log('Creator USDC onchain Balance:', ethers.formatUnits(creatorBal, 6), 'USDC');
   } catch (err) {
     console.error('Failed to get creator balance:', err.message);
   }
 
   try {
     const agentBal = await usdc.balanceOf(agentAddress);
-    console.log('Agent USDC on-chain Balance:', ethers.formatUnits(agentBal, 6), 'USDC');
+    console.log('Agent USDC onchain Balance:', ethers.formatUnits(agentBal, 6), 'USDC');
   } catch (err) {
     console.error('Failed to get agent balance:', err.message);
   }

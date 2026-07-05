@@ -18,7 +18,7 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
     },
     {
       target: '.tour-claimable-balance',
-      content: 'This is the actual USDC sitting directly in your on-chain custodial wallet. This is real money ready to be withdrawn.',
+      content: 'This is the actual USDC sitting directly in your onchain custodial wallet. This is real money ready to be withdrawn.',
       skipBeacon: true,
       placement: 'bottom',
     },

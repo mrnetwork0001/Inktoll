@@ -190,7 +190,7 @@ router.post('/sync-gateway', async (req, res) => {
       return res.status(400).json({ error: 'No new earnings in the Gateway to sync.' });
     }
 
-    // Attempt the on-chain Gateway withdrawal, but don't block on failure.
+    // Attempt the onchain Gateway withdrawal, but don't block on failure.
     // On Arc Testnet, the Circle Facilitator batches payments asynchronously,
     // so the Gateway contract may not have settled funds yet.
     // If it fails, we still mark payments as synced — the creator's custodial
@@ -200,9 +200,9 @@ router.post('/sync-gateway', async (req, res) => {
     try {
       const { withdrawFromGateway } = await import('../services/wallet.js');
       txHash = await withdrawFromGateway(creator.wallet_address, amount.toFixed(6));
-      console.log(`[Gateway Sync] On-chain withdrawal succeeded! TxHash: ${txHash}`);
+      console.log(`[Gateway Sync] Onchain withdrawal succeeded! TxHash: ${txHash}`);
     } catch (withdrawError: any) {
-      console.warn(`[Gateway Sync] On-chain withdrawal failed (${withdrawError.message}). Marking payments as synced anyway — creator wallet already holds funds.`);
+      console.warn(`[Gateway Sync] Onchain withdrawal failed (${withdrawError.message}). Marking payments as synced anyway — creator wallet already holds funds.`);
       txHash = `sync-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
     }
 

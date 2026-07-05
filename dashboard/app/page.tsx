@@ -586,7 +586,7 @@ export default function LandingPage() {
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Settle micro-transactions as small as $0.001
                 </motion.div>
                 <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
-                  <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Gasless payouts settled dynamically on-chain
+                  <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> Gasless payouts settled dynamically onchain
                 </motion.div>
                 <motion.div variants={staggerItem} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem' }}>
                   <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>✓</span> No user subscription boundaries

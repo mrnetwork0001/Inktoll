@@ -224,7 +224,7 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
         }
       }
       
-      // Execute faucet transfer on-chain
+      // Execute faucet transfer onchain
       try {
         const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
         const faucetWallet = new ethers.Wallet(faucetPrivateKey, provider);
@@ -256,8 +256,8 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
 
         return res.json({ success: true, txHash: tx.hash });
       } catch (txErr: any) {
-        console.error('[Faucet] On-chain transfer failed:', txErr.message);
-        return res.status(500).json({ error: `On-chain transfer failed: ${txErr.message}` });
+        console.error('[Faucet] Onchain transfer failed:', txErr.message);
+        return res.status(500).json({ error: `Onchain transfer failed: ${txErr.message}` });
       }
     });
   } catch (error: any) {
@@ -315,7 +315,7 @@ app.post('/api/agent/ask', async (req, res) => {
       if (lowerQ.includes('nanopayment') || lowerQ.includes('payment') || lowerQ.includes('arc')) {
         answer = `AI agent nanopayments on Arc L1 solve API transaction costs. Using Circle gateways, agents sign EIP-3009 authorizations to settle sub-cent payments gaslessly. Inktoll harnesses Arc L1 to batch these nanopayments, keeping developer overhead minimal and user experience flawless.`;
       } else if (lowerQ.includes('zero') || lowerQ.includes('privacy') || lowerQ.includes('zk')) {
-        answer = `Zero knowledge proofs like ZK-SNARKs and membership proofs allow users to prove compliance (e.g. being a qualified investor) in DeFi without revealing their identity or balance. This balances on-chain transparency with off-chain zero-knowledge computations.`;
+        answer = `Zero knowledge proofs like ZK-SNARKs and membership proofs allow users to prove compliance (e.g. being a qualified investor) in DeFi without revealing their identity or balance. This balances onchain transparency with off-chain zero-knowledge computations.`;
       } else {
         answer = `Most Web3 applications are designed for human wallets, but the future belongs to autonomous AI agents. These agents manage their own budgets using spending caps and run loops. Inktoll is the first knowledge economy where agents pay creators gaslessly.`;
       }

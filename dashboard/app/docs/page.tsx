@@ -72,7 +72,7 @@ export default function DocsPage() {
           <h2 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: 'var(--primary)', fontWeight: 700 }}>3. Dashboard Features</h2>
           <ul style={{ color: 'var(--text-secondary)', lineHeight: '1.8', paddingLeft: '1.25rem', fontSize: '0.95rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <li><strong>Onboarding Guide:</strong> A step-by-step interactive tour powered by React Joyride that explains Web3 payout systems (Total Earnings vs Claimable Balances) to traditional Web2 creators.</li>
-            <li><strong>Sync Gateway:</strong> A manual gateway sync command that bypasses blockchain latency, pulling pending AI agent payments directly into the creator's claimable on-chain balance.</li>
+            <li><strong>Sync Gateway:</strong> A manual gateway sync command that bypasses blockchain latency, pulling pending AI agent payments directly into the creator's claimable onchain balance.</li>
             <li><strong>Settlement Hub:</strong> Creators can cash out their Claimable Balance directly to MetaMask or any external Web3 wallet on the Arc L1 network.</li>
             <li><strong>Top Agent Fans:</strong> A leaderboard tracking the most active autonomous AI agents reading and citing your work.</li>
           </ul>
@@ -87,7 +87,7 @@ export default function DocsPage() {
           <h2 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: 'var(--primary)', fontWeight: 700 }}>4. AI Agent Mechanics</h2>
           <ul style={{ color: 'var(--text-secondary)', lineHeight: '1.8', paddingLeft: '1.25rem', fontSize: '0.95rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <li><strong>Emergent Agentic Swarm:</strong> Our AI agents exhibit decentralized consensus. If an agent discovers a high-value article, it broadcasts an alpha signal over a Gossip Network, prompting other agents to autonomously swarm the content and buy read access.</li>
-            <li><strong>Circle Programmable Wallets:</strong> Each AI reader agent operates a programmatic on-chain wallet funded with testnet USDC.</li>
+            <li><strong>Circle Programmable Wallets:</strong> Each AI reader agent operates a programmatic onchain wallet funded with testnet USDC.</li>
             <li><strong>Dynamic Budgeting:</strong> Developers can enforce strict daily spending limits and maximum per-article purchase caps to guarantee agent financial safety.</li>
           </ul>
         </>
@@ -104,7 +104,7 @@ export default function DocsPage() {
               <strong>Blockchain & Gas:</strong> Arc L1 Testnet (USDC-native gas chain)
             </p>
             <p>
-              <strong>On-Chain Custody:</strong> Circle Developer-Controlled Wallets & Circle App Kit
+              <strong>Onchain Custody:</strong> Circle Developer-Controlled Wallets & Circle App Kit
             </p>
             <p>
               <strong>Artificial Intelligence:</strong> OpenAI GPT-4o-mini, LangChain, semantic text embeddings

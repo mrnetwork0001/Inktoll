@@ -11,6 +11,7 @@ export default function CreatorOnboard() {
   const [price, setPrice] = useState('0.005');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showGuide, setShowGuide] = useState(false);
 
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
 
@@ -123,39 +124,59 @@ export default function CreatorOnboard() {
               </button>
               
               <h2 style={{ marginBottom: '0.5rem' }}>✍️ Onboard Your Ghost Blog</h2>
-              <p style={{ marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+              <p style={{ marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.6 }}>
                 Connect your Ghost publication to start earning USDC. We will generate a Circle Programmable Wallet for you, import your articles, and wrap them with an autonomous x402 paywall.
+                <button
+                  type="button"
+                  onClick={() => setShowGuide(!showGuide)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--primary)',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                    marginLeft: '0.5rem',
+                    textDecoration: 'underline',
+                    fontSize: '0.95rem',
+                    padding: 0,
+                    display: 'inline'
+                  }}
+                >
+                  {showGuide ? 'Read Less' : 'Read More'}
+                </button>
               </p>
 
               {/* Onboarding Guide Card */}
-              <div style={{
-                background: 'rgba(255, 128, 34, 0.04)',
-                border: '1px solid rgba(255, 128, 34, 0.2)',
-                borderRadius: '12px',
-                padding: '1.25rem',
-                marginBottom: '2.5rem',
-                fontSize: '0.85rem',
-                lineHeight: 1.5,
-                color: 'var(--text-secondary)'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                  <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>Seamless Ghost Setup Guide</strong>
+              {showGuide && (
+                <div style={{
+                  background: 'rgba(255, 128, 34, 0.04)',
+                  border: '1px solid rgba(255, 128, 34, 0.2)',
+                  borderRadius: '12px',
+                  padding: '1.25rem',
+                  marginBottom: '2.5rem',
+                  fontSize: '0.85rem',
+                  lineHeight: 1.5,
+                  color: 'var(--text-secondary)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>Seamless Ghost Setup Guide</strong>
+                  </div>
+                  
+                  <p style={{ margin: '0 0 1rem 0' }}>
+                    Don't have a blog yet? Set up your publication and publish articles on <a href="https://ghost.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'underline' }}>Ghost.org</a>.
+                  </p>
+                  
+                  <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '0.75rem' }}>
+                    <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '0.5rem' }}>Retrieving your API Key:</strong>
+                    <ol style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <li>Open your Ghost admin dashboard and click the <strong>Settings</strong> icon (bottom left).</li>
+                      <li>Under the <strong>Advanced</strong> category, click on <strong>Integrations</strong>.</li>
+                      <li>Copy your <strong>Content API Key</strong> (it is completely secure and read-only) and paste it below.</li>
+                    </ol>
+                  </div>
                 </div>
-                
-                <p style={{ margin: '0 0 1rem 0' }}>
-                  Don't have a blog yet? Set up your publication and publish articles on <a href="https://ghost.org" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'underline' }}>Ghost.org</a>.
-                </p>
-                
-                <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '0.75rem' }}>
-                  <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '0.5rem' }}>Retrieving your API Key:</strong>
-                  <ol style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    <li>Open your Ghost admin dashboard and click the <strong>Settings</strong> icon (bottom left).</li>
-                    <li>Under the <strong>Advanced</strong> category, click on <strong>Integrations</strong>.</li>
-                    <li>Copy your <strong>Content API Key</strong> (it is completely secure and read-only) and paste it below.</li>
-                  </ol>
-                </div>
-              </div>
+              )}
 
               <form onSubmit={handleConnect} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div className="form-group">

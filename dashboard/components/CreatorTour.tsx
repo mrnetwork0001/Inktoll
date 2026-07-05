@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Joyride, { Step, CallBackProps, STATUS } from 'react-joyride';
+import { Joyride, Step, CallBackProps, STATUS } from 'react-joyride';
 
 interface CreatorTourProps {
   run: boolean;

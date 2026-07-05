@@ -49,10 +49,16 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
   ];
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status } = data;
+    const { status, type, action } = data;
     const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
     
-    if (finishedStatuses.includes(status)) {
+    // Reset state if tour ends, is skipped, or is closed
+    if (
+      finishedStatuses.includes(status) || 
+      type === 'tour:end' || 
+      action === 'skip' || 
+      action === 'close'
+    ) {
       onFinish();
     }
   };

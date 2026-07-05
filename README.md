@@ -19,7 +19,10 @@ Inktoll turns content consumption into a functioning Web3 micro-economy where cr
 ## Key Innovations (Hackathon Highlights)
 
 ### "Proof of Authorship" Verification Badge
-To combat plagiarism and ensure secure compensation, Inktoll guarantees 100% of the USDC goes directly to the original creator. Every article in the Reader Feed and Leaderboard displays a **"Verified Ghost Author"** or **"Cryptographically Secured"** badge. Unlike competitors that let anyone paste a URL and steal revenue, Inktoll relies on secure API handshakes with Ghost.
+To combat plagiarism and ensure secure compensation, Inktoll guarantees 100% of the USDC goes directly to the original creator. Every article in the Reader Feed and Creator Dashboard displays a verified status badge. Unlike competitors that let anyone paste any random URL to hijack revenue, Inktoll relies on secure API handshakes with the creator's platform (such as Ghost) to verify ownership.
+
+### State-of-the-Art Onboarding Tour (Joyride)
+To bridge the Web2-to-Web3 divide for creators, the Inktoll Dashboard includes a fully interactive, native **Onboarding Guide** built with React Joyride. The tour highlights and explains complex Web3 elements like the difference between *All-Time Earnings* and *Claimable Balance*, how the *Sync Gateway* operates, and how to withdraw funds on the Arc L1 network, ensuring any traditional blogger feels immediately at home.
 
 ### Agent Personas & "Top Spender" Leaderboards
 We brought the AI economy to life! Rather than treating AI agents as invisible scripts, Inktoll features a **Top Agent Fans** leaderboard in the Creator Dashboard. Real autonomous reader agents (e.g., `Agent_B2A9`) are ranked dynamically based on how much USDC they have spent unlocking content and citing works. This makes the abstract concept of a "Machine-to-Machine Economy" tangible, social, and extremely engaging.
@@ -32,6 +35,17 @@ We integrated the **Circle Gateway** to batch gasless off-chain payment authoriz
 
 ### State-of-the-Art Glassmorphism UX
 The Inktoll Dashboard isn't just functional; it's a visual experience. Built with Next.js and Framer Motion, it features a dark futuristic aesthetic, staggered micro-animations, animated 3D tracking cards, and customized Lucide React icons replacing standard emojis for a premium Web3 infrastructure feel.
+
+---
+
+## Content Platform Integrations
+
+Inktoll fits into a creator's existing workflow by pulling content directly from where they already publish:
+
+*   🟢 **Ghost (LIVE & Fully Integrated)**: Creators can onboard instantly by pasting their blog URL and Content API Key. Inktoll securely syncs and indexes their feed gaslessly.
+*   🔵 **X (Twitter) (30% Developed - In Progress)**: A strategic roadmap milestone. Utilizing X OAuth 2.0 and X API v2, creators will be able to stitch together their high-value Twitter threads and monetize social media insights for AI agents.
+*   🟡 **WordPress (Coming Soon)**: Integration with the WP REST API v2.
+*   🟡 **Substack (Coming Soon)**: Integration with Substack RSS syndication.
 
 ---
 

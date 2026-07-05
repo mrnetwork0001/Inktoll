@@ -520,7 +520,7 @@ export default function ReaderSetup() {
             </div>
 
             {/* Wallet Custody Card */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ display: 'none', flexDirection: 'column', gap: '1.5rem' }}>
               <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <h3>Wallet Custody Model</h3>
                 <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>

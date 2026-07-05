@@ -73,10 +73,13 @@ export default function CreatorOnboard() {
                 {/* Ghost Card (Active) */}
                 <div 
                   onClick={() => setSelectedPlatform('ghost')}
-                  style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--primary)', background: 'var(--bg-active)', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 20px rgba(255, 128, 34, 0.1)' }}
+                  style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--primary)', background: 'var(--bg-active)', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 20px rgba(255, 128, 34, 0.1)', position: 'relative', overflow: 'hidden' }}
                   onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                   onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 107, 0, 0.15)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                    LIVE
+                  </div>
                   <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>Ghost</div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Connect via Content API</div>
                 </div>

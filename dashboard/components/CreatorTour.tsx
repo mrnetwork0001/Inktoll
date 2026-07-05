@@ -19,21 +19,25 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
     {
       target: '.tour-claimable-balance',
       content: 'This is the actual USDC sitting directly in your on-chain custodial wallet. This is real money ready to be withdrawn.',
+      disableBeacon: true,
       placement: 'bottom',
     },
     {
       target: '.tour-sync-gateway',
       content: 'Sometimes blockchain networks have lag. Clicking Sync Gateway forces the backend to pull any pending agent payments directly into your Claimable Balance.',
+      disableBeacon: true,
       placement: 'bottom',
     },
     {
       target: '.tour-monetized-hub',
       content: 'This hub breaks down exactly which of your articles are being read by agents, how many citations they have, and how much each has earned.',
+      disableBeacon: true,
       placement: 'left',
     },
     {
       target: '.tour-settlement-hub',
       content: 'Ready to cash out? Use the Settlement Hub to withdraw your Claimable Balance directly to your MetaMask or any other personal Web3 wallet.',
+      disableBeacon: true,
       placement: 'right',
     }
   ];

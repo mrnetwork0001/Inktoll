@@ -132,10 +132,55 @@ export default function DocsPage() {
         </p>
 
         {/* Responsive Grid Layout */}
-        <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', alignItems: 'flex-start', width: '100%' }}>
           
+          <style>{`
+            .mobile-docs-nav {
+              display: none !important;
+            }
+            .desktop-docs-nav {
+              display: flex !important;
+            }
+            @media (max-width: 768px) {
+              .mobile-docs-nav {
+                display: block !important;
+              }
+              .desktop-docs-nav {
+                display: none !important;
+              }
+            }
+          `}</style>
+
+          {/* Mobile Dropdown Menu (visible only on mobile) */}
+          <div className="mobile-docs-nav" style={{ width: '100%', marginBottom: '1rem' }}>
+            <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Select Section:</label>
+            <select
+              value={activeSection}
+              onChange={(e) => setActiveSection(Number(e.target.value))}
+              style={{
+                width: '100%',
+                padding: '0.85rem 1.25rem',
+                borderRadius: '10px',
+                border: '1px solid var(--border)',
+                background: 'var(--bg-active)',
+                color: 'var(--text)',
+                fontSize: '0.95rem',
+                outline: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+              }}
+            >
+              {sections.map((sec, index) => (
+                <option key={sec.id} value={index} style={{ background: '#1c1c1e', color: 'var(--text)' }}>
+                  {sec.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Left Sidebar Menu */}
-          <nav style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: '0.5rem', position: 'sticky', top: '100px' }}>
+          <nav className="desktop-docs-nav" style={{ flex: '1 1 220px', display: 'flex', flexDirection: 'column', gap: '0.5rem', position: 'sticky', top: '100px' }}>
             {sections.map((sec, index) => {
               const isActive = index === activeSection;
               return (

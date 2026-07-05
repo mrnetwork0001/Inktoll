@@ -152,8 +152,7 @@ export default function CreatorOnboard() {
                   <ol style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     <li>Open your Ghost admin dashboard and click the <strong>Settings</strong> icon (bottom left).</li>
                     <li>Under the <strong>Advanced</strong> category, click on <strong>Integrations</strong>.</li>
-                    <li>Click <strong>+ Add custom integration</strong> and name it <code>Inktoll</code>.</li>
-                    <li>Copy the <strong>Content API Key</strong> (it is completely secure and read-only) and paste it below.</li>
+                    <li>Copy your <strong>Content API Key</strong> (it is completely secure and read-only) and paste it below.</li>
                   </ol>
                 </div>
               </div>

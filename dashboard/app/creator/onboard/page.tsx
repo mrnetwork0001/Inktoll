@@ -81,7 +81,7 @@ export default function CreatorOnboard() {
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Connect via Content API</div>
                 </div>
 
-                 {/* WordPress Card (Coming Soon) */}
+                {/* WordPress Card (Coming Soon) */}
                 <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.6, position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
                   <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
                     COMING SOON
@@ -108,28 +108,10 @@ export default function CreatorOnboard() {
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>RSS Syndication</div>
                 </div>
 
-                {/* Medium Card (Coming Soon) */}
-                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.6, position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
-                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                    COMING SOON
-                  </div>
-                  <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>Medium</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Medium API</div>
-                </div>
-
-                {/* Custom RSS Card (Coming Soon) */}
-                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.6, position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
-                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                    COMING SOON
-                  </div>
-                  <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>Custom RSS</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>XML/Atom Syndication</div>
-                </div>
-
               </div>
               
               <div style={{ marginTop: '2rem', textAlign: 'center', fontStyle: 'italic', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                For the current hackathon sprint, Ghost is our fully supported integration. We are actively building integrations for X (Twitter), WordPress, Substack, Medium, and Custom RSS to onboard more creators into the Machine-to-Machine economy.
+                For the current hackathon sprint, Ghost is our fully supported integration. We are actively building integrations for X (Twitter), WordPress, and Substack to onboard more creators into the Machine-to-Machine economy.
               </div>
             </div>
           ) : (

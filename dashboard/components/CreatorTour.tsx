@@ -64,8 +64,11 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
       continuous={true}
       showSkipButton={true}
       showProgress={true}
-      disableScroll={true}
       callback={handleJoyrideCallback}
+      options={{
+        skipScroll: true,
+        buttons: ['back', 'skip', 'primary']
+      }}
       locale={{
         skip: 'Skip',
         next: 'Next',
@@ -98,6 +101,7 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
         buttonSkip: {
           color: '#aaa',
           padding: '8px 16px',
+          marginRight: 'auto'
         }
       }}
     />

@@ -704,10 +704,10 @@ export default function LandingPage() {
           </section>
 
           {/* 8. FAQ SECTION */}
-          <section style={{ maxWidth: '800px', margin: '2rem auto 0 auto', display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%' }}>
+          <section style={{ maxWidth: '800px', margin: '2rem auto 0 auto', display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%' }}>
             <h2 style={{ textAlign: 'center', fontSize: '2.25rem', marginBottom: '2.5rem' }}>Frequently Asked Questions</h2>
             
-            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
               <summary className="faq-summary">
                 <span>What exactly is Inktoll?</span>
                 <span className="faq-icon">+</span>
@@ -717,7 +717,7 @@ export default function LandingPage() {
               </div>
             </details>
 
-            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
               <summary className="faq-summary">
                 <span>How do "gasless" nanopayments work?</span>
                 <span className="faq-icon">+</span>
@@ -727,17 +727,17 @@ export default function LandingPage() {
               </div>
             </details>
 
-            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
               <summary className="faq-summary">
                 <span>What is a Citation Toll?</span>
                 <span className="faq-icon">+</span>
               </summary>
               <div className="faq-content">
-                The knowledge economy doesn't stop at reading. When an AI agent uses your previously purchased content to generate an answer for a user, Inktoll's semantic tracking detects the citation and automatically routes a micro-royalty (e.g. $0.0001) back to your wallet.
+                The knowledge economy doesn't stop at reading. When an AI agent uses your previously purchased content to generate an answer for a user, Inktoll's semantic tracking detects the citation and automatically routes a micro-royalty (e.g. $0.0001 USDC) back to your wallet.
               </div>
             </details>
 
-            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
               <summary className="faq-summary">
                 <span>Do I need to be a crypto expert to use this?</span>
                 <span className="faq-icon">+</span>
@@ -747,13 +747,63 @@ export default function LandingPage() {
               </div>
             </details>
 
-            <details name="faq" className="glass-card faq-item" style={{ padding: '1.5rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
               <summary className="faq-summary">
                 <span>How do agents avoid spending all my money?</span>
                 <span className="faq-icon">+</span>
               </summary>
               <div className="faq-content">
                 Users can set strict daily USDC spending caps and maximum per-article prices for their agents. Once your agent hits its budget, it pauses automatically until the next day, ensuring complete financial safety while curating your feed.
+              </div>
+            </details>
+
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+              <summary className="faq-summary">
+                <span>How does Ghost onboarding work?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                Creators can connect their Ghost blogs in seconds by copying their Content API Key from their Ghost Settings. Inktoll handles importing, indexing, and wrapping the articles in paywalls automatically.
+              </div>
+            </details>
+
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+              <summary className="faq-summary">
+                <span>What is the Arc Testnet?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                Arc is an EVM-compatible L1 blockchain optimized for sub-second, low-cost stablecoin transactions. It uses USDC as its native gas token, eliminating the volatile gas fees found on main chains.
+              </div>
+            </details>
+
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+              <summary className="faq-summary">
+                <span>Why are some platform integrations listed as "Coming Soon"?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                Ghost is our fully operational launch integration. We are actively developing secure handshakes for X (Twitter), WordPress, and Substack to expand the Inktoll creator ecosystem.
+              </div>
+            </details>
+
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+              <summary className="faq-summary">
+                <span>How secure are my Ghost API keys?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                Your Ghost Content API Key is securely encrypted. We only request Read-Only access to index public articles; the protocol cannot edit, modify, or delete your content.
+              </div>
+            </details>
+
+            <details name="faq" className="glass-card faq-item" style={{ padding: '0.85rem 1.25rem', borderRadius: '16px', background: 'var(--bg-card)' }}>
+              <summary className="faq-summary">
+                <span>Where does the name "Inktoll" come from?</span>
+                <span className="faq-icon">+</span>
+              </summary>
+              <div className="faq-content">
+                "Ink" represents the creative writing and content produced by authors. "Toll" represents the autonomous settlement gate that AI agents must pass through, paying authors for their intelligence.
               </div>
             </details>
           </section>

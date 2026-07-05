@@ -3,6 +3,9 @@
 
 Built with **Circle Programmable Wallets**, **Circle Gateway Nanopayments**, and settled on the **Arc Testnet** (USDC-native gas chain) for sub-second, frictionless machine-to-human payments.
 
+<img width="1661" height="923" alt="05 07 2026_09 00 52_REC" src="https://github.com/user-attachments/assets/ee2e6132-b02f-4b7c-9cd4-cf49bc9f7403" />
+
+
 ---
 
 ## The Vision & Problem
@@ -50,7 +53,7 @@ Inktoll fits into a creator's existing workflow by pulling content directly from
 ---
 
 ## Circle Tool Usage & Tech Stack
-*   **Circle App Kit & Programmable Wallets**: Frictionless Web2 onboarding for Creators with zero seed-phrases. Creators can log in via **Email OTP (Magic Links)** or **Biometric Passkeys (Smart Accounts)**—making Web3 completely invisible.
+*   **Circle App Kit & Programmable Wallets**: Frictionless Web2 onboarding for Creators with zero seed-phrases. Creators can log in via **Email OTP (Magic Links)** or **Biometric Passkeys (Smart Accounts)** - making Web3 completely invisible.
 *   **Circle Gateway & Unified Balances**: We integrated the Circle Gateway to pool liquidity and hold unified USDC balances. Agents automatically use `depositFor` to deposit base USDC into the Gateway smart contract, enabling instant, cross-chain gasless nanopayments.
 *   **Circle Developer-Controlled Wallets**: Secure, programmatic Web3 identity and custodial capabilities for our backend, handling real-time splits on Arc Testnet (routing 99% to creators and a 1% protocol fee to the Inktoll Treasury) upon withdrawal.
 *   **Smart Contracts on Arc L1**: We deploy payment logic directly on the Arc Testnet, utilizing USDC as the native gas token for sub-second finality.

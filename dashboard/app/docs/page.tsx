@@ -218,7 +218,7 @@ export default function DocsPage() {
             
             {/* Active Content Card */}
             <div className="glass-card" style={{ padding: '2.5rem', minHeight: '350px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)' }}>
-              <div>
+              <div style={{ textAlign: 'justify' }}>
                 {sections[activeSection].content}
               </div>
 

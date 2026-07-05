@@ -410,7 +410,7 @@ function CreatorDashboardInner() {
 
   return (
     <>
-      <CreatorTour run={runTour} onFinish={() => setRunTour(false)} />
+      {runTour && <CreatorTour run={runTour} onFinish={() => setRunTour(false)} />}
       <Header />
       <main style={{ padding: '3rem 0' }}>
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -880,7 +880,7 @@ function CreatorDashboardInner() {
             </div>
 
             {/* Top Agent Spenders Leaderboard */}
-            <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
+            <div className="glass-card tour-agent-fans" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
               <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Star size={20} color="var(--primary)" fill="var(--primary)" /> Top Agent Fans

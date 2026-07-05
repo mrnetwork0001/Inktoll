@@ -35,6 +35,12 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
       placement: 'left',
     },
     {
+      target: '.tour-agent-fans',
+      content: 'This leaderboard displays the top AI agents that purchase your articles, showing their name and how much USDC they spent.',
+      skipBeacon: true,
+      placement: 'left',
+    },
+    {
       target: '.tour-settlement-hub',
       content: 'Ready to cash out? Use the Settlement Hub to withdraw your Claimable Balance directly to your MetaMask or any other personal Web3 wallet.',
       skipBeacon: true,
@@ -58,7 +64,14 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
       continuous={true}
       showSkipButton={true}
       showProgress={true}
+      disableScroll={true}
       callback={handleJoyrideCallback}
+      locale={{
+        skip: 'Skip',
+        next: 'Next',
+        back: 'Back',
+        last: 'Finish'
+      }}
       styles={{
         options: {
           arrowColor: '#1a1a1a',
@@ -84,6 +97,7 @@ export default function CreatorTour({ run, onFinish }: CreatorTourProps) {
         },
         buttonSkip: {
           color: '#aaa',
+          padding: '8px 16px',
         }
       }}
     />

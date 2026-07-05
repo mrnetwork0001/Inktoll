@@ -77,7 +77,7 @@ export default function CreatorOnboard() {
                   onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
                   onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
-                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 107, 0, 0.15)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(52, 211, 153, 0.15)', color: '#10b981', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
                     LIVE
                   </div>
                   <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>Ghost</div>
@@ -85,8 +85,8 @@ export default function CreatorOnboard() {
                 </div>
 
                 {/* X (Twitter) Card (30% Developed) */}
-                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(52, 211, 153, 0.3)', background: 'var(--bg-active)', position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
-                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(52, 211, 153, 0.15)', color: '#10b981', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)', background: 'var(--bg-active)', position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
                     30% DEVELOPED
                   </div>
                   <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>X (Twitter)</div>

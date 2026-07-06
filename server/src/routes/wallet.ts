@@ -68,4 +68,22 @@ router.post('/initialize', async (req, res) => {
   }
 });
 
+router.get('/list', async (req, res) => {
+  try {
+    const userToken = req.query.userToken as string;
+    if (!userToken) {
+      return res.status(400).json({ error: 'Missing userToken' });
+    }
+
+    const client = getClient();
+    if (!client) throw new Error('Circle API Key missing');
+
+    const response = await client.getUserWallets({ userToken });
+    res.json(response.data);
+  } catch (error: any) {
+    console.error('Failed to list wallets:', error?.response?.data || error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

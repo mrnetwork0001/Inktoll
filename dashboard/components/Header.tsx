@@ -277,6 +277,23 @@ export default function Header() {
     sdkRef.current.verifyOtp();
   };
 
+  const fetchWalletAddress = async (uToken: string) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/wallet/list?userToken=${uToken}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Failed to list wallets');
+      
+      const wallets = data.wallets || [];
+      if (wallets.length > 0) {
+        return wallets[0].address;
+      }
+      return null;
+    } catch (err) {
+      console.error('Failed to fetch wallet address:', err);
+      return null;
+    }
+  };
+
   const handleInitializeUser = async (uToken: string) => {
     try {
       setEmailStatus('Initializing user...');
@@ -289,10 +306,12 @@ export default function Header() {
 
       if (data.code === 155106) {
         // User already initialized, we just need their wallet
-        setEmailStatus('Welcome back! Wallet loaded.');
-        setWalletAddress('Email-Wallet-Loaded'); // TODO: call listWallets
+        setEmailStatus('Welcome back! Loading wallet...');
+        const addr = await fetchWalletAddress(uToken);
+        setWalletAddress(addr || 'Email-Wallet-Loaded');
         setWalletType('managed');
         localStorage.setItem('inktoll_wallet_type', 'managed');
+        if (addr) localStorage.setItem('inktoll_connected_address', addr);
         setShowAuthModal(false);
         setAuthStep('options');
         return;
@@ -316,15 +335,17 @@ export default function Header() {
       encryptionKey: localStorage.getItem('inktoll_encryptionKey') as string,
     });
 
-    sdk.execute(cId, (error) => {
+    sdk.execute(cId, async (error) => {
       if (error) {
         setEmailStatus('Failed: ' + ((error as Error).message || 'Unknown error'));
         return;
       }
-      setEmailStatus('Wallet Created Successfully!');
-      setWalletAddress('New-Email-Wallet'); // TODO: call listWallets
+      setEmailStatus('Wallet Created Successfully! Fetching address...');
+      const addr = await fetchWalletAddress(uToken);
+      setWalletAddress(addr || 'New-Email-Wallet');
       setWalletType('managed');
       localStorage.setItem('inktoll_wallet_type', 'managed');
+      if (addr) localStorage.setItem('inktoll_connected_address', addr);
       setShowAuthModal(false);
       setAuthStep('options');
     });

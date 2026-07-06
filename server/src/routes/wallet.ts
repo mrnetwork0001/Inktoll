@@ -60,7 +60,7 @@ router.post('/initialize', async (req, res) => {
     console.error('Failed to initialize user:', error?.response?.data || error);
     
     // 155106 means the user already exists and has wallets
-    if (error?.response?.data?.code === 155106) {
+    if (error?.code === 155106 || error?.response?.data?.code === 155106) {
       return res.json({ code: 155106 });
     }
     

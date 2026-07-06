@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 import { config } from '../config.js';
 import { getDb } from '../db/index.js';
-import * as circleSdk from '@circle-fin/developer-controlled-wallets';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const circleSdk = require('@circle-fin/developer-controlled-wallets');
 const { initiateDeveloperControlledWalletsClient } = circleSdk;
 
 export interface CircleWallet {

@@ -500,21 +500,6 @@ export default function Header() {
                     <button 
                       style={{ 
                         textAlign: 'left', 
-                        background: walletType === 'metamask' ? 'var(--bg-active)' : 'transparent',
-                        color: walletType === 'metamask' ? 'var(--primary)' : 'var(--text-primary)',
-                        border: 'none', 
-                        padding: '0.4rem 0.6rem', 
-                        cursor: 'pointer',
-                        borderRadius: '6px',
-                        fontSize: '0.85rem'
-                      }}
-                      onClick={connectWallet}
-                    >
-                      MetaMask (EVM EOA)
-                    </button>
-                    <button 
-                      style={{ 
-                        textAlign: 'left', 
                         background: walletType === 'passkey' ? 'var(--bg-active)' : 'transparent',
                         color: walletType === 'passkey' ? 'var(--primary)' : 'var(--text-primary)',
                         border: 'none', 
@@ -526,6 +511,21 @@ export default function Header() {
                       onClick={() => switchWalletType('passkey')}
                     >
                       Circle Wallet
+                    </button>
+                    <button 
+                      style={{ 
+                        textAlign: 'left', 
+                        background: walletType === 'metamask' ? 'var(--bg-active)' : 'transparent',
+                        color: walletType === 'metamask' ? 'var(--primary)' : 'var(--text-primary)',
+                        border: 'none', 
+                        padding: '0.4rem 0.6rem', 
+                        cursor: 'pointer',
+                        borderRadius: '6px',
+                        fontSize: '0.85rem'
+                      }}
+                      onClick={connectWallet}
+                    >
+                      MetaMask (EVM EOA)
                     </button>
 
                   </div>
@@ -662,16 +662,6 @@ export default function Header() {
                     Connect Wallet options:
                   </div>
                   <button 
-                    className="btn btn-secondary" 
-                    style={{ width: '100%', minHeight: '38px', fontSize: '0.85rem', marginBottom: 0, justifyContent: 'flex-start' }}
-                    onClick={() => {
-                      connectWallet();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    MetaMask (EVM EOA)
-                  </button>
-                  <button 
                     className="btn btn-primary" 
                     style={{ width: '100%', minHeight: '38px', fontSize: '0.85rem', marginBottom: 0, justifyContent: 'flex-start' }}
                     onClick={() => {
@@ -680,6 +670,16 @@ export default function Header() {
                     }}
                   >
                     Circle Wallet (Passkey)
+                  </button>
+                  <button 
+                    className="btn btn-secondary" 
+                    style={{ width: '100%', minHeight: '38px', fontSize: '0.85rem', marginBottom: 0, justifyContent: 'flex-start' }}
+                    onClick={() => {
+                      connectWallet();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    MetaMask (EVM EOA)
                   </button>
                 </>
               )}

@@ -46,7 +46,7 @@ The Inktoll Dashboard isn't just functional; it's a visual experience. Built wit
 Inktoll fits into a creator's existing workflow by pulling content directly from where they already publish:
 
 *   🟢 **Ghost (LIVE & Fully Integrated)**: Creators can onboard instantly by pasting their blog URL and Content API Key. Inktoll securely syncs and indexes their feed gaslessly.
-*   🔵 **X (Twitter) (30% Developed - In Progress)**: A strategic roadmap milestone. Utilizing X OAuth 2.0 and X API v2, creators will be able to stitch together their high-value Twitter threads and monetize social media insights for AI agents.
+*   🔵 **X (Twitter) (65% Developed - In Progress)**: A strategic roadmap milestone. Utilizing X OAuth 2.0 and X API v2, creators will be able to stitch together their high-value Twitter threads and monetize social media insights for AI agents.
 *   🟡 **WordPress (Coming Soon)**: Integration with the WP REST API v2.
 *   🟡 **Substack (Coming Soon)**: Integration with Substack RSS syndication.
 

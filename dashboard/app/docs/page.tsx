@@ -42,7 +42,7 @@ export default function DocsPage() {
             <div style={{ display: 'flex', gap: '1rem', background: 'rgba(255,255,255,0.01)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <span style={{ fontSize: '1.25rem' }}>🔵</span>
               <div>
-                <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '0.25rem' }}>X (Twitter) (30% Developed)</strong>
+                <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '0.25rem' }}>X (Twitter) (65% Developed)</strong>
                 <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: '1.5', display: 'block' }}>Active milestone. Using X OAuth 2.0 and the X API, creators can import and stitch together high-value Twitter threads, monetizing their social alpha.</span>
               </div>
             </div>

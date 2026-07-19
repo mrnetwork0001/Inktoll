@@ -84,10 +84,10 @@ export default function CreatorOnboard() {
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Connect via Content API</div>
                 </div>
 
-                {/* X (Twitter) Card (30% Developed) */}
+                {/* X (Twitter) Card (65% Developed) */}
                 <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)', background: 'var(--bg-active)', position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
                   <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                    30% DEVELOPED
+                    65% DEVELOPED
                   </div>
                   <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>X (Twitter)</div>
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>OAuth 2.0 & Stitched Threads</div>

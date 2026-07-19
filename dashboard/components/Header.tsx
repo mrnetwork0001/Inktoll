@@ -445,6 +445,7 @@ export default function Header() {
                     Leaderboard
                   </Link>
                 </li>
+                {/* Royalty Graph — hidden until launch. Re-enable by uncommenting.
                 <li>
                   <Link
                     href="/graph"
@@ -453,6 +454,7 @@ export default function Header() {
                     Royalty Graph
                   </Link>
                 </li>
+                */}
                 <li>
                   <Link
                     href="/docs"
@@ -633,6 +635,7 @@ export default function Header() {
             >
               Leaderboard
             </Link>
+            {/* Royalty Graph — hidden until launch. Re-enable by uncommenting.
             <Link
               href="/graph"
               className={`nav-link ${isActive('/graph') ? 'active' : ''}`}
@@ -640,6 +643,7 @@ export default function Header() {
             >
               Royalty Graph
             </Link>
+            */}
             <Link
               href="/docs"
               className={`nav-link ${isActive('/docs') ? 'active' : ''}`}

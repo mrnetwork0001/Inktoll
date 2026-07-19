@@ -438,16 +438,24 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <Link 
-                    href="/leaderboard" 
+                  <Link
+                    href="/leaderboard"
                     className={`nav-link ${isActive('/leaderboard') ? 'active' : ''}`}
                   >
                     Leaderboard
                   </Link>
                 </li>
                 <li>
-                  <Link 
-                    href="/docs" 
+                  <Link
+                    href="/graph"
+                    className={`nav-link ${isActive('/graph') ? 'active' : ''}`}
+                  >
+                    Royalty Graph
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/docs"
                     className={`nav-link ${isActive('/docs') ? 'active' : ''}`}
                   >
                     Docs
@@ -618,15 +626,22 @@ export default function Header() {
             >
               Creator Panel
             </Link>
-            <Link 
-              href="/leaderboard" 
+            <Link
+              href="/leaderboard"
               className={`nav-link ${isActive('/leaderboard') ? 'active' : ''}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               Leaderboard
             </Link>
-            <Link 
-              href="/docs" 
+            <Link
+              href="/graph"
+              className={`nav-link ${isActive('/graph') ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Royalty Graph
+            </Link>
+            <Link
+              href="/docs"
               className={`nav-link ${isActive('/docs') ? 'active' : ''}`}
               onClick={() => setMobileMenuOpen(false)}
             >

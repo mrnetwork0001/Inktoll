@@ -11,6 +11,7 @@ import faucetRouter from './routes/faucet.js';
 import walletRouter from './routes/wallet.js';
 import statsRouter from './routes/stats.js';
 import gossipRouter from './routes/gossip.js';
+import graphRouter from './routes/graph.js';
 
 // Validate config
 validateConfig();
@@ -38,6 +39,7 @@ app.use('/api/faucet', faucetRouter);
 app.use('/api/wallet', walletRouter);
 app.use('/api/stats', statsRouter);
 app.use('/api/gossip', gossipRouter);
+app.use('/api/graph', graphRouter);
 
 // Health check
 app.get('/health', (req, res) => {

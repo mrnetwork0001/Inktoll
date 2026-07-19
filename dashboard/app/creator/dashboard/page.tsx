@@ -4,8 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
 import { useNotification } from '../../../components/NotificationProvider';
-import { Eye, EyeOff, BookOpen, ReceiptText, BadgeCheck, Info, Bot, Star, RefreshCw, HelpCircle } from 'lucide-react';
+import { Eye, EyeOff, BookOpen, ReceiptText, BadgeCheck, Info, Bot, Star, RefreshCw, HelpCircle, Share2 } from 'lucide-react';
 import CreatorTour from '../../../components/CreatorTour';
+import ShareEarningsCard from '../../../components/ShareEarningsCard';
 
 // Custom hook to animate number counting
 function useAnimatedCount(targetValue: number, duration: number = 800) {
@@ -60,6 +61,7 @@ function CreatorDashboardInner() {
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState<{message: string, txHash?: string, url?: string} | null>(null);
   const [runTour, setRunTour] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState<string>('');
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
   const [connectedType, setConnectedType] = useState<string>('managed');
@@ -411,6 +413,14 @@ function CreatorDashboardInner() {
   return (
     <>
       {runTour && <CreatorTour run={runTour} onFinish={() => setRunTour(false)} />}
+      {showShareCard && (
+        <ShareEarningsCard
+          earnings={stats?.totalEarningsUsdc || 0}
+          reads={stats?.readCount || 0}
+          citations={stats?.citationCount || 0}
+          onClose={() => setShowShareCard(false)}
+        />
+      )}
       <Header />
       <main style={{ padding: '3rem 0' }}>
         <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -432,6 +442,27 @@ function CreatorDashboardInner() {
             </div>
             
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <button
+                onClick={() => setShowShareCard(true)}
+                style={{
+                  background: 'var(--primary-glow)',
+                  border: '1px solid var(--primary)',
+                  borderRadius: '6px',
+                  padding: '6px 12px',
+                  fontSize: '0.8rem',
+                  color: 'var(--primary)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontWeight: 600,
+                  transition: 'all 0.2s',
+                  outline: 'none'
+                }}
+              >
+                <Share2 size={16} /> Share
+              </button>
+
               <button
                 onClick={() => setRunTour(true)}
                 style={{

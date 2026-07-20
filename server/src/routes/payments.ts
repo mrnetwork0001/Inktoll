@@ -79,6 +79,8 @@ router.get('/', async (req, res) => {
         role: 'creator',
         walletAddress: creator.wallet_address,
         ownerAddress: creator.owner_address,
+        platform: creator.platform || 'ghost',
+        platformVerified: !!creator.platform_verified,
         balanceUsdc: balance,
         readCount: readRev.count,
         readRevenueUsdc: readRev.total,

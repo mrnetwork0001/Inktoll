@@ -238,7 +238,16 @@ function CreatorDashboardInner() {
         throw new Error(errData.error || 'Failed to bind wallet');
       }
 
-      showToast('Successfully bound Ghost blog account to your wallet!', 'success');
+      const bindData = await res.json();
+      if (stats?.platform === 'paragraph') {
+        if (bindData.platformVerified) {
+          showToast('Wallet bound — Verified Paragraph Author! Your publication ownership is confirmed onchain.', 'success');
+        } else {
+          showToast('Wallet bound, but this wallet does not own your Paragraph publication. Connect the owning wallet to verify.', 'error');
+        }
+      } else {
+        showToast('Successfully bound Ghost blog account to your wallet!', 'success');
+      }
       await fetchStats();
     } catch (err: any) {
       setError('Binding failed: ' + err.message);
@@ -435,6 +444,11 @@ function CreatorDashboardInner() {
             <div>
               <h1 style={{ margin: 0, fontSize: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 Creator Dashboard
+                {stats?.platform === 'paragraph' && stats?.platformVerified && (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.7rem', fontWeight: 700, background: 'rgba(52, 211, 153, 0.15)', color: '#10b981', padding: '4px 10px', borderRadius: '999px', verticalAlign: 'middle' }}>
+                    <BadgeCheck size={13} /> VERIFIED PARAGRAPH AUTHOR
+                  </span>
+                )}
               </h1>
               <p style={{ margin: '0.25rem 0 0 0', color: 'var(--text-secondary)' }}>
                 Manage your monetized blog feeds, payouts, and onchain earnings.
@@ -517,6 +531,32 @@ function CreatorDashboardInner() {
             </button>
             </div>
           </div>
+
+          {/* Unverified Paragraph publication nudge */}
+          {stats?.platform === 'paragraph' && !stats?.platformVerified && (
+            <div style={{ padding: '1rem 1.25rem', background: 'var(--primary-glow)', border: '1px solid var(--primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem' }}>
+                  ⚠️ Unverified publication
+                </span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  {connectedAddress
+                    ? 'Sign with the wallet that owns your Paragraph publication to earn the Verified Author badge.'
+                    : 'Connect the wallet that owns your Paragraph publication (top right), then verify to earn the Verified Author badge.'}
+                </span>
+              </div>
+              {connectedAddress && (
+                <button
+                  className="btn btn-primary"
+                  style={{ padding: '0.5rem 1.25rem', fontSize: '0.8rem', minHeight: 'auto', marginBottom: 0, borderRadius: '8px', whiteSpace: 'nowrap' }}
+                  onClick={handleBindWallet}
+                  disabled={binding}
+                >
+                  {binding ? 'Verifying...' : 'Verify Ownership'}
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Top Row KPI Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
@@ -727,10 +767,12 @@ function CreatorDashboardInner() {
                 }}>
                   <div style={{ fontWeight: 700, color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
-                    Bind Ghost blog to connected wallet
+                    {stats?.platform === 'paragraph' ? 'Bind Paragraph publication to connected wallet' : 'Bind Ghost blog to connected wallet'}
                   </div>
                   <div style={{ color: 'var(--text-secondary)' }}>
-                    Bind your blog account to enable passwordless wallet authentication and secure logins.
+                    {stats?.platform === 'paragraph'
+                      ? 'Binding also verifies publication ownership cryptographically — sign with the wallet that owns your Paragraph account.'
+                      : 'Bind your blog account to enable passwordless wallet authentication and secure logins.'}
                   </div>
                   <button 
                     className="btn btn-primary"

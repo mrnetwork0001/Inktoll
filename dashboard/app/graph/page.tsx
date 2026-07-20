@@ -62,6 +62,8 @@ interface SimNode {
   y: number;
   vx: number;
   vy: number;
+  phase: number;
+  freq: number;
   data: any;
 }
 
@@ -132,7 +134,7 @@ export default function RoyaltyGraph() {
     return `${Math.floor(hours / 24)}d ago`;
   };
 
-  const upsertNode = (key: string, node: Omit<SimNode, 'x' | 'y' | 'vx' | 'vy'>, anchor?: SimNode) => {
+  const upsertNode = (key: string, node: Omit<SimNode, 'x' | 'y' | 'vx' | 'vy' | 'phase' | 'freq'>, anchor?: SimNode) => {
     const map = nodesRef.current;
     const existing = map.get(key);
     if (existing) {
@@ -151,6 +153,9 @@ export default function RoyaltyGraph() {
       y: baseY + (Math.random() - 0.5) * 120,
       vx: 0,
       vy: 0,
+      // Per-node rhythm for the perpetual drift/breathing animation
+      phase: Math.random() * Math.PI * 2,
+      freq: 0.4 + Math.random() * 0.6,
     };
     map.set(key, created);
     return created;
@@ -292,6 +297,8 @@ export default function RoyaltyGraph() {
       frame++;
       if (frame % 60 === 0) refreshThemeColors();
 
+      const now = performance.now();
+      const tSec = now * 0.001;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       const nodes = Array.from(nodesRef.current.values());
@@ -327,6 +334,9 @@ export default function RoyaltyGraph() {
         b.vx -= dx * force; b.vy -= dy * force;
       });
       nodes.forEach((n) => {
+        // Perpetual organic drift so the graph never freezes at equilibrium
+        n.vx += Math.sin(tSec * n.freq + n.phase) * 0.018;
+        n.vy += Math.cos(tSec * n.freq * 0.85 + n.phase * 1.3) * 0.018;
         // Gentle gravity toward center keeps disconnected clusters on screen
         n.vx += (w / 2 - n.x) * 0.0015;
         n.vy += (h / 2 - n.y) * 0.0015;
@@ -370,8 +380,32 @@ export default function RoyaltyGraph() {
         ctx.setLineDash([]);
       });
 
+      // Continuous energy flow along edges — money visibly circulating at all times.
+      // Read/citation dots travel agent -> article; ownership dots article -> creator.
+      edges.forEach((e, i) => {
+        const a = nodesRef.current.get(e.source);
+        const b = nodesRef.current.get(e.target);
+        if (!a || !b) return;
+        const isOwnership = e.kind === 'ownership';
+        const dots = isOwnership ? 1 : Math.min(3, Math.ceil(e.strength));
+        const speed = isOwnership ? 0.05 : 0.11;
+        const edgePhase = (i * 0.618) % 1;
+        for (let d = 0; d < dots; d++) {
+          const t = (tSec * speed + edgePhase + d / dots) % 1;
+          const x = a.x + (b.x - a.x) * t;
+          const y = a.y + (b.y - a.y) * t;
+          ctx.beginPath();
+          ctx.arc(x, y, isOwnership ? 1.2 : 1.8, 0, Math.PI * 2);
+          ctx.fillStyle = e.kind === 'citation'
+            ? 'rgba(228, 193, 125, 0.5)'
+            : e.kind === 'read'
+              ? 'rgba(255, 128, 34, 0.45)'
+              : 'rgba(255, 255, 255, 0.16)';
+          ctx.fill();
+        }
+      });
+
       // Money pulses travelling along edges
-      const now = performance.now();
       pulsesRef.current = pulsesRef.current.filter((p) => now < p.start + p.duration);
       pulsesRef.current.forEach((p) => {
         if (now < p.start) return;
@@ -392,6 +426,17 @@ export default function RoyaltyGraph() {
 
       nodes.forEach((n) => {
         const color = NODE_COLORS[n.type];
+
+        // Breathing halo on creators and agents
+        if (n.type !== 'article') {
+          const breath = 0.5 + 0.5 * Math.sin(tSec * 1.4 + n.phase);
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.radius + 4 + breath * 4, 0, Math.PI * 2);
+          ctx.strokeStyle = color + Math.round(24 + breath * 40).toString(16).padStart(2, '0');
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
         ctx.fillStyle = color + '26';

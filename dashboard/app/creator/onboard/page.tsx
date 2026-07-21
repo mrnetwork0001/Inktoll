@@ -8,6 +8,7 @@ export default function CreatorOnboard() {
   const router = useRouter();
   const [ghostUrl, setGhostUrl] = useState('');
   const [ghostApiKey, setGhostApiKey] = useState('');
+  const [paragraphUrl, setParagraphUrl] = useState('');
   const [price, setPrice] = useState('0.005');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -30,12 +31,21 @@ export default function CreatorOnboard() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ghostUrl,
-          ghostApiKey,
-          defaultPriceUsdc: parseFloat(price),
-          ownerAddress
-        }),
+        body: JSON.stringify(
+          selectedPlatform === 'paragraph'
+            ? {
+                platform: 'paragraph',
+                paragraphUrl,
+                defaultPriceUsdc: parseFloat(price),
+                ownerAddress
+              }
+            : {
+                ghostUrl,
+                ghostApiKey,
+                defaultPriceUsdc: parseFloat(price),
+                ownerAddress
+              }
+        ),
       });
 
       if (!response.ok) {
@@ -93,13 +103,18 @@ export default function CreatorOnboard() {
                   <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>OAuth 2.0 & Stitched Threads</div>
                 </div>
 
-                {/* WordPress Card (Coming Soon) */}
-                <div style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg-active)', opacity: 0.6, position: 'relative', overflow: 'hidden', cursor: 'not-allowed' }}>
-                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(255, 128, 34, 0.2)', color: 'var(--primary)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                    COMING SOON
+                {/* Paragraph Card (Active) */}
+                <div
+                  onClick={() => setSelectedPlatform('paragraph')}
+                  style={{ padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--primary)', background: 'var(--bg-active)', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 20px rgba(255, 128, 34, 0.1)', position: 'relative', overflow: 'hidden' }}
+                  onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                  onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(52, 211, 153, 0.15)', color: '#10b981', padding: '2px 8px', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                    LIVE
                   </div>
-                  <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>WordPress</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>WP REST API v2</div>
+                  <div style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text)' }}>Paragraph</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Web3-Native · Wallet Verified</div>
                 </div>
 
                 {/* Substack Card (Coming Soon) */}
@@ -114,18 +129,79 @@ export default function CreatorOnboard() {
               </div>
               
               <div style={{ marginTop: '2rem', textAlign: 'center', fontStyle: 'italic', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                For the current hackathon sprint, Ghost is our fully supported integration. We are actively building integrations for X (Twitter), WordPress, and Substack to onboard more creators into the Machine-to-Machine economy.
+                Ghost and Paragraph are our fully supported integrations. We are actively building integrations for X (Twitter) and Substack to onboard more creators into the Machine-to-Machine economy.
               </div>
             </div>
-          ) : (
+          ) : selectedPlatform === 'paragraph' ? (
             <div className="glass-card">
-              <button 
+              <button
                 onClick={() => setSelectedPlatform(null)}
                 style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', padding: 0 }}
               >
                 ← Back to Platforms
               </button>
-              
+
+              <h2 style={{ marginBottom: '0.5rem' }}>🖋️ Onboard Your Paragraph Publication</h2>
+              <p style={{ marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                Paste your Paragraph URL — that's it. No API key needed: Paragraph's public content API lets us index your published posts directly, and your authorship is verified cryptographically against the wallet that owns your publication.
+              </p>
+
+              <form onSubmit={handleConnect} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div className="form-group">
+                  <label className="form-label">Paragraph Publication URL</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="https://paragraph.com/@your-publication"
+                    value={paragraphUrl}
+                    onChange={(e) => setParagraphUrl(e.target.value)}
+                    required
+                  />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', marginTop: '0.25rem' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      Also accepts @handle or paragraph.xyz links. Connect the wallet that owns your publication to earn the Verified Author badge.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Default Price per Article (USDC)</label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    min="0.0001"
+                    max="1.0"
+                    className="form-input"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    required
+                  />
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Pricing typically ranges from $0.001 to $0.05 USDC per read.
+                  </span>
+                </div>
+
+                {error && (
+                  <div style={{ padding: '1rem', background: 'var(--bg-active)', border: '1px solid var(--primary)', borderRadius: '8px', color: 'var(--primary)', fontSize: '0.9rem' }}>
+                    ⚠️ {error}
+                  </div>
+                )}
+
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? 'Connecting & Syncing...' : 'Connect Paragraph & Import Posts'}
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="glass-card">
+              <button
+                onClick={() => setSelectedPlatform(null)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', padding: 0 }}
+              >
+                ← Back to Platforms
+              </button>
+
               <h2 style={{ marginBottom: '0.5rem' }}>✍️ Onboard Your Ghost Blog</h2>
               <p style={{ marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.6 }}>
                 Connect your Ghost publication to start earning USDC. We will generate a Circle Programmable Wallet for you, import your articles, and wrap them with an autonomous x402 paywall.

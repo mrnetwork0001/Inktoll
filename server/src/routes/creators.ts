@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { getDb } from '../db/index.js';
 import { createCircleWallet } from '../services/wallet.js';
 import { fetchGhostArticles } from '../services/ghost.js';
+import { fetchParagraphArticles, verifyParagraphOwnership } from '../services/paragraph.js';
 import crypto from 'crypto';
 import { ethers } from 'ethers';
 import { config } from '../config.js';
@@ -9,17 +10,23 @@ import { config } from '../config.js';
 const router = Router();
 
 router.post('/', async (req, res) => {
-  const { ghostUrl, ghostApiKey, defaultPriceUsdc, ownerAddress } = req.body;
+  const { ghostUrl, ghostApiKey, paragraphUrl, defaultPriceUsdc, ownerAddress } = req.body;
 
-  if (!ghostUrl) {
-    return res.status(400).json({ error: 'ghostUrl is required' });
+  // Platform routing: 'paragraph' publications need only a public URL (no API key);
+  // everything else follows the original Ghost flow. The ghost_url column stores
+  // the source URL for both platforms.
+  const platform = req.body.platform === 'paragraph' || (!ghostUrl && paragraphUrl) ? 'paragraph' : 'ghost';
+  const sourceUrl = platform === 'paragraph' ? paragraphUrl : ghostUrl;
+
+  if (!sourceUrl) {
+    return res.status(400).json({ error: platform === 'paragraph' ? 'paragraphUrl is required' : 'ghostUrl is required' });
   }
 
   const db = getDb();
 
   try {
-    // Generate unique ID based on Ghost URL hash
-    const creatorId = crypto.createHash('md5').update(ghostUrl).digest('hex');
+    // Generate unique ID based on source URL hash
+    const creatorId = crypto.createHash('md5').update(sourceUrl).digest('hex');
 
     // Check if creator already exists
     let creator = db.prepare('SELECT * FROM creators WHERE id = ?').get(creatorId) as any;
@@ -47,28 +54,40 @@ router.post('/', async (req, res) => {
         console.error(`[Creator] Failed to request faucet gas funds:`, faucetErr.message);
       }
 
+      // Paragraph proof-of-authorship: the connected wallet must resolve to the
+      // publication owner via Paragraph's public user API. Non-blocking — an
+      // unverified creator can still onboard, they just don't get the badge.
+      let platformVerified = 0;
+      if (platform === 'paragraph' && ownerAddress) {
+        platformVerified = (await verifyParagraphOwnership(sourceUrl, ownerAddress)) ? 1 : 0;
+      }
+
       // Insert creator
       db.prepare(`
-        INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc, owner_address)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc, owner_address, platform, platform_verified)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         creatorId,
-        ghostUrl,
+        sourceUrl,
         ghostApiKey || '',
         wallet.address,
         wallet.id,
         parseFloat(defaultPriceUsdc || '0.005'),
-        ownerAddress ? ownerAddress.toLowerCase() : null
+        ownerAddress ? ownerAddress.toLowerCase() : null,
+        platform,
+        platformVerified
       );
 
       creator = {
         id: creatorId,
-        ghost_url: ghostUrl,
+        ghost_url: sourceUrl,
         ghost_api_key: ghostApiKey || '',
         wallet_address: wallet.address,
         wallet_id: wallet.id,
         default_price_usdc: parseFloat(defaultPriceUsdc || '0.005'),
         owner_address: ownerAddress ? ownerAddress.toLowerCase() : null,
+        platform,
+        platform_verified: platformVerified,
       };
     } else if (ownerAddress && !creator.owner_address) {
       db.prepare('UPDATE creators SET owner_address = ? WHERE id = ?').run(ownerAddress.toLowerCase(), creatorId);
@@ -76,7 +95,9 @@ router.post('/', async (req, res) => {
     }
 
     // Fetch and import articles
-    const posts = await fetchGhostArticles(ghostUrl, ghostApiKey);
+    const posts = platform === 'paragraph'
+      ? await fetchParagraphArticles(sourceUrl)
+      : await fetchGhostArticles(sourceUrl, ghostApiKey);
     let importedCount = 0;
 
     for (const post of posts) {
@@ -131,6 +152,8 @@ router.post('/', async (req, res) => {
       creatorId: creator.id,
       walletAddress: creator.wallet_address,
       defaultPriceUsdc: creator.default_price_usdc,
+      platform: creator.platform || 'ghost',
+      platformVerified: !!creator.platform_verified,
       articlesImported: importedCount,
       totalArticles: db.prepare('SELECT COUNT(*) as count FROM articles WHERE creator_id = ?').get(creator.id) as any
     });
@@ -255,7 +278,15 @@ router.post('/bind', async (req, res) => {
     // Update owner_address in database
     db.prepare('UPDATE creators SET owner_address = ? WHERE id = ?').run(walletAddress.toLowerCase(), creatorId);
 
-    return res.json({ success: true, ownerAddress: walletAddress.toLowerCase() });
+    // For Paragraph creators, binding a wallet also re-checks cryptographic
+    // proof-of-authorship against the publication owner.
+    let platformVerified = !!creator.platform_verified;
+    if (creator.platform === 'paragraph') {
+      platformVerified = await verifyParagraphOwnership(creator.ghost_url, walletAddress);
+      db.prepare('UPDATE creators SET platform_verified = ? WHERE id = ?').run(platformVerified ? 1 : 0, creatorId);
+    }
+
+    return res.json({ success: true, ownerAddress: walletAddress.toLowerCase(), platformVerified });
   } catch (error: any) {
     console.error(`[Creators Bind] Error: ${error.message}`);
     return res.status(500).json({ error: error.message });
@@ -270,7 +301,9 @@ router.post('/:creatorId/sync', async (req, res) => {
       return res.status(404).json({ error: 'Creator not found' });
     }
 
-    const posts = await fetchGhostArticles(creator.ghost_url, creator.ghost_api_key);
+    const posts = creator.platform === 'paragraph'
+      ? await fetchParagraphArticles(creator.ghost_url)
+      : await fetchGhostArticles(creator.ghost_url, creator.ghost_api_key);
     let importedCount = 0;
 
     for (const post of posts) {
@@ -377,7 +410,7 @@ router.post('/register-agent', (req, res) => {
 
 router.get('/', (req, res) => {
   const db = getDb();
-  const creators = db.prepare('SELECT id, ghost_url, wallet_address, default_price_usdc FROM creators').all();
+  const creators = db.prepare('SELECT id, ghost_url, wallet_address, default_price_usdc, platform FROM creators').all();
   return res.json(creators);
 });
 

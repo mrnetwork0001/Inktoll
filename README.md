@@ -47,7 +47,7 @@ Inktoll fits into a creator's existing workflow by pulling content directly from
 
 *   🟢 **Ghost (LIVE & Fully Integrated)**: Creators can onboard instantly by pasting their blog URL and Content API Key. Inktoll securely syncs and indexes their feed gaslessly.
 *   🔵 **X (Twitter) (65% Developed - In Progress)**: A strategic roadmap milestone. Utilizing X OAuth 2.0 and X API v2, creators will be able to stitch together their high-value Twitter threads and monetize social media insights for AI agents.
-*   🟡 **WordPress (Coming Soon)**: Integration with the WP REST API v2.
+*   🟢 **Paragraph (LIVE & Fully Integrated)**: Web3-native publishing, home of the former Mirror ecosystem. Creators paste their publication URL — no API key required — and Inktoll verifies authorship cryptographically against the wallet that owns the publication before indexing posts via Paragraph's public content API.
 *   🟡 **Substack (Coming Soon)**: Integration with Substack RSS syndication.
 
 ---

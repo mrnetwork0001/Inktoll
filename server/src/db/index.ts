@@ -12,6 +12,8 @@ export interface Creator {
   wallet_address: string;
   wallet_id: string;
   default_price_usdc: number;
+  platform?: 'ghost' | 'paragraph';
+  platform_verified?: number;
   created_at: string;
 }
 
@@ -88,6 +90,20 @@ export function initDatabase() {
   try {
     dbInstance.exec("ALTER TABLE creators ADD COLUMN owner_address TEXT");
     console.log("[DB] Added owner_address column to creators table.");
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  try {
+    dbInstance.exec("ALTER TABLE creators ADD COLUMN platform TEXT DEFAULT 'ghost'");
+    console.log("[DB] Added platform column to creators table.");
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  try {
+    dbInstance.exec("ALTER TABLE creators ADD COLUMN platform_verified INTEGER DEFAULT 0");
+    console.log("[DB] Added platform_verified column to creators table.");
   } catch (e) {
     // Column already exists, ignore
   }

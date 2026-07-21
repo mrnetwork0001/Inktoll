@@ -4,25 +4,6 @@ import { Article } from '../db/index.js';
 // Docs: https://paragraph.com/docs/api-reference
 const PARAGRAPH_API_BASE = 'https://public.api.paragraph.com/api/v1';
 
-const MOCK_ARTICLES: Partial<Article>[] = [
-  {
-    ghost_slug: 'onchain-writing-economy',
-    title: 'The Onchain Writing Economy After Mirror',
-    excerpt: 'Paragraph absorbed Mirror and became the default home for crypto-native writing. What does that mean for creator monetization?',
-    full_html: `<p>Paragraph absorbed Mirror and became the default home for crypto-native writing. What does that mean for creator monetization?</p>
-<p>Web3 writers already own their audience through wallet subscriptions and permanent storage. The missing piece has been per-read economics: a way for every individual reader — human or AI — to compensate the author directly without a subscription commitment.</p>
-<p>Machine-to-creator nanopayments close that gap. When an AI agent reads an essay and pays USDC for the privilege, the essay stops being marketing and starts being inventory.</p>`,
-  },
-  {
-    ghost_slug: 'wallet-native-authorship',
-    title: 'Wallet-Native Authorship: Proof Without Platforms',
-    excerpt: 'When every writer has a wallet, ownership verification becomes cryptographic instead of bureaucratic.',
-    full_html: `<p>When every writer has a wallet, ownership verification becomes cryptographic instead of bureaucratic.</p>
-<p>Traditional platforms verify authors with API keys, OAuth handshakes, and support tickets. Wallet-native publishing replaces all of that with a signature: prove you control the address that owns the publication, and you have proven authorship.</p>
-<p>This is the foundation for royalty routing — payments can flow to the verified owner with no intermediary custody.</p>`,
-  },
-];
-
 // Accepts "@myblog", "myblog", "https://paragraph.com/@myblog", "paragraph.xyz/@myblog/post" etc.
 export function parseParagraphSlug(input: string): string {
   const trimmed = input.trim().replace(/\/+$/, '');
@@ -65,50 +46,49 @@ async function fetchParagraphPublication(handle: string): Promise<any> {
     // Fall through: some publications use the wallet address as their slug
   }
   const response = await fetch(`${PARAGRAPH_API_BASE}/publications/slug/${encodeURIComponent(handle)}`);
+  if (response.status === 404) {
+    throw new Error(`Paragraph publication '@${handle}' was not found. Double-check your publication URL or handle.`);
+  }
   if (!response.ok) {
-    throw new Error(`Paragraph API responded with status ${response.status} for publication '${handle}'`);
+    throw new Error(`Paragraph API responded with status ${response.status} for publication '${handle}'. Please try again.`);
   }
   return response.json();
 }
 
+// No mock fallback by design: a bad URL or Paragraph API failure must surface
+// to the creator as an error — never silently import sample articles.
 export async function fetchParagraphArticles(publicationUrl: string): Promise<Partial<Article>[]> {
-  if (!publicationUrl || publicationUrl.includes('mock')) {
-    console.log('[Paragraph Service] Running in mock mode, returning sample articles.');
-    return MOCK_ARTICLES;
+  if (!publicationUrl) {
+    throw new Error('Paragraph publication URL is required.');
   }
 
-  try {
-    const slug = parseParagraphSlug(publicationUrl);
-    console.log(`[Paragraph Service] Resolving publication '@${slug}'...`);
-    const publication = await fetchParagraphPublication(slug);
+  const slug = parseParagraphSlug(publicationUrl);
+  console.log(`[Paragraph Service] Resolving publication '@${slug}'...`);
+  const publication = await fetchParagraphPublication(slug);
 
-    const posts: any[] = [];
-    let cursor: string | undefined;
-    do {
-      const params = new URLSearchParams({ limit: '100', includeContent: 'true' });
-      if (cursor) params.set('cursor', cursor);
-      const response = await fetch(`${PARAGRAPH_API_BASE}/publications/${publication.id}/posts?${params}`);
-      if (!response.ok) {
-        throw new Error(`Paragraph API responded with status ${response.status} listing posts`);
-      }
-      const page = (await response.json()) as any;
-      const items = page.items || page.posts || page.data || [];
-      posts.push(...items);
-      cursor = page.hasMore ? page.cursor : undefined;
-    } while (cursor);
+  const posts: any[] = [];
+  let cursor: string | undefined;
+  do {
+    const params = new URLSearchParams({ limit: '100', includeContent: 'true' });
+    if (cursor) params.set('cursor', cursor);
+    const response = await fetch(`${PARAGRAPH_API_BASE}/publications/${publication.id}/posts?${params}`);
+    if (!response.ok) {
+      throw new Error(`Paragraph API responded with status ${response.status} listing posts. Please try again.`);
+    }
+    const page = (await response.json()) as any;
+    const items = page.items || page.posts || page.data || [];
+    posts.push(...items);
+    cursor = page.hasMore ? page.cursor : undefined;
+  } while (cursor);
 
-    console.log(`[Paragraph Service] Fetched ${posts.length} posts from '@${slug}'.`);
-    return posts.map((post: any) => ({
-      ghost_slug: post.slug,
-      title: post.title,
-      excerpt: post.subtitle || '',
-      full_html: post.staticHtml || (post.markdown ? `<pre>${post.markdown}</pre>` : ''),
-      published_at: normalizePublishedAt(post.publishedAt),
-    }));
-  } catch (error: any) {
-    console.error(`[Paragraph Service] Error fetching articles: ${error.message}. Falling back to mock articles.`);
-    return MOCK_ARTICLES;
-  }
+  console.log(`[Paragraph Service] Fetched ${posts.length} posts from '@${slug}'.`);
+  return posts.map((post: any) => ({
+    ghost_slug: post.slug,
+    title: post.title,
+    excerpt: post.subtitle || '',
+    full_html: post.staticHtml || (post.markdown ? `<pre>${post.markdown}</pre>` : ''),
+    published_at: normalizePublishedAt(post.publishedAt),
+  }));
 }
 
 // Cryptographic proof-of-authorship: the connected wallet must resolve (via

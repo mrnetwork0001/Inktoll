@@ -21,7 +21,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getOrCreateAgentWallet } from './tools/pay.js';
+import { getOrCreateAgentWallet, getCircleClient } from './tools/pay.js';
 import { loadProfile, saveProfile } from './profile.js';
 import { loadHistory } from './budget.js';
 import { runAutonomousAgent } from './agent.js';
@@ -57,6 +57,43 @@ app.use((req, res, next) => {
   next();
 });
 
+// Balance reads used to hit the public Arc RPC on every status poll, which
+// burned through the node's request quota and starved the faucet's writes
+// (-32011 "request limit reached"). Circle's API is authoritative for our
+// custodial wallets and doesn't touch the Arc RPC; results are cached briefly
+// because the dashboard polls this endpoint. RPC remains a last-resort fallback.
+const balanceCache = new Map<string, { value: number; fetchedAt: number }>();
+const BALANCE_CACHE_TTL_MS = 30_000;
+
+async function getAgentUsdcBalance(wallet: { id: string; address: string }): Promise<number> {
+  const cached = balanceCache.get(wallet.address);
+  if (cached && Date.now() - cached.fetchedAt < BALANCE_CACHE_TTL_MS) {
+    return cached.value;
+  }
+
+  let balance = 0.00;
+  try {
+    const circle = getCircleClient();
+    if (!circle) throw new Error('Circle client not initialized');
+    const balanceResponse = await circle.getWalletTokenBalance({ id: wallet.id });
+    const usdcToken = balanceResponse.data?.tokenBalances?.find((t: any) => t.token?.symbol === 'USDC');
+    balance = usdcToken ? parseFloat(usdcToken.amount) : 0;
+  } catch (circleErr: any) {
+    try {
+      const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
+      const usdcAbi = ["function balanceOf(address owner) view returns (uint256)"];
+      const usdcContract = new ethers.Contract(process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000', usdcAbi, provider);
+      const balStr = await usdcContract.balanceOf(wallet.address);
+      balance = Number(ethers.formatUnits(balStr, 6)); // USDC has 6 decimals
+    } catch (rpcErr) {
+      console.warn('[Agent Status] Balance unavailable from both Circle API and Arc RPC, using default.');
+    }
+  }
+
+  balanceCache.set(wallet.address, { value: balance, fetchedAt: Date.now() });
+  return balance;
+}
+
 // Status Endpoint
 app.get('/api/agent/status', async (req, res) => {
   const userId = (req as any).userId;
@@ -65,18 +102,8 @@ app.get('/api/agent/status', async (req, res) => {
     const profile = await loadProfile(userId);
     const history = await loadHistory(userId);
 
-    // Fetch real USDC balance from Arc Testnet
-    let balance = 0.00; // fallback default
-    try {
-      const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
-      const usdcAbi = ["function balanceOf(address owner) view returns (uint256)"];
-      const usdcContract = new ethers.Contract(process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000', usdcAbi, provider);
-      
-      const balStr = await usdcContract.balanceOf(wallet.address);
-      balance = Number(ethers.formatUnits(balStr, 6)); // USDC has 6 decimals
-    } catch (err) {
-      console.warn('[Agent Status] Failed to fetch live wallet balance from Arc Testnet, using default.');
-    }
+    // Fetch real USDC balance (Circle API first, cached, RPC fallback)
+    const balance = await getAgentUsdcBalance(wallet);
 
     // Fetch Circle Gateway balance
     let gatewayBalance = 0.00;
@@ -224,17 +251,82 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
         }
       }
       
-      // Execute faucet transfer onchain
-      try {
-        const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
-        const faucetWallet = new ethers.Wallet(faucetPrivateKey, provider);
-        const usdcAbi = ["function transfer(address to, uint256 value) returns (bool)"];
-        const usdcContract = new ethers.Contract(process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000', usdcAbi, faucetWallet);
+      // Execute faucet transfer onchain, with retry + Circle drip fallback.
+      // The public Arc RPC rate-limits aggressively (-32011 "request limit
+      // reached"): backoff retries ride out short throttles, and Circle's
+      // faucet API covers sustained ones without touching the Arc RPC at all.
+      const isRateLimited = (err: any) => {
+        const msg = String(err?.message || '');
+        return msg.includes('request limit') || msg.includes('-32011') || msg.toLowerCase().includes('rate limit');
+      };
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-        console.log(`[Faucet] Transferring 1.0 USDC from faucet to agent EOA: ${wallet.address}...`);
-        const tx = await usdcContract.transfer(wallet.address, ethers.parseUnits("1.0", 6));
-        await tx.wait();
-        console.log(`[Faucet] Transfer succeeded: ${tx.hash}`);
+      try {
+        let txHash = '';
+        let lastErr: any = null;
+
+        for (let attempt = 1; attempt <= 3 && !txHash; attempt++) {
+          try {
+            const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
+            const faucetWallet = new ethers.Wallet(faucetPrivateKey, provider);
+            const usdcAbi = ["function transfer(address to, uint256 value) returns (bool)"];
+            const usdcContract = new ethers.Contract(process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000', usdcAbi, faucetWallet);
+
+            console.log(`[Faucet] Transferring 1.0 USDC from faucet to agent EOA: ${wallet.address} (attempt ${attempt}/3)...`);
+            const tx = await usdcContract.transfer(wallet.address, ethers.parseUnits("1.0", 6));
+            await tx.wait();
+            txHash = tx.hash;
+            console.log(`[Faucet] Transfer succeeded: ${txHash}`);
+          } catch (err: any) {
+            lastErr = err;
+            if (!isRateLimited(err) || attempt === 3) break;
+            const delayMs = attempt * 5000;
+            console.warn(`[Faucet] Arc RPC rate-limited (attempt ${attempt}/3), retrying in ${delayMs / 1000}s...`);
+            await sleep(delayMs);
+          }
+        }
+
+        let fundedViaDrip = false;
+        if (!txHash) {
+          // Fallback: Circle's faucet API funds the wallet without the Arc RPC
+          console.warn(`[Faucet] Onchain transfer failed (${lastErr?.message}). Falling back to Circle faucet drip...`);
+          const dripRes = await fetch('https://api.circle.com/v1/faucet/drips', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${process.env.CIRCLE_API_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              address: wallet.address,
+              blockchain: process.env.ARC_BLOCKCHAIN_NAME || 'ARC-TESTNET',
+              usdc: true
+            })
+          });
+          if (!dripRes.ok) {
+            throw new Error(`Arc RPC is rate-limited and the Circle faucet fallback also failed (status ${dripRes.status}). Please try again in a few minutes.`);
+          }
+          console.log('[Faucet] Circle drip requested. Waiting for funds to arrive...');
+          fundedViaDrip = true;
+          txHash = 'circle-faucet-drip';
+
+          // Wait (up to ~60s) for the drip to land before the Gateway deposit
+          let arrived = false;
+          for (let i = 0; i < 12; i++) {
+            await sleep(5000);
+            try {
+              const circle = getCircleClient();
+              const balanceResponse = await circle.getWalletTokenBalance({ id: wallet.id });
+              const usdcToken = balanceResponse.data?.tokenBalances?.find((t: any) => t.token?.symbol === 'USDC');
+              if (usdcToken && parseFloat(usdcToken.amount) >= 0.95) {
+                arrived = true;
+                break;
+              }
+            } catch { /* keep polling */ }
+          }
+          if (!arrived) {
+            console.warn('[Faucet] Drip not confirmed within 60s — skipping auto-deposit. Funds will appear in the wallet balance shortly.');
+          }
+        }
 
         // Automatically deposit to Gateway for unified balance
         try {
@@ -254,9 +346,12 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
           if (updateErr) console.error('[Faucet] Failed to save timestamp in DB:', updateErr);
         });
 
-        return res.json({ success: true, txHash: tx.hash });
+        // Fresh funds arrived — drop any cached balance so the UI updates immediately
+        balanceCache.delete(wallet.address);
+
+        return res.json({ success: true, txHash, method: fundedViaDrip ? 'circle-drip' : 'faucet-transfer' });
       } catch (txErr: any) {
-        console.error('[Faucet] Onchain transfer failed:', txErr.message);
+        console.error('[Faucet] Claim failed:', txErr.message);
         return res.status(500).json({ error: `Onchain transfer failed: ${txErr.message}` });
       }
     });

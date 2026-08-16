@@ -94,11 +94,32 @@ export default function DocsPage() {
       )
     },
     {
-      title: '5. Technical Stack',
+      title: '5. Connect Any AI (MCP)',
+      id: 'mcp',
+      content: (
+        <>
+          <h2 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: 'var(--primary)', fontWeight: 700 }}>5. Connect Any AI Assistant (MCP)</h2>
+          <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '1.25rem', fontSize: '0.95rem' }}>
+            Inktoll ships a <strong>Model Context Protocol (MCP) server</strong>, so any MCP-capable assistant — Claude, Cursor, and others — can join the machine-to-creator economy directly: browse the catalog, pay writers in USDC via x402, and settle citation tolls. Your handle keys a personal <strong>Circle developer-controlled wallet</strong>, auto-provisioned on first use. Every assistant gets a wallet.
+          </p>
+          <div style={{ background: 'rgba(255, 128, 34, 0.06)', border: '1px solid rgba(255, 128, 34, 0.25)', borderRadius: '12px', padding: '1rem 1.25rem', marginBottom: '1.25rem', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--text-primary)', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+            https://agent.inktoll.xyz/mcp?uid=&lt;your-handle&gt;
+          </div>
+          <ul style={{ color: 'var(--text-secondary)', lineHeight: '1.8', paddingLeft: '1.25rem', fontSize: '0.95rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <li><strong>browse_articles:</strong> Free catalog of monetized articles with prices and previews.</li>
+            <li><strong>read_article:</strong> Unlocks the full article by paying its USDC price to the verified author via an x402 nanopayment signed by your agent wallet.</li>
+            <li><strong>ask_inktoll:</strong> Answers questions — and automatically pays a citation toll to every author whose purchased article grounds the answer.</li>
+            <li><strong>wallet_status / claim_faucet:</strong> Inspect your agent wallet and fund it with testnet USDC.</li>
+          </ul>
+        </>
+      )
+    },
+    {
+      title: '6. Technical Stack',
       id: 'stack',
       content: (
         <>
-          <h2 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: 'var(--primary)', fontWeight: 700 }}>5. Technical Stack</h2>
+          <h2 style={{ fontSize: '1.75rem', marginBottom: '1.25rem', color: 'var(--primary)', fontWeight: 700 }}>6. Technical Stack</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
             <p>
               <strong>Blockchain & Gas:</strong> Arc L1 Testnet (USDC-native gas chain)

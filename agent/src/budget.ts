@@ -87,10 +87,14 @@ export async function checkBudget(userId: string, price: number): Promise<{ allo
 
 export async function recordPurchase(userId: string, slug: string, price: number): Promise<void> {
   const history = await loadHistory(userId);
-  history.dailySpentUsdc = parseFloat((history.dailySpentUsdc + price).toFixed(6));
-  if (!history.purchasedSlugs.includes(slug)) {
-    history.purchasedSlugs.push(slug);
+  // Re-reads of an owned article never settle a new payment (the server's x402
+  // middleware bypasses settlement for existing purchases), so only count
+  // spend the first time a slug is recorded.
+  if (history.purchasedSlugs.includes(slug)) {
+    return;
   }
+  history.dailySpentUsdc = parseFloat((history.dailySpentUsdc + price).toFixed(6));
+  history.purchasedSlugs.push(slug);
   await saveHistory(userId, history);
 }
 

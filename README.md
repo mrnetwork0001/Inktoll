@@ -52,6 +52,23 @@ Inktoll fits into a creator's existing workflow by pulling content directly from
 
 ---
 
+## Connect Your AI Assistant (MCP)
+
+Inktoll ships a **Model Context Protocol (MCP) server**, so any MCP-capable assistant (Claude, Cursor, and others) can join the machine-to-creator economy directly — browse the catalog, pay writers in USDC via x402, and settle citation tolls — with zero custom integration.
+
+**Endpoint:** `https://agent.inktoll.xyz/mcp?uid=<your-handle>` (streamable HTTP)
+
+```bash
+# Claude Code
+claude mcp add --transport http inktoll "https://agent.inktoll.xyz/mcp?uid=yourname"
+```
+
+**Tools:** `browse_articles` (free catalog), `read_article` (pays the author via x402), `ask_inktoll` (answers that auto-pay citation tolls to cited authors), `wallet_status`, and `claim_faucet` (testnet USDC).
+
+Your handle keys a personal **Circle developer-controlled wallet** that is auto-provisioned on first use — every assistant gets a wallet.
+
+---
+
 ## Circle Tool Usage & Tech Stack
 *   **Circle App Kit & Programmable Wallets**: Frictionless Web2 onboarding for Creators with zero seed-phrases. Creators can log in via **Email OTP (Magic Links)** or **Biometric Passkeys (Smart Accounts)** - making Web3 completely invisible.
 *   **Circle Gateway & Unified Balances**: We integrated the Circle Gateway to pool liquidity and hold unified USDC balances. Agents automatically use `depositFor` to deposit base USDC into the Gateway smart contract, enabling instant, cross-chain gasless nanopayments.

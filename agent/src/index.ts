@@ -26,6 +26,8 @@ import { loadProfile, saveProfile } from './profile.js';
 import { loadHistory } from './budget.js';
 import { runAutonomousAgent } from './agent.js';
 import { detectCitations, triggerCitationTolls } from './citation.js';
+import { mountMcp } from './mcp.js';
+import { getAgentUsdcBalance, getGatewayBalance, invalidateBalance } from './tools/balance.js';
 import { ChatOpenAI } from '@langchain/openai';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 import { ethers } from 'ethers';
@@ -43,12 +45,16 @@ const PORT = parseInt(process.env.AGENT_PORT || '3002', 10);
 const SERVER_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
-// Middleware to enforce user authentication
-app.use((req, res, next) => {
+// MCP endpoint handles its own identity (uid query param or x-user-id header)
+mountMcp(app);
+
+// Middleware to enforce user authentication — scoped to the /api surface so
+// route-registration order can never accidentally expose or block /mcp.
+app.use('/api', (req, res, next) => {
   if (req.method === 'OPTIONS') {
     return next();
   }
-  
+
   const userId = req.headers['x-user-id'] as string;
   if (!userId) {
     return res.status(401).json({ error: 'x-user-id header is required for agent multi-tenancy' });
@@ -56,43 +62,6 @@ app.use((req, res, next) => {
   (req as any).userId = userId;
   next();
 });
-
-// Balance reads used to hit the public Arc RPC on every status poll, which
-// burned through the node's request quota and starved the faucet's writes
-// (-32011 "request limit reached"). Circle's API is authoritative for our
-// custodial wallets and doesn't touch the Arc RPC; results are cached briefly
-// because the dashboard polls this endpoint. RPC remains a last-resort fallback.
-const balanceCache = new Map<string, { value: number; fetchedAt: number }>();
-const BALANCE_CACHE_TTL_MS = 30_000;
-
-async function getAgentUsdcBalance(wallet: { id: string; address: string }): Promise<number> {
-  const cached = balanceCache.get(wallet.address);
-  if (cached && Date.now() - cached.fetchedAt < BALANCE_CACHE_TTL_MS) {
-    return cached.value;
-  }
-
-  let balance = 0.00;
-  try {
-    const circle = getCircleClient();
-    if (!circle) throw new Error('Circle client not initialized');
-    const balanceResponse = await circle.getWalletTokenBalance({ id: wallet.id });
-    const usdcToken = balanceResponse.data?.tokenBalances?.find((t: any) => t.token?.symbol === 'USDC');
-    balance = usdcToken ? parseFloat(usdcToken.amount) : 0;
-  } catch (circleErr: any) {
-    try {
-      const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
-      const usdcAbi = ["function balanceOf(address owner) view returns (uint256)"];
-      const usdcContract = new ethers.Contract(process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000', usdcAbi, provider);
-      const balStr = await usdcContract.balanceOf(wallet.address);
-      balance = Number(ethers.formatUnits(balStr, 6)); // USDC has 6 decimals
-    } catch (rpcErr) {
-      console.warn('[Agent Status] Balance unavailable from both Circle API and Arc RPC, using default.');
-    }
-  }
-
-  balanceCache.set(wallet.address, { value: balance, fetchedAt: Date.now() });
-  return balance;
-}
 
 // Status Endpoint
 app.get('/api/agent/status', async (req, res) => {
@@ -105,28 +74,8 @@ app.get('/api/agent/status', async (req, res) => {
     // Fetch real USDC balance (Circle API first, cached, RPC fallback)
     const balance = await getAgentUsdcBalance(wallet);
 
-    // Fetch Circle Gateway balance
-    let gatewayBalance = 0.00;
-    try {
-      let GATEWAY_API_URL = process.env.CIRCLE_GATEWAY_URL || 'https://gateway-api-testnet.circle.com/v1';
-      if (!GATEWAY_API_URL.endsWith('/v1')) GATEWAY_API_URL += '/v1';
-      const balanceRes = await fetch(`${GATEWAY_API_URL}/balances`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token: 'USDC',
-          sources: [
-            { domain: 26, depositor: wallet.address } // Domain 26 is Arc Testnet
-          ]
-        })
-      });
-      if (balanceRes.ok) {
-        const data: any = await balanceRes.json();
-        gatewayBalance = parseFloat(data.balances[0].balance);
-      }
-    } catch (err) {
-      console.warn('[Agent Status] Failed to fetch gateway balance:', (err as any).message);
-    }
+    // Fetch Circle Gateway balance (shared helper)
+    const gatewayBalance = await getGatewayBalance(wallet.address);
 
     // Sync with the backend database to register active agents
     try {
@@ -347,7 +296,7 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
         });
 
         // Fresh funds arrived — drop any cached balance so the UI updates immediately
-        balanceCache.delete(wallet.address);
+        invalidateBalance(wallet.address);
 
         return res.json({ success: true, txHash, method: fundedViaDrip ? 'circle-drip' : 'faucet-transfer' });
       } catch (txErr: any) {

@@ -186,14 +186,13 @@ a:hover {
   justify-content: space-between;
   align-items: center;
   min-height: 80px;
-  max-width: 100%;
-  padding: 0 1.25rem;
-}
-
-@media (min-width: 1024px) {
-  .header-container {
-    padding: 0 12vw;
-  }
+  /* Matches .container so the header aligns with page content instead of
+     using viewport-proportional padding (the old 12vw ate ~24% of the
+     screen, which pushed the nav onto a second line and left large gaps). */
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .logo-section {
@@ -208,6 +207,7 @@ a:hover {
   gap: 1.5rem;
   align-items: center;
   list-style: none;
+  flex-wrap: nowrap;
 }
 
 .nav-link {
@@ -217,6 +217,7 @@ a:hover {
   border-radius: 8px;
   text-decoration: none !important;
   transition: var(--transition-fast);
+  white-space: nowrap;
 }
 .nav-link:hover, .nav-link.active {
   color: var(--text-primary);
@@ -616,4 +617,30 @@ input::-webkit-inner-spin-button {
 
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+/* Desktop nav: keep every item on a single line between the mobile
+   breakpoint and wide screens by tightening spacing instead of wrapping. */
+@media (min-width: 992px) and (max-width: 1500px) {
+  .desktop-nav {
+    gap: 1rem !important;
+    min-width: 0;
+  }
+  .nav-links {
+    gap: 0.35rem;
+  }
+  .nav-link {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.86rem;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1180px) {
+  .nav-links {
+    gap: 0.15rem;
+  }
+  .nav-link {
+    padding: 0.45rem 0.3rem;
+    font-size: 0.78rem;
+  }
 }

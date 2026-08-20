@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Header from '../../../components/Header';
-import { BookOpen, PenTool, BadgeCheck, ExternalLink, Copy, Share2, Bot, ReceiptText, Clock, X } from 'lucide-react';
+import { BookOpen, PenTool, BadgeCheck, ExternalLink, Copy, Share2, Bot, ReceiptText, Clock, X, ImageDown } from 'lucide-react';
+import ReceiptImageCard from '../../../components/ReceiptImageCard';
 import { useNotification } from '../../../components/NotificationProvider';
 
 interface Receipt {
@@ -39,6 +40,7 @@ export default function ReceiptPage() {
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showImageCard, setShowImageCard] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -189,25 +191,32 @@ export default function ReceiptPage() {
               </div>
 
               {/* Actions */}
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
                 <button
                   className="btn btn-secondary"
-                  style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', padding: '0.55rem 0.4rem', fontSize: '0.76rem', whiteSpace: 'nowrap', minWidth: 0, marginBottom: 0 }}
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
                     showToast('Receipt link copied!', 'success');
                   }}
                 >
-                  <Copy size={15} /> Copy Link
+                  <Copy size={14} /> Copy
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', padding: '0.55rem 0.4rem', fontSize: '0.76rem', whiteSpace: 'nowrap', minWidth: 0, marginBottom: 0 }}
+                  onClick={() => setShowImageCard(true)}
+                >
+                  <ImageDown size={14} /> Image
                 </button>
                 <a
                   className="btn btn-primary"
-                  style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none' }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', padding: '0.55rem 0.4rem', fontSize: '0.76rem', whiteSpace: 'nowrap', minWidth: 0, marginBottom: 0 }}
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Share2 size={15} /> Share on X
+                  <Share2 size={14} /> Post on X
                 </a>
               </div>
 
@@ -218,6 +227,10 @@ export default function ReceiptPage() {
           )}
         </div>
       </main>
+
+      {showImageCard && receipt && (
+        <ReceiptImageCard receipt={receipt} onClose={() => setShowImageCard(false)} />
+      )}
     </>
   );
 }

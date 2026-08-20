@@ -605,7 +605,7 @@ export default function RoyaltyGraph() {
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     {feed.map((p) => (
-                      <div key={p.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)' }}>
+                      <a key={p.id} href={`/receipt/${p.id}`} title="View the public payment receipt" style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--border)', textDecoration: 'none', cursor: 'pointer' }}>
                         {p.payment_type === 'citation'
                           ? <PenTool size={15} style={{ color: NODE_COLORS.article, marginTop: 2, flexShrink: 0 }} />
                           : <BookOpen size={15} style={{ color: NODE_COLORS.creator, marginTop: 2, flexShrink: 0 }} />}
@@ -618,7 +618,7 @@ export default function RoyaltyGraph() {
                             +${Number(p.amount_usdc).toFixed(4)} USDC · {timeAgo(p.created_at)}
                           </div>
                         </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 )}

@@ -468,6 +468,13 @@ export default function Leaderboard() {
                   💡 <strong>Circle x402 Nanopayment Batching:</strong> To achieve sub-cent transactions with <strong>zero gas fees</strong>, Inktoll batches transfer signatures off-chain. Individual payments are net-settled in batch transactions onchain.
                 </div>
 
+                <a
+                  href={`/receipt/${selectedReceipt.id}`}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: '0.75rem', padding: '0.6rem', borderRadius: '8px', border: '1px solid var(--primary)', background: 'var(--primary-glow)', color: 'var(--primary)', fontWeight: 600, fontSize: '0.8rem', textDecoration: 'none' }}
+                >
+                  <ReceiptText size={14} /> View Permanent Public Receipt
+                </a>
+
                 <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
                   <button
                     className="btn"

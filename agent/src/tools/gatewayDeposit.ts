@@ -1,12 +1,13 @@
 import { getCircleClient } from './pay.js';
+import { arc } from '../config.js';
 
 export async function autoDepositToGateway(walletAddress: string, amountUsdcStr: string) {
   const client = getCircleClient();
   if (!client) throw new Error('Circle Client not initialized');
 
-  const GATEWAY_WALLET_ADDRESS = process.env.ARC_VERIFYING_CONTRACT || "0x0077777d7EBA4688BDeF3E311b846F25870A19B9";
-  const USDC_ADDRESS = process.env.ARC_USDC_ADDRESS || "0x3600000000000000000000000000000000000000";
-  const BLOCKCHAIN = (process.env.ARC_BLOCKCHAIN_NAME as any) || "ARC-TESTNET";
+  const GATEWAY_WALLET_ADDRESS = arc.verifyingContract;
+  const USDC_ADDRESS = arc.usdcAddress;
+  const BLOCKCHAIN = arc.blockchainName as any;
   
   const [whole, decimal = ""] = amountUsdcStr.split(".");
   const parsedAmount = (whole || "0") + (decimal + "000000").slice(0, 6);

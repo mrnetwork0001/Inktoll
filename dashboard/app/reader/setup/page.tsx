@@ -67,6 +67,7 @@ export default function ReaderSetup() {
 
   // Faucet States
   const [faucetAllowed, setFaucetAllowed] = useState(true);
+  const [faucetReason, setFaucetReason] = useState<string>('');
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
   const [claimingFaucet, setClaimingFaucet] = useState(false);
 
@@ -78,6 +79,7 @@ export default function ReaderSetup() {
       if (res.ok) {
         const data = await res.json();
         setFaucetAllowed(data.allowed);
+        setFaucetReason(data.reason || '');
         if (!data.allowed && data.cooldownRemainingSeconds) {
           setCooldownSeconds(data.cooldownRemainingSeconds);
         }
@@ -392,6 +394,7 @@ export default function ReaderSetup() {
                             className="btn btn-secondary"
                             onClick={handleClaimFaucet}
                             disabled={claimingFaucet || !faucetAllowed}
+                            title={faucetReason === 'mainnet' ? 'No faucet exists on Arc mainnet — send USDC to your agent wallet address above to fund it.' : undefined}
                             style={{
                               padding: '4px 8px',
                               fontSize: '0.7rem',
@@ -405,7 +408,7 @@ export default function ReaderSetup() {
                               fontWeight: 600
                             }}
                           >
-                            {claimingFaucet ? 'Claiming...' : faucetAllowed ? 'Claim 1 USDC' : `Cooldown: ${Math.floor(cooldownSeconds / 3600)}h ${Math.floor((cooldownSeconds % 3600) / 60)}m`}
+                            {claimingFaucet ? 'Claiming...' : faucetReason === 'mainnet' ? 'Mainnet — deposit USDC' : faucetAllowed ? 'Claim 1 USDC' : `Cooldown: ${Math.floor(cooldownSeconds / 3600)}h ${Math.floor((cooldownSeconds % 3600) / 60)}m`}
                           </button>
                         </div>
                         <div style={{ fontSize: '1.25rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>

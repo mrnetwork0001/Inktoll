@@ -7,6 +7,7 @@ import { summarizeAndEmbed } from './tools/summarize.js';
 import { getAgentUsdcBalance, getGatewayBalance } from './tools/balance.js';
 import { checkBudget, loadHistory, isPurchased } from './budget.js';
 import { loadProfile } from './profile.js';
+import { arc } from './config.js';
 
 // Inktoll MCP server: lets ANY MCP-capable AI assistant (Claude, Cursor, etc.)
 // browse the article catalog, pay creators in USDC via x402, and ask questions
@@ -296,14 +297,28 @@ function buildMcpServer(userId: string | null): McpServer {
   server.registerTool(
     'claim_faucet',
     {
-      title: 'Fund your agent wallet with testnet USDC',
+      title: 'Fund your agent wallet',
       description:
-        'Claims 1 testnet USDC into your agent wallet (24h cooldown) and auto-deposits into Circle Gateway so ' +
-        'read_article payments can settle. Can take over a minute under testnet congestion.',
+        'On testnet, claims 1 USDC into your agent wallet (24h cooldown) and auto-deposits into Circle Gateway so ' +
+        'read_article payments can settle. On mainnet there is no faucet — this returns your wallet address and ' +
+        'funding instructions instead.',
       inputSchema: {},
     },
     async () => {
       if (!userId) return toolError(NO_UID_MSG);
+
+      if (arc.isMainnet) {
+        try {
+          const wallet = await getOrCreateAgentWallet(userId);
+          return text(
+            `No faucet exists on Arc mainnet. To fund this agent, send USDC on Arc to:\n\n${wallet.address}\n\n` +
+              `Once the balance arrives, it must be deposited into Circle Gateway before read_article can settle. ` +
+              `Check wallet_status to see both your wallet and Gateway balances.`
+          );
+        } catch (err: any) {
+          return toolError(`Could not resolve your agent wallet: ${err.message}`);
+        }
+      }
 
       let res: globalThis.Response;
       try {

@@ -17,10 +17,10 @@ let facilitatorClient: any = null;
 function getFacilitatorClient() {
   if (!facilitatorClient && config.circle.apiKey) {
     console.log('[Gateway Service] Initializing BatchFacilitatorClient:');
-    console.log('  URL:', config.circle.gatewayUrl || 'https://gateway-api-testnet.circle.com');
+    console.log('  URL:', config.circle.gatewayUrl);
     console.log('  API Key (first 10 chars):', config.circle.apiKey.substring(0, 10) + '...');
     facilitatorClient = new BatchFacilitatorClient({
-      url: config.circle.gatewayUrl || 'https://gateway-api-testnet.circle.com',
+      url: config.circle.gatewayUrl,
     });
   }
   return facilitatorClient;
@@ -52,7 +52,7 @@ export async function submitGatewayPayment(
     const value = Math.round(auth.amount * 1e6).toString(); // USDC uses 6 decimals
     paymentRequirements = {
       scheme: 'exact',
-      network: `eip155:${config.arc.chainId}`,
+      network: config.arc.x402Network,
       asset: config.arc.usdcAddress,
       amount: value,
       payTo: auth.toAddress,

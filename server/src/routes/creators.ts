@@ -35,8 +35,11 @@ router.post('/', async (req, res) => {
       // Provision Circle wallet
       const wallet = await createCircleWallet(creatorId, 'creator');
 
-      // Request Faucet Funds for Gas
+      // Request Faucet Funds for Gas (testnet only — no faucet exists on mainnet)
       try {
+        if (config.arc.isMainnet) {
+          throw new Error('skip-faucet-on-mainnet');
+        }
         console.log(`[Creator] Requesting faucet funds (gas) for new wallet ${wallet.address}...`);
         await fetch(`https://api.circle.com/v1/faucet/drips`, {
           method: 'POST',
@@ -46,12 +49,14 @@ router.post('/', async (req, res) => {
           },
           body: JSON.stringify({
             address: wallet.address,
-            blockchain: (config.arc.blockchainName as any) || 'ARC-TESTNET',
+            blockchain: config.arc.blockchainName as any,
             usdc: true
           })
         });
       } catch (faucetErr: any) {
-        console.error(`[Creator] Failed to request faucet gas funds:`, faucetErr.message);
+        if (faucetErr.message !== 'skip-faucet-on-mainnet') {
+          console.error(`[Creator] Failed to request faucet gas funds:`, faucetErr.message);
+        }
       }
 
       // Paragraph proof-of-authorship: the connected wallet must resolve to the
@@ -176,11 +181,16 @@ router.post('/withdraw', async (req, res) => {
       return res.status(404).json({ error: 'Creator not found' });
     }
 
-    const { processWithdrawal } = await import('../services/wallet.js');
-    const dest = destinationAddress || '0xWithdrawTarget' + Math.floor(Math.random() * 100000);
-    const txHash = await processWithdrawal(creator.wallet_address, dest, parseFloat(amount));
+    // Never invent a destination: paying out to a random placeholder address
+    // would burn real USDC irrecoverably.
+    if (!destinationAddress || !/^0x[a-fA-F0-9]{40}$/.test(destinationAddress)) {
+      return res.status(400).json({ error: 'A valid destinationAddress (0x...) is required to withdraw.' });
+    }
 
-    return res.json({ success: true, txHash, destinationAddress: dest });
+    const { processWithdrawal } = await import('../services/wallet.js');
+    const txHash = await processWithdrawal(creator.wallet_address, destinationAddress, parseFloat(amount));
+
+    return res.json({ success: true, txHash, destinationAddress });
   } catch (error: any) {
     console.error(`[Creators Withdraw] Error: ${error.message}`);
     return res.status(500).json({ error: error.message });
@@ -219,17 +229,22 @@ router.post('/sync-gateway', async (req, res) => {
     // If it fails, we still mark payments as synced — the creator's custodial
     // wallet already holds USDC (from faucet or prior transfers), so their
     // claimable balance is accurate.
+    // Only mark earnings as synced when the onchain withdrawal actually
+    // succeeded. Fabricating a txHash here would report money as moved when
+    // it had not — unacceptable once real USDC is involved.
     let txHash = '';
     try {
       const { withdrawFromGateway } = await import('../services/wallet.js');
       txHash = await withdrawFromGateway(creator.wallet_address, amount.toFixed(6));
       console.log(`[Gateway Sync] Onchain withdrawal succeeded! TxHash: ${txHash}`);
     } catch (withdrawError: any) {
-      console.warn(`[Gateway Sync] Onchain withdrawal failed (${withdrawError.message}). Marking payments as synced anyway — creator wallet already holds funds.`);
-      txHash = `sync-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
+      console.error(`[Gateway Sync] Onchain withdrawal failed: ${withdrawError.message}`);
+      return res.status(502).json({
+        error: `Gateway settlement is not available yet: ${withdrawError.message}. Your earnings are safe and still pending — try again shortly.`,
+        pendingAmount: amount,
+      });
     }
 
-    // Always mark payments as synced
     db.prepare(`
       UPDATE payments 
       SET gateway_synced = 1 
@@ -259,16 +274,16 @@ router.post('/bind', async (req, res) => {
       return res.status(404).json({ error: 'Creator not found' });
     }
 
-    // Verify signature
+    // Require a genuine signature. The old 'mock-passkey-signature' shortcut
+    // let anyone bind any creator profile to their own wallet and redirect
+    // that creator's payouts.
     let recoveredAddress = '';
     try {
       recoveredAddress = ethers.verifyMessage(message, signature);
     } catch (err: any) {
-      if (signature === 'mock-passkey-signature') {
-        recoveredAddress = walletAddress;
-      } else {
-        throw new Error('Invalid signature format: ' + err.message);
-      }
+      return res.status(400).json({
+        error: 'A real wallet signature is required to bind a creator profile. Please connect a wallet that can sign messages and try again.',
+      });
     }
 
     if (recoveredAddress.toLowerCase() !== walletAddress.toLowerCase()) {

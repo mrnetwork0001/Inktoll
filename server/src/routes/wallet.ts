@@ -51,7 +51,7 @@ router.post('/initialize', async (req, res) => {
 
     const response = await client.createUserPinWithWallets({
       userToken,
-      blockchains: ['ARC-TESTNET'],
+      blockchains: [config.arc.blockchainName as any],
       accountType: 'SCA',
     });
 

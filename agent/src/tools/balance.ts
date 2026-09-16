@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { getCircleClient } from './pay.js';
+import { arc } from '../config.js';
 
 // Shared balance reads for the agent service. Balance polling used to hit the
 // public Arc RPC on every status call, which burned through the node's request
@@ -29,9 +30,9 @@ export async function getAgentUsdcBalance(wallet: { id: string; address: string 
     balance = usdcToken ? parseFloat(usdcToken.amount) : 0;
   } catch (circleErr: any) {
     try {
-      const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
+      const provider = new ethers.JsonRpcProvider(arc.rpcUrl);
       const usdcAbi = ["function balanceOf(address owner) view returns (uint256)"];
-      const usdcContract = new ethers.Contract(process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000', usdcAbi, provider);
+      const usdcContract = new ethers.Contract(arc.usdcAddress, usdcAbi, provider);
       const balStr = await usdcContract.balanceOf(wallet.address);
       balance = Number(ethers.formatUnits(balStr, 6)); // USDC has 6 decimals
     } catch (rpcErr) {
@@ -45,14 +46,14 @@ export async function getAgentUsdcBalance(wallet: { id: string; address: string 
 
 export async function getGatewayBalance(address: string): Promise<number> {
   try {
-    let gatewayApi = process.env.CIRCLE_GATEWAY_URL || 'https://gateway-api-testnet.circle.com/v1';
+    let gatewayApi = arc.gatewayUrl;
     if (!gatewayApi.endsWith('/v1')) gatewayApi += '/v1';
     const res = await fetch(`${gatewayApi}/balances`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         token: 'USDC',
-        sources: [{ domain: 26, depositor: address }] // Domain 26 is Arc Testnet
+        sources: [{ domain: arc.gatewayDomain, depositor: address }] // Arc = domain 26 on both networks
       })
     });
     if (!res.ok) return 0;

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { requestFaucetFunds } from '../services/wallet.js';
+import { config } from '../config.js';
 
 const router = Router();
 
@@ -8,6 +9,14 @@ router.post('/', async (req, res) => {
 
   if (!walletAddress || !type || !['creator', 'agent'].includes(type)) {
     return res.status(400).json({ error: 'Missing or invalid walletAddress or type' });
+  }
+
+  if (config.arc.isMainnet) {
+    return res.status(400).json({
+      error: 'There is no faucet on Arc mainnet.',
+      fundingInstructions: `Send USDC on Arc to ${walletAddress} to fund this wallet.`,
+      network: config.arc.networkLabel,
+    });
   }
 
   try {

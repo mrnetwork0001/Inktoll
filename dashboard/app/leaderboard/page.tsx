@@ -44,6 +44,9 @@ export default function Leaderboard() {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+  const EXPLORER_URL = process.env.NEXT_PUBLIC_EXPLORER_URL || 'https://testnet.arcscan.app';
+  const NETWORK_LABEL = process.env.NEXT_PUBLIC_NETWORK_LABEL || 'Arc Testnet';
+
   // Extract clean domain name from Ghost URL
   const getDomainName = (urlStr: string) => {
     try {
@@ -160,7 +163,7 @@ export default function Leaderboard() {
             <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '3px solid var(--primary)' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Settlement Network</span>
               <h3 style={{ fontSize: '1.5rem', margin: '0.55rem 0 0 0', color: 'var(--primary)', fontWeight: 600 }}>
-                Arc Testnet
+                {NETWORK_LABEL}
               </h3>
             </div>
           </div>
@@ -493,7 +496,7 @@ export default function Leaderboard() {
                     Close
                   </button>
                   <a
-                    href={`https://testnet.arcscan.app/address/${recipientAddress || recipientAddress === '' ? recipientAddress : '0xcd0a2370f2dc12c1802707b7d9ab3fec891e3c02'}`}
+                    href={`${EXPLORER_URL}/address/${recipientAddress || recipientAddress === '' ? recipientAddress : '0xcd0a2370f2dc12c1802707b7d9ab3fec891e3c02'}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

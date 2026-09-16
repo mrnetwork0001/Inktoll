@@ -23,11 +23,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { getOrCreateAgentWallet, getCircleClient } from './tools/pay.js';
 import { loadProfile, saveProfile } from './profile.js';
-import { loadHistory } from './budget.js';
+import { loadHistory, isPurchased } from './budget.js';
 import { runAutonomousAgent } from './agent.js';
 import { detectCitations, triggerCitationTolls } from './citation.js';
 import { mountMcp } from './mcp.js';
 import { getAgentUsdcBalance, getGatewayBalance, invalidateBalance } from './tools/balance.js';
+import { arc, serverUrl as arcServerUrl, internalApiSecret } from './config.js';
 import { ChatOpenAI } from '@langchain/openai';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 import { ethers } from 'ethers';
@@ -105,6 +106,9 @@ app.get('/api/agent/status', async (req, res) => {
       dailySpentUsdc: history.dailySpentUsdc,
       purchasedCount: history.purchasedSlugs.length,
       purchasedSlugs: history.purchasedSlugs,
+      network: arc.networkLabel,
+      isMainnet: arc.isMainnet,
+      chainId: arc.chainId,
     });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
@@ -127,7 +131,7 @@ app.post('/api/agent/withdraw', async (req, res) => {
     const wallet = await getOrCreateAgentWallet(userId);
     const { GatewayClient } = await import('@circle-fin/x402-batching/client');
     const client = new GatewayClient({
-      chain: (process.env.ARC_CHAIN_NAME as any) || 'arcTestnet',
+      chain: arc.chainName as any,
       privateKey: (wallet as any).privateKey as `0x${string}`, // Typecast to bypass since Developer Wallets don't expose private keys
     });
 
@@ -150,6 +154,21 @@ app.post('/api/agent/withdraw', async (req, res) => {
 app.get('/api/agent/faucet/status', async (req, res) => {
   const userId = (req as any).userId;
   const db = (await import('./db.js')).db;
+
+  if (arc.isMainnet) {
+    try {
+      const wallet = await getOrCreateAgentWallet(userId);
+      return res.json({
+        allowed: false,
+        reason: 'mainnet',
+        network: arc.networkLabel,
+        fundingAddress: wallet.address,
+        message: `No faucet exists on Arc mainnet. Send USDC on Arc to ${wallet.address} to fund this agent.`,
+      });
+    } catch {
+      return res.json({ allowed: false, reason: 'mainnet', network: arc.networkLabel });
+    }
+  }
 
   try {
     db.get('SELECT lastClaimedAt FROM FaucetClaims WHERE userId = ?', [userId], (err, row: any) => {
@@ -177,6 +196,20 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
   const userId = (req as any).userId;
   const db = (await import('./db.js')).db;
   
+  if (arc.isMainnet) {
+    try {
+      const wallet = await getOrCreateAgentWallet(userId);
+      return res.status(400).json({
+        error: 'There is no faucet on Arc mainnet.',
+        fundingAddress: wallet.address,
+        fundingInstructions: `Send USDC on Arc to ${wallet.address}, then deposit into Circle Gateway to enable payments.`,
+        network: arc.networkLabel,
+      });
+    } catch (e: any) {
+      return res.status(400).json({ error: 'There is no faucet on Arc mainnet.', network: arc.networkLabel });
+    }
+  }
+
   const faucetPrivateKey = process.env.FAUCET_PRIVATE_KEY;
   if (!faucetPrivateKey) {
     return res.status(500).json({ error: 'Faucet is not configured on this server. Please define FAUCET_PRIVATE_KEY in your .env file.' });
@@ -216,10 +249,10 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
 
         for (let attempt = 1; attempt <= 3 && !txHash; attempt++) {
           try {
-            const provider = new ethers.JsonRpcProvider(process.env.ARC_RPC_URL || 'https://rpc.testnet.arc.network');
+            const provider = new ethers.JsonRpcProvider(arc.rpcUrl);
             const faucetWallet = new ethers.Wallet(faucetPrivateKey, provider);
             const usdcAbi = ["function transfer(address to, uint256 value) returns (bool)"];
-            const usdcContract = new ethers.Contract(process.env.ARC_USDC_ADDRESS || '0x3600000000000000000000000000000000000000', usdcAbi, faucetWallet);
+            const usdcContract = new ethers.Contract(arc.usdcAddress, usdcAbi, faucetWallet);
 
             console.log(`[Faucet] Transferring 1.0 USDC from faucet to agent EOA: ${wallet.address} (attempt ${attempt}/3)...`);
             const tx = await usdcContract.transfer(wallet.address, ethers.parseUnits("1.0", 6));
@@ -247,7 +280,7 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
             },
             body: JSON.stringify({
               address: wallet.address,
-              blockchain: process.env.ARC_BLOCKCHAIN_NAME || 'ARC-TESTNET',
+              blockchain: arc.blockchainName,
               usdc: true
             })
           });
@@ -304,6 +337,43 @@ app.post('/api/agent/faucet/claim', async (req, res) => {
         return res.status(500).json({ error: `Onchain transfer failed: ${txErr.message}` });
       }
     });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// Serve the full text of an article THIS agent already paid for.
+// The dashboard reader feed calls this instead of forging a payment
+// signature: identity comes from x-user-id, and the backend is asked with the
+// shared internal secret plus the agent's own wallet address.
+app.get('/api/agent/article/:slug', async (req, res) => {
+  const userId = (req as any).userId;
+  const { slug } = req.params;
+
+  try {
+    const purchased = await isPurchased(userId, slug);
+    if (!purchased) {
+      return res.status(403).json({ error: 'Your agent has not purchased this article.' });
+    }
+
+    const secret = internalApiSecret();
+    if (!secret) {
+      return res.status(500).json({ error: 'INTERNAL_API_SECRET is not configured on this deployment.' });
+    }
+
+    const wallet = await getOrCreateAgentWallet(userId);
+    const upstream = await originalFetch(`${arcServerUrl()}/api/articles/${encodeURIComponent(slug)}`, {
+      headers: {
+        'x-internal-secret': secret,
+        'x-agent-address': wallet.address,
+      },
+    });
+
+    if (!upstream.ok) {
+      return res.status(upstream.status).json({ error: 'Could not retrieve the article from the content service.' });
+    }
+    const data: any = await upstream.json();
+    return res.json(data);
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }

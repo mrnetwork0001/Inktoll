@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getDb } from '../db/index.js';
+import { config } from '../config.js';
 
 const router = Router();
 
@@ -45,7 +46,8 @@ router.get('/:paymentId', (req, res) => {
         ...receipt,
         platform_verified: !!receipt.platform_verified,
         onchain,
-        explorerUrl: onchain ? `https://testnet.arcscan.app/tx/${receipt.tx_hash}` : null,
+        explorerUrl: onchain ? `${config.arc.explorerUrl}/tx/${receipt.tx_hash}` : null,
+        network: config.arc.networkLabel,
       },
     });
   } catch (error: any) {

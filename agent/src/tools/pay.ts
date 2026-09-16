@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { recordPurchase } from '../budget.js';
 import crypto from 'crypto';
 import { db } from '../db.js';
+import { arc } from '../config.js';
 
 export interface PayResult {
   success: boolean;
@@ -44,7 +45,7 @@ export async function getOrCreateAgentWallet(userId: string): Promise<{ id: stri
         console.log(`[Agent Wallet] Provisioning new Developer-Controlled Wallet for agent...`);
         const response = await client.createWallets({
           accountType: 'EOA',
-          blockchains: [(process.env.ARC_BLOCKCHAIN_NAME as any) || 'ARC-TESTNET'],
+          blockchains: [arc.blockchainName as any],
           count: 1,
           walletSetId: process.env.CIRCLE_WALLET_SET_ID || '',
         });
@@ -55,6 +56,7 @@ export async function getOrCreateAgentWallet(userId: string): Promise<{ id: stri
         console.log(`[Agent Wallet] Generated new agent wallet for ${userId}: ${wallet.address}`);
         
         try {
+          if (arc.isMainnet) throw new Error('skip-faucet-on-mainnet');
           console.log(`[Agent Wallet] Requesting automatic testnet funds from Circle Faucet...`);
           await fetch(`https://api.circle.com/v1/faucet/drips`, {
             method: 'POST',
@@ -64,12 +66,14 @@ export async function getOrCreateAgentWallet(userId: string): Promise<{ id: stri
             },
             body: JSON.stringify({
               address: wallet.address,
-              blockchain: (process.env.ARC_BLOCKCHAIN_NAME as any) || 'ARC-TESTNET',
+              blockchain: arc.blockchainName as any,
               usdc: true
             })
           });
         } catch (faucetErr: any) {
-          console.error(`[Agent Wallet] Failed to request faucet funds:`, faucetErr.message);
+          if (faucetErr.message !== 'skip-faucet-on-mainnet') {
+            console.error(`[Agent Wallet] Failed to request faucet funds:`, faucetErr.message);
+          }
         }
 
         db.run(`
@@ -121,8 +125,8 @@ export async function payAndFetchArticle(
     const domain = {
       name: 'GatewayWalletBatched',
       version: '1',
-      chainId: parseInt(process.env.ARC_CHAIN_ID || '5042002', 10),
-      verifyingContract: process.env.ARC_VERIFYING_CONTRACT || '0x0077777d7EBA4688BDeF3E311b846F25870A19B9'
+      chainId: arc.chainId,
+      verifyingContract: arc.verifyingContract
     };
 
     const types = {

@@ -76,6 +76,8 @@ function CreatorDashboardInner() {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+  const EXPLORER_URL = process.env.NEXT_PUBLIC_EXPLORER_URL || 'https://testnet.arcscan.app';
+
   // Load showBalances from localStorage
   useEffect(() => {
     const val = localStorage.getItem('inktoll_show_balances');
@@ -217,9 +219,14 @@ function CreatorDashboardInner() {
           method: 'personal_sign',
           params: [message, connectedAddress]
         });
+      } else if (typeof window !== 'undefined' && (window as any).ethereum) {
+        // Any injected provider that can sign personal messages
+        signature = await (window as any).ethereum.request({
+          method: 'personal_sign',
+          params: [message, connectedAddress]
+        });
       } else {
-        // Mock signature for smart account / Circle Passkey wallet login
-        signature = 'mock-passkey-signature';
+        throw new Error('This wallet cannot sign messages in the browser. Connect a signing wallet (e.g. MetaMask) to bind your creator profile.');
       }
 
       const res = await fetch(`${API_URL}/api/creators/bind`, {
@@ -300,7 +307,7 @@ function CreatorDashboardInner() {
       setWithdrawSuccess({
         message: `Success! Withdrew ${amt} USDC to ${dest.substring(0, 10)}... (Tx: ${data.txHash.substring(0, 16)}...)`,
         txHash: data.txHash,
-        url: `https://testnet.arcscan.app/tx/${data.txHash}`
+        url: `${EXPLORER_URL}/tx/${data.txHash}`
       });
       setWithdrawAmount('');
       await fetchStats();
@@ -399,7 +406,7 @@ function CreatorDashboardInner() {
           <div>Success! Pulled {data.amount.toFixed(6)} USDC from Gateway.</div>
           {data.txHash && (
             <a 
-              href={`https://testnet.arcscan.app/tx/${data.txHash}`} 
+              href={`${EXPLORER_URL}/tx/${data.txHash}`} 
               target="_blank" 
               rel="noreferrer"
               style={{ color: 'var(--primary)', textDecoration: 'underline', fontSize: '0.85rem' }}
@@ -1243,7 +1250,7 @@ function CreatorDashboardInner() {
                   Close
                 </button>
                 <a
-                  href={`https://testnet.arcscan.app/address/${stats?.walletAddress || ''}`}
+                  href={`${EXPLORER_URL}/address/${stats?.walletAddress || ''}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{

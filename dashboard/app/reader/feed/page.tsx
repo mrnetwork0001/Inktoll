@@ -72,26 +72,16 @@ export default function ReaderFeed() {
     setFetchingArticle(true);
     setActiveArticle(null);
     try {
-      // Query individual article. In this flow, we fetch from local DB.
-      // Since it was already paid by this agent, the server will retrieve it.
-      // For simplicity in the demo UI client, the server allows listing paid contents
-      // or we can request with a bypass header/agent authorization.
-      // Let's pass the authorization header using a mock signature to satisfy the server's x402Middleware
-      const authPayload = {
-        fromAddress: agentAddress,
-        signature: 'mock-client-bypass',
-        nonce: crypto.randomUUID(),
-        deadline: Math.floor(Date.now() / 1000) + 3600
-      };
-
-      const res = await fetch(`${API_URL}/api/articles/${slug}`, {
-        headers: {
-          'X-Payment-Authorization': JSON.stringify(authPayload)
-        }
+      // Read through the agent service, which owns this agent's identity and
+      // proves the purchase server-side. The old path forged a payment
+      // signature to satisfy the paywall, which is no longer accepted.
+      const res = await fetch(`${AGENT_URL}/api/agent/article/${encodeURIComponent(slug)}`, {
+        headers: { 'x-user-id': getUserId() }
       });
 
       if (!res.ok) {
-        throw new Error('Failed to retrieve full article content');
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to retrieve full article content');
       }
 
       const data = await res.json();

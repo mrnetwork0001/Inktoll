@@ -497,44 +497,113 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* 2. ECOSYSTEM STATS GRID */}
-          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1.25rem', marginTop: '-2rem' }}>
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Global USDC Volume</span>
-              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
-                {loading ? '...' : `$${(stats?.totalVolumeUsdc || 0).toFixed(4)}`}
-              </h3>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Micro-settlements routed</span>
-            </div>
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Articles Indexed</span>
-              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
-                {loading ? '...' : (stats?.totalArticles || 0)}
-              </h3>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Feeds parsed by agent loop</span>
-            </div>
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Active Reader Agents</span>
-              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
-                {loading ? '...' : (stats?.activeAgents || 0)}
-              </h3>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Self-governed crawlers active</span>
-            </div>
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total Creators</span>
-              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
-                {loading ? '...' : (stats?.totalCreators || 0)}
-              </h3>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Publishers earning USDC</span>
-            </div>
-            <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Protocol Revenue</span>
-              <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
-                {loading ? '...' : `$${(stats?.protocolRevenue || 0).toFixed(4)}`}
-              </h3>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>1% Withdrawal Fee</span>
-            </div>
-          </section>
+          {/* 2. ECOSYSTEM STATS GRID
+               While the economy is empty (e.g. immediately after the mainnet
+               cutover) a row of status badges reads far better than a wall of
+               zeros. The live counters return automatically as soon as the
+               first creator onboards or the first payment settles. */}
+          {(() => {
+            const hasActivity = !!stats && (
+              (stats.totalVolumeUsdc || 0) > 0 ||
+              (stats.totalCreators || 0) > 0 ||
+              (stats.totalArticles || 0) > 0
+            );
+
+            if (!loading && !hasActivity) {
+              const badges = [
+                { label: 'Live on Arc Mainnet', live: true },
+                { label: 'Gasless USDC nanopayments', live: false },
+                { label: 'x402 native', live: false },
+                { label: 'Verified authorship', live: false },
+                { label: 'Public onchain receipts', live: false },
+              ];
+              return (
+                <section style={{ marginTop: '-2rem' }}>
+                  <div
+                    className="glass-card"
+                    style={{
+                      padding: '1.1rem 1.5rem',
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '1.75rem',
+                      borderLeft: '4px solid var(--primary)',
+                    }}
+                  >
+                    {badges.map((b) => (
+                      <span
+                        key={b.label}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.55rem',
+                          fontSize: '0.92rem',
+                          fontWeight: 600,
+                          color: 'var(--text-primary)',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            flexShrink: 0,
+                            background: b.live ? '#4ADE80' : 'var(--primary)',
+                            boxShadow: b.live
+                              ? '0 0 8px #4ADE80'
+                              : '0 0 8px var(--primary-glow)',
+                          }}
+                        />
+                        {b.label}
+                      </span>
+                    ))}
+                  </div>
+                </section>
+              );
+            }
+
+            return (
+              <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1.25rem', marginTop: '-2rem' }}>
+                <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Global USDC Volume</span>
+                  <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+                    {loading ? '...' : `$${(stats?.totalVolumeUsdc || 0).toFixed(4)}`}
+                  </h3>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Micro-settlements routed</span>
+                </div>
+                <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Articles Indexed</span>
+                  <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+                    {loading ? '...' : (stats?.totalArticles || 0)}
+                  </h3>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Feeds parsed by agent loop</span>
+                </div>
+                <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Active Reader Agents</span>
+                  <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+                    {loading ? '...' : (stats?.activeAgents || 0)}
+                  </h3>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Self-governed crawlers active</span>
+                </div>
+                <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total Creators</span>
+                  <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+                    {loading ? '...' : (stats?.totalCreators || 0)}
+                  </h3>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Publishers earning USDC</span>
+                </div>
+                <div className="glass-card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--primary)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Protocol Revenue</span>
+                  <h3 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0.5rem 0 0 0', color: 'var(--primary)', fontFamily: 'var(--font-mono)', fontWeight: 800 }}>
+                    {loading ? '...' : `$${(stats?.protocolRevenue || 0).toFixed(4)}`}
+                  </h3>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>1% Withdrawal Fee</span>
+                </div>
+              </section>
+            );
+          })()}
 
           {/* 3. THE PROBLEM SECTION */}
           <motion.section 

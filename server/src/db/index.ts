@@ -94,6 +94,29 @@ export function initDatabase() {
     // Column already exists, ignore
   }
 
+  // Counterparty screening (CompliR): the creator's last known risk tier and the
+  // decision that produced it, replayable at trycomplir.xyz/log/<decisionId>.
+  try {
+    dbInstance.exec("ALTER TABLE creators ADD COLUMN risk_tier TEXT");
+    console.log("[DB] Added risk_tier column to creators table.");
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  try {
+    dbInstance.exec("ALTER TABLE creators ADD COLUMN risk_decision_id TEXT");
+    console.log("[DB] Added risk_decision_id column to creators table.");
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  try {
+    dbInstance.exec("ALTER TABLE payments ADD COLUMN risk_decision_id TEXT");
+    console.log("[DB] Added risk_decision_id column to payments table.");
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
   try {
     dbInstance.exec("ALTER TABLE creators ADD COLUMN platform TEXT DEFAULT 'ghost'");
     console.log("[DB] Added platform column to creators table.");

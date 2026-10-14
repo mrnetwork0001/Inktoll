@@ -1,5 +1,10 @@
 # Inktoll — Master Build Prompt
 
+> **Historical document.** This is the original build spec written for the Lepton Agents
+> Hackathon in June 2026, kept for provenance. It describes the Arc **testnet** build and a
+> Ghost CMS integration. Inktoll now runs on **Arc mainnet** (chainId `5042`) and integrates
+> **Paragraph** rather than Ghost. See [README.md](README.md) for current architecture.
+
 ## CONTEXT: What Is This?
 
 **Inktoll** is the first AI-powered knowledge economy where **creators get paid every time their work is read — and every time it is cited.** Built for the **Lepton Agents Hackathon** (Canteen × Circle, June 15–29, 2026, $50K prize pool).

@@ -28,6 +28,7 @@ import { runAutonomousAgent } from './agent.js';
 import { detectCitations, triggerCitationTolls } from './citation.js';
 import { mountMcp } from './mcp.js';
 import { getAgentUsdcBalance, getGatewayBalance, invalidateBalance } from './tools/balance.js';
+import { checkPayee } from './tools/complir.js';
 import { arc, serverUrl as arcServerUrl, internalApiSecret } from './config.js';
 import { ChatOpenAI } from '@langchain/openai';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
@@ -125,6 +126,18 @@ app.post('/api/agent/withdraw', async (req, res) => {
   }
   if (!recipient) {
     return res.status(400).json({ error: 'Recipient EOA address is required' });
+  }
+
+  // A user-typed destination for real USDC: screen it before withdrawing.
+  const screening = await checkPayee(recipient, parseFloat(amount));
+  if (!screening.allowed) {
+    console.warn(`[Agent Withdrawal] Blocked by CompliR (decision ${screening.decisionId}): ${screening.reason}`);
+    return res.status(403).json({
+      error: screening.reason,
+      tier: screening.tier,
+      maxUsdc: screening.maxUsdc,
+      decisionId: screening.decisionId,
+    });
   }
 
   try {

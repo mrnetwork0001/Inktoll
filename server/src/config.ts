@@ -49,6 +49,15 @@ export const config = {
     url: process.env.GHOST_BLOG_URL || '',
     apiKey: process.env.GHOST_CONTENT_API_KEY || '',
   },
+  // Counterparty screening. An empty url disables screening entirely, and
+  // every checkAddress() call then allows the payment through unchanged.
+  complir: {
+    url: (process.env.COMPLIR_URL ?? 'https://trycomplir.xyz').replace(/\/$/, ''),
+    failMode: process.env.COMPLIR_FAIL_MODE === 'closed' ? 'closed' : 'open',
+    clientId: process.env.COMPLIR_CLIENT_ID || 'inktoll',
+    // Public origin CompliR posts tier.changed events back to.
+    webhookUrl: process.env.COMPLIR_WEBHOOK_URL || '',
+  },
 };
 
 export function validateConfig() {

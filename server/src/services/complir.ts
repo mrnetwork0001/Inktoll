@@ -50,6 +50,9 @@ const POST_TIMEOUT_MS = 120_000; // a fresh screen traces funders and runs an an
 const FIRST_SIGHT_WAIT_S = 8;
 const MAX_RETRIES = 3;
 const BACKOFF_MS = [200, 600, 1500];
+// Longest we will sit on a Retry-After before giving up and applying the fail
+// mode: a payment request cannot wait indefinitely.
+const RETRY_AFTER_CAP_S = 20;
 
 const ALLOW: CheckResult = { allowed: true, tier: null, maxUsdc: null, reason: null, decisionId: null, eddUrl: null };
 
@@ -92,28 +95,35 @@ async function fetchVerdict(address: string): Promise<Verdict | null> {
   let lastError = 'unknown';
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    if (attempt > 0) await sleep(BACKOFF_MS[attempt - 1] ?? 1500);
-
     let res: Response;
     try {
       res = await request(url, { headers: { accept: 'application/json' } }, GET_TIMEOUT_MS);
     } catch (error: any) {
       // Aborted on timeout, or the connection dropped: both retryable.
       lastError = error?.name === 'AbortError' ? `timeout after ${GET_TIMEOUT_MS}ms` : error.message;
+      await sleep(BACKOFF_MS[attempt] ?? 1500);
       continue;
     }
 
-    if (res.status === 202) {
-      // Screen is running server-side; come back for it when told to.
-      const retryAfter = Number(res.headers.get('retry-after')) || 5;
-      lastError = 'first-sight screen still running';
-      await sleep(Math.min(retryAfter, 10) * 1000);
+    // 202 (screen running), 503 (SCREENING_IN_PROGRESS) and 429 (first-sight rate
+    // limit, 30/min/IP) all carry Retry-After. Honour it rather than backing off
+    // fast: hammering a first-sight screen only burns the rate-limit budget and
+    // turns a wait into a 429.
+    if (res.status === 202 || res.status === 503 || res.status === 429) {
+      const retryAfter = Number(res.headers.get('retry-after'));
+      const waitMs = Math.min(Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter : 5, RETRY_AFTER_CAP_S) * 1000;
+      lastError =
+        res.status === 429
+          ? `rate limited (${res.headers.get('ratelimit-remaining') ?? '0'} remaining)`
+          : 'first-sight screen still running';
+      await sleep(waitMs);
       continue;
     }
 
     if (res.status === 404) return null; // documented not to happen; handled anyway
     if (res.status >= 500) {
       lastError = `HTTP ${res.status}`;
+      await sleep(BACKOFF_MS[attempt] ?? 1500);
       continue;
     }
     if (!res.ok) throw new Error(`CompliR attestation lookup failed: HTTP ${res.status}`);

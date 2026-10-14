@@ -7,13 +7,13 @@ const realFetch = globalThis.fetch;
 let passed = 0;
 let failed = 0;
 
-function stubFetch(handler: (url: string, init?: any) => { status: number; body?: any }) {
+function stubFetch(handler: (url: string, init?: any) => { status: number; body?: any; headers?: Record<string, string> }) {
   globalThis.fetch = (async (input: any, init?: any) => {
-    const { status, body } = handler(String(input), init);
+    const { status, body, headers } = handler(String(input), init);
     return {
       ok: status >= 200 && status < 300,
       status,
-      headers: { get: (k: string) => (k.toLowerCase() === 'retry-after' ? '1' : null) },
+      headers: { get: (k: string) => (headers as any)?.[k.toLowerCase()] ?? (k.toLowerCase() === 'retry-after' ? '1' : null) },
       json: async () => body,
       text: async () => JSON.stringify(body ?? ''),
     } as unknown as Response;
@@ -255,6 +255,41 @@ async function run() {
     const { checkAddress } = await loadModule();
     const r = await checkAddress(ADDR, { amountUsdc: 0.02, direction: 'inbound' });
     assert.equal(r.allowed, true, 'readers should not be locked out by an oracle outage');
+  });
+
+  await test('429 rate limit is waited out, not treated as a failure', async () => {
+    process.env.COMPLIR_URL = 'https://trycomplir.xyz';
+    process.env.COMPLIR_FAIL_MODE = 'open';
+    let calls = 0;
+    stubFetch(() => {
+      calls++;
+      // First-sight screens are limited to 30/min/IP. A 429 must not block a
+      // payment outright now that outbound fails closed.
+      return calls === 1
+        ? { status: 429, headers: { 'retry-after': '1', 'ratelimit-remaining': '0' } }
+        : { status: 200, body: verdict('LOW') };
+    });
+    const { checkAddress } = await loadModule();
+    const r = await checkAddress(ADDR, { amountUsdc: 1, direction: 'outbound' });
+    assert.equal(calls, 2, 'a 429 should be retried after Retry-After');
+    assert.equal(r.allowed, true, 'a rate limit must not block a legitimate payment');
+    assert.equal(r.tier, 'LOW');
+  });
+
+  await test('503 SCREENING_IN_PROGRESS is retried and resolves', async () => {
+    process.env.COMPLIR_URL = 'https://trycomplir.xyz';
+    process.env.COMPLIR_FAIL_MODE = 'open';
+    let calls = 0;
+    stubFetch(() => {
+      calls++;
+      return calls === 1
+        ? { status: 503, body: { error: 'SCREENING_IN_PROGRESS' }, headers: { 'retry-after': '1' } }
+        : { status: 200, body: verdict('HIGH') };
+    });
+    const { checkAddress } = await loadModule();
+    const r = await checkAddress(ADDR, { amountUsdc: 1, direction: 'outbound' });
+    assert.equal(calls, 2, '503 should be retried, not failed');
+    assert.equal(r.allowed, false, 'the verdict that arrives must still be honoured');
   });
 
   console.log(`\n${passed} passed, ${failed} failed`);

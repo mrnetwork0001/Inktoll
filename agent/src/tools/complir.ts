@@ -28,6 +28,7 @@ const GET_TIMEOUT_MS = 15_000;
 const FIRST_SIGHT_WAIT_S = 8;
 const MAX_RETRIES = 3;
 const BACKOFF_MS = [200, 600, 1500];
+const RETRY_AFTER_CAP_S = 20;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function checkPayee(address: string, amountUsdc: number): Promise<CheckResult> {
@@ -42,7 +43,6 @@ export async function checkPayee(address: string, amountUsdc: number): Promise<C
     let lastError = 'unknown';
 
     for (let attempt = 0; attempt <= MAX_RETRIES && !v; attempt++) {
-      if (attempt > 0) await sleep(BACKOFF_MS[attempt - 1] ?? 1500);
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), GET_TIMEOUT_MS);
       let res: Response;
@@ -50,20 +50,27 @@ export async function checkPayee(address: string, amountUsdc: number): Promise<C
         res = await fetch(url, { headers: { accept: 'application/json' }, signal: controller.signal });
       } catch (err: any) {
         lastError = err?.name === 'AbortError' ? `timeout after ${GET_TIMEOUT_MS}ms` : err.message;
+        await sleep(BACKOFF_MS[attempt] ?? 1500);
         continue;
       } finally {
         clearTimeout(timer);
       }
 
-      if (res.status === 202) {
-        // First-sight screen still running; honour Retry-After.
-        const retryAfter = Number(res.headers.get('retry-after')) || 5;
-        lastError = 'first-sight screen still running';
-        await sleep(Math.min(retryAfter, 10) * 1000);
+      // 202 (running), 503 (SCREENING_IN_PROGRESS) and 429 (first-sight rate
+      // limit) all carry Retry-After; honour it instead of backing off fast.
+      if (res.status === 202 || res.status === 503 || res.status === 429) {
+        const retryAfter = Number(res.headers.get('retry-after'));
+        const waitS = Math.min(Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter : 5, RETRY_AFTER_CAP_S);
+        lastError = res.status === 429 ? 'rate limited' : 'first-sight screen still running';
+        await sleep(waitS * 1000);
         continue;
       }
       if (res.status === 404) return ALLOW; // documented not to happen
-      if (res.status >= 500) { lastError = `HTTP ${res.status}`; continue; }
+      if (res.status >= 500) {
+        lastError = `HTTP ${res.status}`;
+        await sleep(BACKOFF_MS[attempt] ?? 1500);
+        continue;
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       v = await res.json();
     }

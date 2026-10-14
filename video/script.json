@@ -1,0 +1,113 @@
+{
+  "title": "Inktoll: AI reads your work, Inktoll makes it pay",
+  "model": "eleven_multilingual_v2",
+  "voices": {
+    "narrator": {
+      "name": "Brian",
+      "id": "nPczCjzI2devNBz1zQrb",
+      "settings": {
+        "stability": 0.5,
+        "similarity_boost": 0.8,
+        "style": 0.26,
+        "use_speaker_boost": true
+      }
+    },
+    "user": {
+      "name": "Jessica",
+      "id": "cgSgspJ2msm6clMCkdW9",
+      "settings": {
+        "stability": 0.6,
+        "similarity_boost": 0.8,
+        "style": 0.2,
+        "use_speaker_boost": true
+      }
+    }
+  },
+  "scenes": [
+    {
+      "id": "open",
+      "seconds": 16,
+      "lines": [
+        { "voice": "user", "text": "How do stablecoin payment rails actually settle?" },
+        { "voice": "narrator", "text": "Four seconds. That is how long the answer took. To write it, the model read work by a human who will never know, never be credited, and never be paid." }
+      ]
+    },
+    {
+      "id": "problem",
+      "seconds": 9,
+      "lines": [
+        { "voice": "narrator", "text": "This is the biggest unpaid tab on the internet. Agents read everything. Writers earn nothing." }
+      ]
+    },
+    {
+      "id": "walls",
+      "seconds": 10,
+      "lines": [
+        { "voice": "narrator", "text": "So publishers build walls. Paywalls, blocks, robots dot txt. The open web fractures, and the writers still do not get paid." }
+      ]
+    },
+    {
+      "id": "gap",
+      "seconds": 12,
+      "lines": [
+        { "voice": "narrator", "text": "But a wall is not a price. There has never been a way for a machine to simply pay a writer two cents and move on." }
+      ]
+    },
+    {
+      "id": "turn",
+      "seconds": 8,
+      "lines": [
+        { "voice": "narrator", "text": "Inktoll. AI pays its sources." }
+      ]
+    },
+    {
+      "id": "creator",
+      "seconds": 12,
+      "lines": [
+        { "voice": "narrator", "text": "A writer connects a wallet and publishes through Paragraph. Authorship is checked against that wallet, so nobody can paste someone else's link and take the money." }
+      ]
+    },
+    {
+      "id": "paywall",
+      "seconds": 12,
+      "lines": [
+        { "voice": "narrator", "text": "An agent finds the article and meets an HTTP four oh two. Payment required. It signs a USDC authorization, and the text comes back." }
+      ]
+    },
+    {
+      "id": "citation",
+      "seconds": 11,
+      "lines": [
+        { "voice": "narrator", "text": "When that knowledge becomes an answer, the writer is paid again. A citation toll, every single time." }
+      ]
+    },
+    {
+      "id": "receipt",
+      "seconds": 8,
+      "lines": [
+        { "voice": "narrator", "text": "Every payment leaves a public receipt, settled on Arc." }
+      ]
+    },
+    {
+      "id": "unique",
+      "seconds": 14,
+      "lines": [
+        { "voice": "narrator", "text": "Two things make this possible. Gas is paid in USDC, so a two cent toll is not absurd. And Circle Gateway batches the signatures, so a thousand reads are not a thousand transactions." }
+      ]
+    },
+    {
+      "id": "mcp",
+      "seconds": 11,
+      "lines": [
+        { "voice": "narrator", "text": "An MCP server lets any AI assistant pay for what it reads, without knowing what a blockchain is." }
+      ]
+    },
+    {
+      "id": "close",
+      "seconds": 9,
+      "lines": [
+        { "voice": "narrator", "text": "Inktoll. Readers pay once. Creators earn forever." }
+      ]
+    }
+  ]
+}

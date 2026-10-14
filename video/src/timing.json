@@ -1,0 +1,1647 @@
+{
+ "fps": 30,
+ "totalFrames": 3976,
+ "bpm": 110,
+ "beats": [
+  1,
+  17,
+  34,
+  50,
+  66,
+  83,
+  99,
+  115,
+  132,
+  148,
+  165,
+  181,
+  197,
+  214,
+  230,
+  246,
+  263,
+  279,
+  295,
+  312,
+  328,
+  345,
+  361,
+  377,
+  394,
+  410,
+  426,
+  443,
+  459,
+  475,
+  492,
+  508,
+  525,
+  541,
+  557,
+  574,
+  590,
+  606,
+  623,
+  639,
+  655,
+  672,
+  688,
+  705,
+  721,
+  737,
+  754,
+  770,
+  786,
+  803,
+  819,
+  835,
+  852,
+  868,
+  885,
+  901,
+  917,
+  934,
+  950,
+  966,
+  983,
+  999,
+  1015,
+  1032,
+  1048,
+  1065,
+  1081,
+  1097,
+  1114,
+  1130,
+  1146,
+  1163,
+  1179,
+  1195,
+  1212,
+  1228,
+  1245,
+  1261,
+  1277,
+  1294,
+  1310,
+  1326,
+  1343,
+  1359,
+  1375,
+  1392,
+  1408,
+  1425,
+  1441,
+  1457,
+  1474,
+  1490,
+  1506,
+  1523,
+  1539,
+  1555,
+  1572,
+  1588,
+  1605,
+  1621,
+  1637,
+  1654,
+  1670,
+  1686,
+  1703,
+  1719,
+  1735,
+  1752,
+  1768,
+  1785,
+  1801,
+  1817,
+  1834,
+  1850,
+  1866,
+  1883,
+  1899,
+  1915,
+  1932,
+  1948,
+  1965,
+  1981,
+  1997,
+  2014,
+  2030,
+  2046,
+  2063,
+  2079,
+  2095,
+  2112,
+  2128,
+  2145,
+  2161,
+  2177,
+  2194,
+  2210,
+  2226,
+  2243,
+  2259,
+  2275,
+  2292,
+  2308,
+  2325,
+  2341,
+  2357,
+  2374,
+  2390,
+  2406,
+  2423,
+  2439,
+  2455,
+  2472,
+  2488,
+  2505,
+  2521,
+  2537,
+  2554,
+  2570,
+  2586,
+  2603,
+  2619,
+  2635,
+  2652,
+  2668,
+  2685,
+  2701,
+  2717,
+  2734,
+  2750,
+  2766,
+  2783,
+  2799,
+  2815,
+  2832,
+  2848,
+  2865,
+  2881,
+  2897,
+  2914,
+  2930,
+  2946,
+  2963,
+  2979,
+  2995,
+  3012,
+  3028,
+  3045,
+  3061,
+  3077,
+  3094,
+  3110,
+  3126,
+  3143,
+  3159,
+  3175,
+  3192,
+  3208,
+  3225,
+  3241,
+  3257,
+  3274,
+  3290,
+  3306,
+  3323,
+  3339,
+  3355,
+  3372,
+  3388,
+  3405,
+  3421,
+  3437,
+  3454,
+  3470,
+  3486,
+  3503,
+  3519,
+  3535,
+  3552,
+  3568,
+  3585,
+  3601,
+  3617,
+  3634,
+  3650,
+  3666,
+  3683,
+  3699,
+  3715,
+  3732,
+  3748,
+  3765,
+  3781,
+  3797,
+  3814,
+  3830,
+  3846,
+  3863,
+  3879,
+  3895,
+  3912,
+  3928,
+  3945,
+  3961
+ ],
+ "music": {
+  "file": "audio/music.mp3",
+  "source": "elevenlabs-music"
+ },
+ "scenes": [
+  {
+   "id": "open",
+   "from": 0,
+   "durationInFrames": 480,
+   "lines": [
+    {
+     "voice": "user",
+     "text": "How do stablecoin payment rails actually settle?",
+     "file": "audio/vo/open_0.mp3",
+     "startFrame": 12,
+     "durationFrames": 77,
+     "words": [
+      {
+       "word": "How",
+       "start": 12,
+       "end": 17
+      },
+      {
+       "word": "do",
+       "start": 18,
+       "end": 20
+      },
+      {
+       "word": "stablecoin",
+       "start": 22,
+       "end": 37
+      },
+      {
+       "word": "payment",
+       "start": 39,
+       "end": 48
+      },
+      {
+       "word": "rails",
+       "start": 49,
+       "end": 56
+      },
+      {
+       "word": "actually",
+       "start": 58,
+       "end": 67
+      },
+      {
+       "word": "settle?",
+       "start": 69,
+       "end": 89
+      }
+     ]
+    },
+    {
+     "voice": "narrator",
+     "text": "Four seconds. That is how long the answer took. To write it, the model read work by a human who will never know, never be credited, and never be paid.",
+     "file": "audio/vo/open_1.mp3",
+     "startFrame": 105,
+     "durationFrames": 304,
+     "words": [
+      {
+       "word": "Four",
+       "start": 105,
+       "end": 115
+      },
+      {
+       "word": "seconds.",
+       "start": 117,
+       "end": 137
+      },
+      {
+       "word": "That",
+       "start": 148,
+       "end": 154
+      },
+      {
+       "word": "is",
+       "start": 156,
+       "end": 158
+      },
+      {
+       "word": "how",
+       "start": 160,
+       "end": 163
+      },
+      {
+       "word": "long",
+       "start": 166,
+       "end": 172
+      },
+      {
+       "word": "the",
+       "start": 174,
+       "end": 176
+      },
+      {
+       "word": "answer",
+       "start": 178,
+       "end": 186
+      },
+      {
+       "word": "took.",
+       "start": 188,
+       "end": 200
+      },
+      {
+       "word": "To",
+       "start": 213,
+       "end": 218
+      },
+      {
+       "word": "write",
+       "start": 220,
+       "end": 227
+      },
+      {
+       "word": "it,",
+       "start": 228,
+       "end": 234
+      },
+      {
+       "word": "the",
+       "start": 236,
+       "end": 239
+      },
+      {
+       "word": "model",
+       "start": 241,
+       "end": 248
+      },
+      {
+       "word": "read",
+       "start": 251,
+       "end": 256
+      },
+      {
+       "word": "work",
+       "start": 258,
+       "end": 265
+      },
+      {
+       "word": "by",
+       "start": 267,
+       "end": 272
+      },
+      {
+       "word": "a",
+       "start": 274,
+       "end": 275
+      },
+      {
+       "word": "human",
+       "start": 277,
+       "end": 287
+      },
+      {
+       "word": "who",
+       "start": 289,
+       "end": 292
+      },
+      {
+       "word": "will",
+       "start": 293,
+       "end": 298
+      },
+      {
+       "word": "never",
+       "start": 299,
+       "end": 305
+      },
+      {
+       "word": "know,",
+       "start": 306,
+       "end": 321
+      },
+      {
+       "word": "never",
+       "start": 331,
+       "end": 339
+      },
+      {
+       "word": "be",
+       "start": 341,
+       "end": 344
+      },
+      {
+       "word": "credited,",
+       "start": 345,
+       "end": 363
+      },
+      {
+       "word": "and",
+       "start": 365,
+       "end": 370
+      },
+      {
+       "word": "never",
+       "start": 372,
+       "end": 379
+      },
+      {
+       "word": "be",
+       "start": 381,
+       "end": 384
+      },
+      {
+       "word": "paid.",
+       "start": 386,
+       "end": 409
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "problem",
+   "from": 480,
+   "durationInFrames": 270,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "This is the biggest unpaid tab on the internet. Agents read everything. Writers earn nothing.",
+     "file": "audio/vo/problem_0.mp3",
+     "startFrame": 492,
+     "durationFrames": 179,
+     "words": [
+      {
+       "word": "This",
+       "start": 492,
+       "end": 499
+      },
+      {
+       "word": "is",
+       "start": 500,
+       "end": 503
+      },
+      {
+       "word": "the",
+       "start": 505,
+       "end": 507
+      },
+      {
+       "word": "biggest",
+       "start": 509,
+       "end": 519
+      },
+      {
+       "word": "unpaid",
+       "start": 521,
+       "end": 536
+      },
+      {
+       "word": "tab",
+       "start": 537,
+       "end": 546
+      },
+      {
+       "word": "on",
+       "start": 547,
+       "end": 549
+      },
+      {
+       "word": "the",
+       "start": 550,
+       "end": 552
+      },
+      {
+       "word": "internet.",
+       "start": 553,
+       "end": 569
+      },
+      {
+       "word": "Agents",
+       "start": 583,
+       "end": 595
+      },
+      {
+       "word": "read",
+       "start": 597,
+       "end": 602
+      },
+      {
+       "word": "everything.",
+       "start": 603,
+       "end": 620
+      },
+      {
+       "word": "Writers",
+       "start": 630,
+       "end": 641
+      },
+      {
+       "word": "earn",
+       "start": 642,
+       "end": 646
+      },
+      {
+       "word": "nothing.",
+       "start": 648,
+       "end": 670
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "walls",
+   "from": 750,
+   "durationInFrames": 300,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "So publishers build walls. Paywalls, blocks, robots dot txt. The open web fractures, and the writers still do not get paid.",
+     "file": "audio/vo/walls_0.mp3",
+     "startFrame": 762,
+     "durationFrames": 244,
+     "words": [
+      {
+       "word": "So",
+       "start": 762,
+       "end": 767
+      },
+      {
+       "word": "publishers",
+       "start": 769,
+       "end": 781
+      },
+      {
+       "word": "build",
+       "start": 783,
+       "end": 788
+      },
+      {
+       "word": "walls.",
+       "start": 790,
+       "end": 802
+      },
+      {
+       "word": "Paywalls,",
+       "start": 812,
+       "end": 831
+      },
+      {
+       "word": "blocks,",
+       "start": 832,
+       "end": 847
+      },
+      {
+       "word": "robots",
+       "start": 850,
+       "end": 864
+      },
+      {
+       "word": "dot",
+       "start": 865,
+       "end": 871
+      },
+      {
+       "word": "txt.",
+       "start": 873,
+       "end": 892
+      },
+      {
+       "word": "The",
+       "start": 902,
+       "end": 905
+      },
+      {
+       "word": "open",
+       "start": 907,
+       "end": 915
+      },
+      {
+       "word": "web",
+       "start": 916,
+       "end": 922
+      },
+      {
+       "word": "fractures,",
+       "start": 924,
+       "end": 941
+      },
+      {
+       "word": "and",
+       "start": 943,
+       "end": 950
+      },
+      {
+       "word": "the",
+       "start": 952,
+       "end": 954
+      },
+      {
+       "word": "writers",
+       "start": 955,
+       "end": 964
+      },
+      {
+       "word": "still",
+       "start": 965,
+       "end": 971
+      },
+      {
+       "word": "do",
+       "start": 972,
+       "end": 974
+      },
+      {
+       "word": "not",
+       "start": 976,
+       "end": 980
+      },
+      {
+       "word": "get",
+       "start": 981,
+       "end": 985
+      },
+      {
+       "word": "paid.",
+       "start": 986,
+       "end": 1006
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "gap",
+   "from": 1050,
+   "durationInFrames": 360,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "But a wall is not a price. There has never been a way for a machine to simply pay a writer two cents and move on.",
+     "file": "audio/vo/gap_0.mp3",
+     "startFrame": 1062,
+     "durationFrames": 208,
+     "words": [
+      {
+       "word": "But",
+       "start": 1062,
+       "end": 1068
+      },
+      {
+       "word": "a",
+       "start": 1069,
+       "end": 1070
+      },
+      {
+       "word": "wall",
+       "start": 1072,
+       "end": 1078
+      },
+      {
+       "word": "is",
+       "start": 1080,
+       "end": 1082
+      },
+      {
+       "word": "not",
+       "start": 1084,
+       "end": 1087
+      },
+      {
+       "word": "a",
+       "start": 1089,
+       "end": 1090
+      },
+      {
+       "word": "price.",
+       "start": 1091,
+       "end": 1108
+      },
+      {
+       "word": "There",
+       "start": 1122,
+       "end": 1128
+      },
+      {
+       "word": "has",
+       "start": 1129,
+       "end": 1131
+      },
+      {
+       "word": "never",
+       "start": 1134,
+       "end": 1140
+      },
+      {
+       "word": "been",
+       "start": 1142,
+       "end": 1146
+      },
+      {
+       "word": "a",
+       "start": 1147,
+       "end": 1148
+      },
+      {
+       "word": "way",
+       "start": 1149,
+       "end": 1154
+      },
+      {
+       "word": "for",
+       "start": 1156,
+       "end": 1160
+      },
+      {
+       "word": "a",
+       "start": 1162,
+       "end": 1162
+      },
+      {
+       "word": "machine",
+       "start": 1164,
+       "end": 1176
+      },
+      {
+       "word": "to",
+       "start": 1177,
+       "end": 1179
+      },
+      {
+       "word": "simply",
+       "start": 1181,
+       "end": 1193
+      },
+      {
+       "word": "pay",
+       "start": 1195,
+       "end": 1201
+      },
+      {
+       "word": "a",
+       "start": 1202,
+       "end": 1203
+      },
+      {
+       "word": "writer",
+       "start": 1205,
+       "end": 1212
+      },
+      {
+       "word": "two",
+       "start": 1214,
+       "end": 1219
+      },
+      {
+       "word": "cents",
+       "start": 1221,
+       "end": 1233
+      },
+      {
+       "word": "and",
+       "start": 1237,
+       "end": 1242
+      },
+      {
+       "word": "move",
+       "start": 1244,
+       "end": 1249
+      },
+      {
+       "word": "on.",
+       "start": 1251,
+       "end": 1270
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "turn",
+   "from": 1410,
+   "durationInFrames": 240,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "Inktoll. AI pays its sources.",
+     "file": "audio/vo/turn_0.mp3",
+     "startFrame": 1422,
+     "durationFrames": 77,
+     "words": [
+      {
+       "word": "Inktoll.",
+       "start": 1422,
+       "end": 1442
+      },
+      {
+       "word": "AI",
+       "start": 1444,
+       "end": 1456
+      },
+      {
+       "word": "pays",
+       "start": 1459,
+       "end": 1467
+      },
+      {
+       "word": "its",
+       "start": 1469,
+       "end": 1472
+      },
+      {
+       "word": "sources.",
+       "start": 1473,
+       "end": 1499
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "creator",
+   "from": 1650,
+   "durationInFrames": 360,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "A writer connects a wallet and publishes through Paragraph. Authorship is checked against that wallet, so nobody can paste someone else's link and take the money.",
+     "file": "audio/vo/creator_0.mp3",
+     "startFrame": 1662,
+     "durationFrames": 262,
+     "words": [
+      {
+       "word": "A",
+       "start": 1662,
+       "end": 1665
+      },
+      {
+       "word": "writer",
+       "start": 1668,
+       "end": 1676
+      },
+      {
+       "word": "connects",
+       "start": 1677,
+       "end": 1686
+      },
+      {
+       "word": "a",
+       "start": 1687,
+       "end": 1688
+      },
+      {
+       "word": "wallet",
+       "start": 1690,
+       "end": 1699
+      },
+      {
+       "word": "and",
+       "start": 1701,
+       "end": 1703
+      },
+      {
+       "word": "publishes",
+       "start": 1705,
+       "end": 1717
+      },
+      {
+       "word": "through",
+       "start": 1718,
+       "end": 1724
+      },
+      {
+       "word": "Paragraph.",
+       "start": 1726,
+       "end": 1746
+      },
+      {
+       "word": "Authorship",
+       "start": 1760,
+       "end": 1779
+      },
+      {
+       "word": "is",
+       "start": 1781,
+       "end": 1784
+      },
+      {
+       "word": "checked",
+       "start": 1785,
+       "end": 1793
+      },
+      {
+       "word": "against",
+       "start": 1794,
+       "end": 1801
+      },
+      {
+       "word": "that",
+       "start": 1802,
+       "end": 1806
+      },
+      {
+       "word": "wallet,",
+       "start": 1808,
+       "end": 1825
+      },
+      {
+       "word": "so",
+       "start": 1833,
+       "end": 1838
+      },
+      {
+       "word": "nobody",
+       "start": 1841,
+       "end": 1852
+      },
+      {
+       "word": "can",
+       "start": 1854,
+       "end": 1857
+      },
+      {
+       "word": "paste",
+       "start": 1859,
+       "end": 1866
+      },
+      {
+       "word": "someone",
+       "start": 1867,
+       "end": 1876
+      },
+      {
+       "word": "else's",
+       "start": 1876,
+       "end": 1885
+      },
+      {
+       "word": "link",
+       "start": 1887,
+       "end": 1894
+      },
+      {
+       "word": "and",
+       "start": 1895,
+       "end": 1897
+      },
+      {
+       "word": "take",
+       "start": 1898,
+       "end": 1903
+      },
+      {
+       "word": "the",
+       "start": 1904,
+       "end": 1906
+      },
+      {
+       "word": "money.",
+       "start": 1907,
+       "end": 1924
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "paywall",
+   "from": 2010,
+   "durationInFrames": 360,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "An agent finds the article and meets an HTTP four oh two. Payment required. It signs a USDC authorization, and the text comes back.",
+     "file": "audio/vo/paywall_0.mp3",
+     "startFrame": 2022,
+     "durationFrames": 279,
+     "words": [
+      {
+       "word": "An",
+       "start": 2022,
+       "end": 2027
+      },
+      {
+       "word": "agent",
+       "start": 2028,
+       "end": 2036
+      },
+      {
+       "word": "finds",
+       "start": 2037,
+       "end": 2044
+      },
+      {
+       "word": "the",
+       "start": 2045,
+       "end": 2047
+      },
+      {
+       "word": "article",
+       "start": 2048,
+       "end": 2060
+      },
+      {
+       "word": "and",
+       "start": 2061,
+       "end": 2064
+      },
+      {
+       "word": "meets",
+       "start": 2066,
+       "end": 2072
+      },
+      {
+       "word": "an",
+       "start": 2073,
+       "end": 2075
+      },
+      {
+       "word": "HTTP",
+       "start": 2078,
+       "end": 2099
+      },
+      {
+       "word": "four",
+       "start": 2104,
+       "end": 2113
+      },
+      {
+       "word": "oh",
+       "start": 2116,
+       "end": 2121
+      },
+      {
+       "word": "two.",
+       "start": 2122,
+       "end": 2136
+      },
+      {
+       "word": "Payment",
+       "start": 2148,
+       "end": 2159
+      },
+      {
+       "word": "required.",
+       "start": 2160,
+       "end": 2179
+      },
+      {
+       "word": "It",
+       "start": 2183,
+       "end": 2187
+      },
+      {
+       "word": "signs",
+       "start": 2189,
+       "end": 2197
+      },
+      {
+       "word": "a",
+       "start": 2199,
+       "end": 2199
+      },
+      {
+       "word": "USDC",
+       "start": 2203,
+       "end": 2221
+      },
+      {
+       "word": "authorization,",
+       "start": 2224,
+       "end": 2250
+      },
+      {
+       "word": "and",
+       "start": 2255,
+       "end": 2260
+      },
+      {
+       "word": "the",
+       "start": 2261,
+       "end": 2263
+      },
+      {
+       "word": "text",
+       "start": 2264,
+       "end": 2272
+      },
+      {
+       "word": "comes",
+       "start": 2273,
+       "end": 2280
+      },
+      {
+       "word": "back.",
+       "start": 2282,
+       "end": 2301
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "citation",
+   "from": 2370,
+   "durationInFrames": 330,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "When that knowledge becomes an answer, the writer is paid again. A citation toll, every single time.",
+     "file": "audio/vo/citation_0.mp3",
+     "startFrame": 2382,
+     "durationFrames": 186,
+     "words": [
+      {
+       "word": "When",
+       "start": 2382,
+       "end": 2388
+      },
+      {
+       "word": "that",
+       "start": 2389,
+       "end": 2393
+      },
+      {
+       "word": "knowledge",
+       "start": 2395,
+       "end": 2404
+      },
+      {
+       "word": "becomes",
+       "start": 2405,
+       "end": 2414
+      },
+      {
+       "word": "an",
+       "start": 2415,
+       "end": 2417
+      },
+      {
+       "word": "answer,",
+       "start": 2419,
+       "end": 2429
+      },
+      {
+       "word": "the",
+       "start": 2429,
+       "end": 2432
+      },
+      {
+       "word": "writer",
+       "start": 2434,
+       "end": 2441
+      },
+      {
+       "word": "is",
+       "start": 2442,
+       "end": 2443
+      },
+      {
+       "word": "paid",
+       "start": 2445,
+       "end": 2450
+      },
+      {
+       "word": "again.",
+       "start": 2451,
+       "end": 2463
+      },
+      {
+       "word": "A",
+       "start": 2474,
+       "end": 2477
+      },
+      {
+       "word": "citation",
+       "start": 2479,
+       "end": 2498
+      },
+      {
+       "word": "toll,",
+       "start": 2500,
+       "end": 2513
+      },
+      {
+       "word": "every",
+       "start": 2519,
+       "end": 2529
+      },
+      {
+       "word": "single",
+       "start": 2534,
+       "end": 2547
+      },
+      {
+       "word": "time.",
+       "start": 2548,
+       "end": 2567
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "receipt",
+   "from": 2700,
+   "durationInFrames": 240,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "Every payment leaves a public receipt, settled on Arc.",
+     "file": "audio/vo/receipt_0.mp3",
+     "startFrame": 2712,
+     "durationFrames": 95,
+     "words": [
+      {
+       "word": "Every",
+       "start": 2712,
+       "end": 2720
+      },
+      {
+       "word": "payment",
+       "start": 2722,
+       "end": 2732
+      },
+      {
+       "word": "leaves",
+       "start": 2733,
+       "end": 2740
+      },
+      {
+       "word": "a",
+       "start": 2741,
+       "end": 2742
+      },
+      {
+       "word": "public",
+       "start": 2744,
+       "end": 2753
+      },
+      {
+       "word": "receipt,",
+       "start": 2755,
+       "end": 2768
+      },
+      {
+       "word": "settled",
+       "start": 2773,
+       "end": 2782
+      },
+      {
+       "word": "on",
+       "start": 2784,
+       "end": 2787
+      },
+      {
+       "word": "Arc.",
+       "start": 2789,
+       "end": 2807
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "unique",
+   "from": 2940,
+   "durationInFrames": 420,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "Two things make this possible. Gas is paid in USDC, so a two cent toll is not absurd. And Circle Gateway batches the signatures, so a thousand reads are not a thousand transactions.",
+     "file": "audio/vo/unique_0.mp3",
+     "startFrame": 2952,
+     "durationFrames": 322,
+     "words": [
+      {
+       "word": "Two",
+       "start": 2952,
+       "end": 2959
+      },
+      {
+       "word": "things",
+       "start": 2961,
+       "end": 2968
+      },
+      {
+       "word": "make",
+       "start": 2969,
+       "end": 2974
+      },
+      {
+       "word": "this",
+       "start": 2975,
+       "end": 2978
+      },
+      {
+       "word": "possible.",
+       "start": 2980,
+       "end": 3000
+      },
+      {
+       "word": "Gas",
+       "start": 3016,
+       "end": 3024
+      },
+      {
+       "word": "is",
+       "start": 3027,
+       "end": 3029
+      },
+      {
+       "word": "paid",
+       "start": 3031,
+       "end": 3037
+      },
+      {
+       "word": "in",
+       "start": 3038,
+       "end": 3039
+      },
+      {
+       "word": "USDC,",
+       "start": 3042,
+       "end": 3063
+      },
+      {
+       "word": "so",
+       "start": 3064,
+       "end": 3068
+      },
+      {
+       "word": "a",
+       "start": 3069,
+       "end": 3069
+      },
+      {
+       "word": "two",
+       "start": 3071,
+       "end": 3076
+      },
+      {
+       "word": "cent",
+       "start": 3078,
+       "end": 3084
+      },
+      {
+       "word": "toll",
+       "start": 3085,
+       "end": 3093
+      },
+      {
+       "word": "is",
+       "start": 3095,
+       "end": 3097
+      },
+      {
+       "word": "not",
+       "start": 3100,
+       "end": 3105
+      },
+      {
+       "word": "absurd.",
+       "start": 3106,
+       "end": 3122
+      },
+      {
+       "word": "And",
+       "start": 3132,
+       "end": 3137
+      },
+      {
+       "word": "Circle",
+       "start": 3138,
+       "end": 3147
+      },
+      {
+       "word": "Gateway",
+       "start": 3148,
+       "end": 3158
+      },
+      {
+       "word": "batches",
+       "start": 3160,
+       "end": 3171
+      },
+      {
+       "word": "the",
+       "start": 3172,
+       "end": 3174
+      },
+      {
+       "word": "signatures,",
+       "start": 3175,
+       "end": 3191
+      },
+      {
+       "word": "so",
+       "start": 3192,
+       "end": 3195
+      },
+      {
+       "word": "a",
+       "start": 3198,
+       "end": 3198
+      },
+      {
+       "word": "thousand",
+       "start": 3200,
+       "end": 3211
+      },
+      {
+       "word": "reads",
+       "start": 3213,
+       "end": 3220
+      },
+      {
+       "word": "are",
+       "start": 3221,
+       "end": 3224
+      },
+      {
+       "word": "not",
+       "start": 3225,
+       "end": 3228
+      },
+      {
+       "word": "a",
+       "start": 3229,
+       "end": 3230
+      },
+      {
+       "word": "thousand",
+       "start": 3231,
+       "end": 3241
+      },
+      {
+       "word": "transactions.",
+       "start": 3242,
+       "end": 3274
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mcp",
+   "from": 3360,
+   "durationInFrames": 330,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "An MCP server lets any AI assistant pay for what it reads, without knowing what a blockchain is.",
+     "file": "audio/vo/mcp_0.mp3",
+     "startFrame": 3372,
+     "durationFrames": 191,
+     "words": [
+      {
+       "word": "An",
+       "start": 3372,
+       "end": 3376
+      },
+      {
+       "word": "MCP",
+       "start": 3378,
+       "end": 3394
+      },
+      {
+       "word": "server",
+       "start": 3400,
+       "end": 3410
+      },
+      {
+       "word": "lets",
+       "start": 3412,
+       "end": 3418
+      },
+      {
+       "word": "any",
+       "start": 3421,
+       "end": 3430
+      },
+      {
+       "word": "AI",
+       "start": 3432,
+       "end": 3444
+      },
+      {
+       "word": "assistant",
+       "start": 3444,
+       "end": 3458
+      },
+      {
+       "word": "pay",
+       "start": 3460,
+       "end": 3465
+      },
+      {
+       "word": "for",
+       "start": 3466,
+       "end": 3469
+      },
+      {
+       "word": "what",
+       "start": 3470,
+       "end": 3474
+      },
+      {
+       "word": "it",
+       "start": 3475,
+       "end": 3476
+      },
+      {
+       "word": "reads,",
+       "start": 3478,
+       "end": 3491
+      },
+      {
+       "word": "without",
+       "start": 3504,
+       "end": 3515
+      },
+      {
+       "word": "knowing",
+       "start": 3517,
+       "end": 3525
+      },
+      {
+       "word": "what",
+       "start": 3526,
+       "end": 3529
+      },
+      {
+       "word": "a",
+       "start": 3530,
+       "end": 3531
+      },
+      {
+       "word": "blockchain",
+       "start": 3532,
+       "end": 3545
+      },
+      {
+       "word": "is.",
+       "start": 3547,
+       "end": 3563
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "close",
+   "from": 3690,
+   "durationInFrames": 286,
+   "lines": [
+    {
+     "voice": "narrator",
+     "text": "Inktoll. Readers pay once. Creators earn forever.",
+     "file": "audio/vo/close_0.mp3",
+     "startFrame": 3702,
+     "durationFrames": 124,
+     "words": [
+      {
+       "word": "Inktoll.",
+       "start": 3702,
+       "end": 3723
+      },
+      {
+       "word": "Readers",
+       "start": 3737,
+       "end": 3749
+      },
+      {
+       "word": "pay",
+       "start": 3751,
+       "end": 3758
+      },
+      {
+       "word": "once.",
+       "start": 3761,
+       "end": 3771
+      },
+      {
+       "word": "Creators",
+       "start": 3772,
+       "end": 3790
+      },
+      {
+       "word": "earn",
+       "start": 3792,
+       "end": 3797
+      },
+      {
+       "word": "forever.",
+       "start": 3800,
+       "end": 3826
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

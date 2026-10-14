@@ -1,0 +1,66 @@
+{
+ "feed": {
+  "file": "footage/feed.mp4",
+  "width": 1600,
+  "height": 900,
+  "durationFrames": 240,
+  "marks": {
+   "feed_article": 96
+  }
+ },
+ "graph": {
+  "file": "footage/graph.mp4",
+  "width": 1600,
+  "height": 900,
+  "durationFrames": 368,
+  "marks": {
+   "graph_settled": 210
+  }
+ },
+ "landing": {
+  "file": "footage/landing.mp4",
+  "width": 1600,
+  "height": 900,
+  "durationFrames": 317,
+  "marks": {
+   "landing_hero": 66,
+   "landing_stats": 192
+  },
+  "scale": 2,
+  "rects": {
+   "nav": {
+    "x": 0,
+    "y": 0,
+    "width": 1600,
+    "height": 81
+   }
+  }
+ },
+ "leaderboard": {
+  "file": "footage/leaderboard.mp4",
+  "width": 1600,
+  "height": 900,
+  "durationFrames": 206,
+  "marks": {
+   "leaderboard": 78
+  }
+ },
+ "onboard": {
+  "file": "footage/onboard.mp4",
+  "width": 1600,
+  "height": 900,
+  "durationFrames": 198,
+  "marks": {
+   "onboard_form": 78
+  }
+ },
+ "receipt": {
+  "file": "footage/receipt.mp4",
+  "width": 1600,
+  "height": 900,
+  "durationFrames": 234,
+  "marks": {
+   "receipt_shown": 90
+  }
+ }
+}

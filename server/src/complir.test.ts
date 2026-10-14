@@ -13,9 +13,10 @@ function stubFetch(handler: (url: string, init?: any) => { status: number; body?
     return {
       ok: status >= 200 && status < 300,
       status,
+      headers: { get: (k: string) => (k.toLowerCase() === 'retry-after' ? '1' : null) },
       json: async () => body,
       text: async () => JSON.stringify(body ?? ''),
-    } as Response;
+    } as unknown as Response;
   }) as typeof fetch;
 }
 
@@ -138,12 +139,13 @@ async function run() {
     assert.equal(out.called, false, 'disabled module must not call the API');
   });
 
-  await test('unreachable + fail mode open allows', async () => {
+  await test('unreachable inbound + fail mode open allows', async () => {
     process.env.COMPLIR_URL = 'https://trycomplir.xyz';
     process.env.COMPLIR_FAIL_MODE = 'open';
     globalThis.fetch = (async () => { throw new Error('ECONNREFUSED'); }) as typeof fetch;
     const { checkAddress } = await loadModule();
-    const r = await checkAddress(ADDR, { amountUsdc: 1, direction: 'outbound' });
+    // Outbound ignores the mode and fails closed; inbound honours it.
+    const r = await checkAddress(ADDR, { amountUsdc: 1, direction: 'inbound' });
     assert.equal(r.allowed, true);
   });
 
@@ -199,6 +201,60 @@ async function run() {
     const { checkAddress } = await loadModule();
     const r = await checkAddress(ADDR, { amountUsdc: 50, direction: 'outbound', allowPaidScreen: true });
     assert.equal(r.allowed, true, 'an unpaid 402 must not block the payout');
+  });
+
+  await test('202 first-sight screen is retried and then resolves', async () => {
+    process.env.COMPLIR_URL = 'https://trycomplir.xyz';
+    process.env.COMPLIR_FAIL_MODE = 'open';
+    let calls = 0;
+    stubFetch(() => {
+      calls++;
+      // First sight: still screening, then the verdict lands.
+      return calls === 1
+        ? { status: 202, body: { status: 'screening', retryAfterSeconds: 1 } }
+        : { status: 200, body: verdict('HIGH') };
+    });
+    const { checkAddress } = await loadModule();
+    const r = await checkAddress(ADDR, { amountUsdc: 1, direction: 'outbound' });
+    assert.equal(calls >= 2, true, 'should retry after a 202');
+    assert.equal(r.allowed, false, 'the verdict that eventually arrives must be honoured');
+    assert.equal(r.tier, 'HIGH');
+  });
+
+  await test('a transient 502 is retried rather than failing open', async () => {
+    process.env.COMPLIR_URL = 'https://trycomplir.xyz';
+    process.env.COMPLIR_FAIL_MODE = 'open';
+    let calls = 0;
+    stubFetch(() => {
+      calls++;
+      // Two 502s then success: previously this waved the payment through.
+      return calls <= 2 ? { status: 502 } : { status: 200, body: verdict('HIGH') };
+    });
+    const { checkAddress } = await loadModule();
+    const r = await checkAddress(ADDR, { amountUsdc: 1, direction: 'outbound' });
+    assert.equal(calls, 3, 'should retry a 5xx twice before succeeding');
+    assert.equal(r.allowed, false, 'a retryable blip must not bypass screening');
+  });
+
+  await test('a persistent 502 on an outbound payment fails closed regardless of mode', async () => {
+    process.env.COMPLIR_URL = 'https://trycomplir.xyz';
+    process.env.COMPLIR_FAIL_MODE = 'open';
+    let calls = 0;
+    stubFetch(() => { calls++; return { status: 502 }; });
+    const { checkAddress } = await loadModule();
+    const r = await checkAddress(ADDR, { amountUsdc: 1, direction: 'outbound' });
+    assert.equal(calls, 4, 'one attempt plus three retries');
+    // Paying an unscreened counterparty is not recoverable; refusing is.
+    assert.equal(r.allowed, false, 'outbound must fail closed even when mode is open');
+  });
+
+  await test('a persistent 502 on an inbound payer honours fail mode open', async () => {
+    process.env.COMPLIR_URL = 'https://trycomplir.xyz';
+    process.env.COMPLIR_FAIL_MODE = 'open';
+    stubFetch(() => ({ status: 502 }));
+    const { checkAddress } = await loadModule();
+    const r = await checkAddress(ADDR, { amountUsdc: 0.02, direction: 'inbound' });
+    assert.equal(r.allowed, true, 'readers should not be locked out by an oracle outage');
   });
 
   console.log(`\n${passed} passed, ${failed} failed`);

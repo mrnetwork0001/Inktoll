@@ -8,11 +8,15 @@ import { config } from '../config.js';
 // COMPLIR_URL is empty the module is disabled and every call returns
 // allowed:true, so existing behaviour is untouched.
 //
-// Cost note: a fresh screen costs ~0.01 USDC, while an Inktoll read costs
-// 0.02 and earns the protocol 0.0002. Paying for a screen on the read path
-// would cost 50x the platform's take, so only `allowPaidScreen` call sites
-// (withdrawals, onboarding) may trigger POST /screen. Everything else reads
-// the free cached verdict.
+// The free GET returns the full verdict (tier, reasons, recommendedLimits,
+// nextRescreenAt) and never 404s: a first sight of an address is screened on
+// demand. A paid POST /screen (~0.0081 USDC) therefore buys depth, not
+// coverage, and is reserved for `allowPaidScreen` call sites.
+//
+// First-sight screens take 20-60s server-side. We ask CompliR to wait, and it
+// answers 202 + Retry-After rather than hanging. We honour that, and retry 5xx
+// and timeouts with backoff, because one transient failure must not be mistaken
+// for "the oracle is down" and silently wave a payment through.
 
 export type Tier = 'LOW' | 'MEDIUM' | 'HIGH';
 
@@ -40,8 +44,12 @@ interface Verdict {
   edd?: { url?: string };
 }
 
-const GET_TIMEOUT_MS = 10_000;
+const GET_TIMEOUT_MS = 15_000;
 const POST_TIMEOUT_MS = 120_000; // a fresh screen traces funders and runs an analyst
+// Seconds CompliR may hold a first-sight request before replying 202.
+const FIRST_SIGHT_WAIT_S = 8;
+const MAX_RETRIES = 3;
+const BACKOFF_MS = [200, 600, 1500];
 
 const ALLOW: CheckResult = { allowed: true, tier: null, maxUsdc: null, reason: null, decisionId: null, eddUrl: null };
 
@@ -72,16 +80,47 @@ async function request<T>(url: string, init: RequestInit, timeoutMs: number): Pr
   }
 }
 
-/** Latest stored verdict. Free, and 404 when the address has never been screened. */
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Latest verdict, free. Asks CompliR to hold the request for up to
+ * FIRST_SIGHT_WAIT_S while a first-sight screen runs; a 202 means it is still
+ * going and carries Retry-After. 5xx and timeouts are retried with backoff.
+ */
 async function fetchVerdict(address: string): Promise<Verdict | null> {
-  const res = await request(
-    `${config.complir.url}/api/v1/attestation/${address}`,
-    { headers: { accept: 'application/json' } },
-    GET_TIMEOUT_MS,
-  );
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`CompliR attestation lookup failed: HTTP ${res.status}`);
-  return (await res.json()) as Verdict;
+  const url = `${config.complir.url}/api/v1/attestation/${address}?wait=${FIRST_SIGHT_WAIT_S}`;
+  let lastError = 'unknown';
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (attempt > 0) await sleep(BACKOFF_MS[attempt - 1] ?? 1500);
+
+    let res: Response;
+    try {
+      res = await request(url, { headers: { accept: 'application/json' } }, GET_TIMEOUT_MS);
+    } catch (error: any) {
+      // Aborted on timeout, or the connection dropped: both retryable.
+      lastError = error?.name === 'AbortError' ? `timeout after ${GET_TIMEOUT_MS}ms` : error.message;
+      continue;
+    }
+
+    if (res.status === 202) {
+      // Screen is running server-side; come back for it when told to.
+      const retryAfter = Number(res.headers.get('retry-after')) || 5;
+      lastError = 'first-sight screen still running';
+      await sleep(Math.min(retryAfter, 10) * 1000);
+      continue;
+    }
+
+    if (res.status === 404) return null; // documented not to happen; handled anyway
+    if (res.status >= 500) {
+      lastError = `HTTP ${res.status}`;
+      continue;
+    }
+    if (!res.ok) throw new Error(`CompliR attestation lookup failed: HTTP ${res.status}`);
+    return (await res.json()) as Verdict;
+  }
+
+  throw new Error(`CompliR attestation lookup failed after ${MAX_RETRIES + 1} attempts: ${lastError}`);
 }
 
 /**
@@ -159,7 +198,10 @@ export async function checkAddress(address: string, options: CheckOptions): Prom
       verdict = (await freshScreen(target, amount)) ?? verdict;
     }
   } catch (error: any) {
-    const failClosed = config.complir.failMode === 'closed';
+    // CompliR recommends failing closed for outbound payments: refusing to pay is
+    // recoverable, paying an unscreened counterparty is not. Inbound still honours
+    // the configured mode so readers are not locked out by an oracle outage.
+    const failClosed = config.complir.failMode === 'closed' || options.direction === 'outbound';
     console.warn(`[CompliR] Unreachable for ${target}: ${error.message}. Failing ${failClosed ? 'closed' : 'open'}.`);
     return failClosed
       ? { ...ALLOW, allowed: false, reason: 'Counterparty screening is unavailable; payment blocked by policy' }

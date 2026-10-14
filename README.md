@@ -88,11 +88,19 @@ counterparty-risk oracle for USDC on Arc mainnet. A verdict grades the address
 | Inbound payer (x402 middleware) | Cached verdict only. `HIGH` payers are refused with HTTP 403. |
 | Creator onboarding and `POST /api/creators/bind` | Screened once and registered for continuous watching; a `HIGH` tier flags the account without blocking signup. |
 
-**Why only some points pay.** A fresh screen costs ~0.0081 USDC. An Inktoll read
-costs 0.02 and earns the protocol 0.0002, so paying for a screen on the read path
-would cost roughly 40x the platform's entire take on that payment. Paid screens are
-therefore limited to withdrawals and onboarding, which are infrequent and large;
-every other call site reads the free cached verdict those screens populate.
+**Why only some points pay.** The free lookup returns the whole verdict (tier,
+reason codes, recommended limits) and screens an unseen address on demand, so it
+is never a cold cache. A paid screen (~0.0081 USDC) adds funder tracing and an
+analyst pass; against a 0.02 USDC read earning 0.0002 in protocol fees it is only
+worth it on withdrawals and onboarding.
+
+**Outages.** A first sight of an address takes 20-60s server-side, so lookups ask
+CompliR to hold the request and it answers `202` with `Retry-After` rather than
+hanging. 5xx responses and timeouts get three backoff retries before the fail mode
+applies, because a single transient blip must not be mistaken for an outage and
+quietly wave a payment through. Outbound payments then fail **closed** regardless
+of `COMPLIR_FAIL_MODE`; inbound payer checks honour it, so a reader is not locked
+out by an oracle outage.
 
 `decisionId` is stored on the creator record (`risk_tier`, `risk_decision_id`) and
 returned in withdrawal responses, so any decision can be replayed at

@@ -49,3 +49,17 @@ export const arc = {
 
 export const serverUrl = () => (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001').replace(/\/$/, '');
 export const internalApiSecret = () => process.env.INTERNAL_API_SECRET || '';
+
+// Counterparty screening (CompliR). Lazy getters for the same reason as `arc`:
+// dotenv runs after imports. An empty url disables screening entirely.
+export const complir = {
+  get url(): string {
+    return (process.env.COMPLIR_URL ?? 'https://trycomplir.xyz').replace(/\/$/, '');
+  },
+  get failMode(): 'open' | 'closed' {
+    return process.env.COMPLIR_FAIL_MODE === 'closed' ? 'closed' : 'open';
+  },
+  get clientId(): string {
+    return process.env.COMPLIR_CLIENT_ID || 'inktoll-agent';
+  },
+};

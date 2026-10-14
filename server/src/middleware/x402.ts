@@ -4,6 +4,7 @@ import { getDb } from '../db/index.js';
 import { submitGatewayPayment } from '../services/gateway.js';
 import { ethers } from 'ethers';
 import { config } from '../config.js';
+import { checkAddress } from '../services/complir.js';
 
 export interface ExtendedRequest extends Request {
   paid?: boolean;
@@ -174,6 +175,22 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
     // unverified must settle for real, and the facilitator is the final judge.
     const recovered = recoverPayer(authData, creatorWallet);
     const verifiedPayer = recovered && recovered.toLowerCase() === String(authData.fromAddress).toLowerCase();
+
+    // Screen the payer. Reads happen thousands of times for a couple of cents,
+    // so this only ever reads CompliR's free cached verdict: no paid screen on
+    // the hot path.
+    const payerScreening = await checkAddress(String(authData.fromAddress), {
+      amountUsdc: article.price_usdc,
+      direction: 'inbound',
+    });
+    if (!payerScreening.allowed) {
+      console.warn(`[x402] Refused payer ${authData.fromAddress} (decision ${payerScreening.decisionId}): ${payerScreening.reason}`);
+      return res.status(403).json({
+        error: payerScreening.reason,
+        tier: payerScreening.tier,
+        decisionId: payerScreening.decisionId,
+      });
+    }
 
     if (verifiedPayer) {
       const existingPayment = db.prepare(`

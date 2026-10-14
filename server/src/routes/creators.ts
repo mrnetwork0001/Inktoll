@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getDb } from '../db/index.js';
+import { checkAddress, watchAddress } from '../services/complir.js';
 import { createCircleWallet } from '../services/wallet.js';
 import { fetchGhostArticles } from '../services/ghost.js';
 import { fetchParagraphArticles, verifyParagraphOwnership } from '../services/paragraph.js';
@@ -67,10 +68,28 @@ router.post('/', async (req, res) => {
         platformVerified = (await verifyParagraphOwnership(sourceUrl, ownerAddress)) ? 1 : 0;
       }
 
+      // Screen the owner wallet once at onboarding and keep it under watch, so
+      // later tier changes reach us without paying per payout. A HIGH tier
+      // flags the account but does not block onboarding; payouts are blocked at
+      // the withdrawal point.
+      let riskTier: string | null = null;
+      let riskDecisionId: string | null = null;
+      if (ownerAddress) {
+        const screening = await checkAddress(ownerAddress, { direction: 'outbound', allowPaidScreen: true });
+        riskTier = screening.tier;
+        riskDecisionId = screening.decisionId;
+        if (!screening.allowed) {
+          console.warn(`[Creator] ${ownerAddress} flagged ${screening.tier} by CompliR (decision ${screening.decisionId}): ${screening.reason}`);
+        }
+        if (config.complir.webhookUrl) {
+          void watchAddress(ownerAddress, `${config.complir.webhookUrl}/api/creators/risk-webhook`);
+        }
+      }
+
       // Insert creator
       db.prepare(`
-        INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc, owner_address, platform, platform_verified)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO creators (id, ghost_url, ghost_api_key, wallet_address, wallet_id, default_price_usdc, owner_address, platform, platform_verified, risk_tier, risk_decision_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         creatorId,
         sourceUrl,
@@ -80,7 +99,9 @@ router.post('/', async (req, res) => {
         parseFloat(defaultPriceUsdc || '0.005'),
         ownerAddress ? ownerAddress.toLowerCase() : null,
         platform,
-        platformVerified
+        platformVerified,
+        riskTier,
+        riskDecisionId
       );
 
       creator = {
@@ -93,6 +114,8 @@ router.post('/', async (req, res) => {
         owner_address: ownerAddress ? ownerAddress.toLowerCase() : null,
         platform,
         platform_verified: platformVerified,
+        risk_tier: riskTier,
+        risk_decision_id: riskDecisionId,
       };
     } else if (ownerAddress && !creator.owner_address) {
       db.prepare('UPDATE creators SET owner_address = ? WHERE id = ?').run(ownerAddress.toLowerCase(), creatorId);
@@ -187,10 +210,29 @@ router.post('/withdraw', async (req, res) => {
       return res.status(400).json({ error: 'A valid destinationAddress (0x...) is required to withdraw.' });
     }
 
+    // Screen the payout destination. This is a user-typed address receiving
+    // real USDC, so it gets a fresh screen when the stored verdict is missing
+    // or stale.
+    const screening = await checkAddress(destinationAddress, {
+      amountUsdc: parseFloat(amount),
+      direction: 'outbound',
+      allowPaidScreen: true,
+    });
+    if (!screening.allowed) {
+      console.warn(`[Creators Withdraw] Blocked by CompliR (decision ${screening.decisionId}): ${screening.reason}`);
+      return res.status(403).json({
+        error: screening.reason,
+        tier: screening.tier,
+        maxUsdc: screening.maxUsdc,
+        decisionId: screening.decisionId,
+        eddUrl: screening.eddUrl,
+      });
+    }
+
     const { processWithdrawal } = await import('../services/wallet.js');
     const txHash = await processWithdrawal(creator.wallet_address, destinationAddress, parseFloat(amount));
 
-    return res.json({ success: true, txHash, destinationAddress });
+    return res.json({ success: true, txHash, destinationAddress, decisionId: screening.decisionId });
   } catch (error: any) {
     console.error(`[Creators Withdraw] Error: ${error.message}`);
     return res.status(500).json({ error: error.message });
@@ -290,8 +332,18 @@ router.post('/bind', async (req, res) => {
       return res.status(400).json({ error: 'Signature verification failed. Address mismatch.' });
     }
 
+    // A newly bound wallet is a new counterparty: screen it and keep it watched.
+    const screening = await checkAddress(walletAddress, { direction: 'outbound', allowPaidScreen: true });
+    if (!screening.allowed) {
+      console.warn(`[Creator Bind] ${walletAddress} flagged ${screening.tier} by CompliR (decision ${screening.decisionId}): ${screening.reason}`);
+    }
+    if (config.complir.webhookUrl) {
+      void watchAddress(walletAddress, `${config.complir.webhookUrl}/api/creators/risk-webhook`);
+    }
+
     // Update owner_address in database
-    db.prepare('UPDATE creators SET owner_address = ? WHERE id = ?').run(walletAddress.toLowerCase(), creatorId);
+    db.prepare('UPDATE creators SET owner_address = ?, risk_tier = ?, risk_decision_id = ? WHERE id = ?')
+      .run(walletAddress.toLowerCase(), screening.tier, screening.decisionId, creatorId);
 
     // For Paragraph creators, binding a wallet also re-checks cryptographic
     // proof-of-authorship against the publication owner.
@@ -427,6 +479,28 @@ router.get('/', (req, res) => {
   const db = getDb();
   const creators = db.prepare('SELECT id, ghost_url, wallet_address, default_price_usdc, platform FROM creators').all();
   return res.json(creators);
+});
+
+// CompliR posts here when a watched address is re-graded. Advisory only: it
+// records the new tier so payouts are evaluated against it, and never moves money.
+router.post('/risk-webhook', (req, res) => {
+  if (req.headers['x-complir-event'] !== 'tier.changed') {
+    return res.status(400).json({ error: 'Unsupported event' });
+  }
+  const { address, from, to, verdict } = req.body || {};
+  if (!address || !to) {
+    return res.status(400).json({ error: 'address and to are required' });
+  }
+  try {
+    getDb()
+      .prepare('UPDATE creators SET risk_tier = ?, risk_decision_id = ? WHERE LOWER(owner_address) = LOWER(?)')
+      .run(to, verdict?.decisionId ?? null, address);
+    console.log(`[CompliR] ${address} re-graded ${from} -> ${to} (decision ${verdict?.decisionId ?? 'n/a'})`);
+    return res.json({ success: true });
+  } catch (error: any) {
+    console.error(`[CompliR Webhook] Error: ${error.message}`);
+    return res.status(500).json({ error: error.message });
+  }
 });
 
 export default router;

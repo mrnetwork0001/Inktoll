@@ -5,6 +5,7 @@ import { recordPurchase } from '../budget.js';
 import crypto from 'crypto';
 import { db } from '../db.js';
 import { arc } from '../config.js';
+import { checkPayee } from './complir.js';
 
 export interface PayResult {
   success: boolean;
@@ -101,6 +102,15 @@ export async function payAndFetchArticle(
   apiUrl: string
 ): Promise<PayResult> {
   const agentWallet = await getOrCreateAgentWallet(userId);
+
+  // Screen the payee before spending anything. In the MCP flow this address
+  // comes from the server's `payment-recipient` header, so it is not inherently
+  // ours to trust. Free cached verdict only: see tools/complir.ts.
+  const payeeScreening = await checkPayee(recipientWallet, price);
+  if (!payeeScreening.allowed) {
+    console.warn(`[Pay Tool] Payment blocked by CompliR (decision ${payeeScreening.decisionId}): ${payeeScreening.reason}`);
+    return { success: false, error: payeeScreening.reason ?? 'Payee blocked by counterparty screening' };
+  }
 
   try {
     const articleUrl = `${apiUrl}/api/articles/${slug}`;

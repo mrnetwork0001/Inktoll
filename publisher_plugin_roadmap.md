@@ -1,6 +1,10 @@
 # 🧭 Inktoll Publisher Plugin Roadmap
 > **Architectural Specification & Development Guide for WordPress & Ghost Integrations**
 
+> **Superseded.** Platform verification now ships via **Paragraph** with wallet-verified
+> authorship. The WordPress and Ghost adapters below are an unbuilt roadmap, not shipped code.
+
+
 This document outlines the design, execution steps, and transaction flows for building plug-and-play publisher plugins that allow any website to monetize AI agent crawling gaslessly in USDC.
 
 ---

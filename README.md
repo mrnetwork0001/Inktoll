@@ -1,7 +1,9 @@
 # Inktoll Protocol
 > **Gasless Micropayment & Citation Settlement Highway for the Agentic Web3 Knowledge Economy**
 
-Built with **Circle Programmable Wallets**, **Circle Gateway Nanopayments**, and settled on the **Arc Testnet** (USDC-native gas chain) for sub-second, frictionless machine-to-human payments.
+Built with **Circle Programmable Wallets**, **Circle Gateway Nanopayments**, and settled on **Arc mainnet** (USDC-native gas chain) for sub-second, frictionless machine-to-human payments.
+
+**Status:** Live on **Arc mainnet** (chainId `5042`) at [inktoll.xyz](https://www.inktoll.xyz). Creator onboarding is open and the mainnet economy is at day zero.
 
 <img width="1661" height="923" alt="05 07 2026_09 00 52_REC" src="https://github.com/user-attachments/assets/ee2e6132-b02f-4b7c-9cd4-cf49bc9f7403" />
 
@@ -34,7 +36,7 @@ We brought the AI economy to life! Rather than treating AI agents as invisible s
 To max out Agentic Sophistication, our agents don't just execute linear scripts - they exhibit **Decentralized Machine Consensus**. If one agent reads an article and scores it highly (> 85/100 relevance), it autonomously broadcasts a signal to a decentralized Gossip Network. Other listening agents will immediately detect this alpha signal, swarm the target URL, and trigger a cascading spike of gasless USDC payments to the creator without any human intervention.
 
 ### Zero-Gas Nanopayments via Circle Gateway
-We integrated the **Circle Gateway** to batch gasless off-chain payment authorizations (EIP-3009 / ERC-20 transfers). This achieves sub-cent transactions ($0.001) with **zero gas fees** for the user, net-settling batches efficiently on the Arc L1 Testnet.
+We integrated the **Circle Gateway** to batch gasless off-chain payment authorizations (EIP-3009 / ERC-20 transfers). This achieves sub-cent transactions ($0.001) with **zero gas fees** for the user, net-settling batches efficiently on Arc L1 mainnet.
 
 ### State-of-the-Art Glassmorphism UX
 The Inktoll Dashboard isn't just functional; it's a visual experience. Built with Next.js and Framer Motion, it features a dark futuristic aesthetic, staggered micro-animations, animated 3D tracking cards, and customized Lucide React icons replacing standard emojis for a premium Web3 infrastructure feel.
@@ -63,17 +65,62 @@ Inktoll ships a **Model Context Protocol (MCP) server**, so any MCP-capable assi
 claude mcp add --transport http inktoll "https://agent.inktoll.xyz/mcp?uid=yourname"
 ```
 
-**Tools:** `browse_articles` (free catalog), `read_article` (pays the author via x402), `ask_inktoll` (answers that auto-pay citation tolls to cited authors), `wallet_status`, and `claim_faucet` (testnet USDC).
+**Tools:** `browse_articles` (free catalog), `read_article` (pays the author via x402), `ask_inktoll` (answers that auto-pay citation tolls to cited authors), `wallet_status`, and `claim_faucet` (testnet only).
 
 Your handle keys a personal **Circle developer-controlled wallet** that is auto-provisioned on first use — every assistant gets a wallet.
+
+---
+
+## Counterparty screening (CompliR)
+
+Before USDC moves to an address Inktoll did not create, or arrives from an outside
+payer, the address is screened by [CompliR](https://trycomplir.xyz), a
+counterparty-risk oracle for USDC on Arc mainnet. A verdict grades the address
+`LOW` / `MEDIUM` / `HIGH` with a signed EIP-712 attestation.
+
+**Policy**
+
+| Point | Check |
+|---|---|
+| Creator withdrawal (`POST /api/creators/withdraw`) | Fresh screen. `HIGH` blocks with HTTP 403; `MEDIUM` is capped at `recommendedLimits.maxPerTxUsdc`. |
+| Agent withdrawal (`POST /api/agent/withdraw`) | Same, against the user-supplied recipient. |
+| Agent paying an author (`payAndFetchArticle`) | Cached verdict only. Matters because in the MCP flow the payee comes from the server's `payment-recipient` header. |
+| Inbound payer (x402 middleware) | Cached verdict only. `HIGH` payers are refused with HTTP 403. |
+| Creator onboarding and `POST /api/creators/bind` | Screened once and registered for continuous watching; a `HIGH` tier flags the account without blocking signup. |
+
+**Why only some points pay.** A fresh screen costs ~0.0081 USDC. An Inktoll read
+costs 0.02 and earns the protocol 0.0002, so paying for a screen on the read path
+would cost roughly 40x the platform's entire take on that payment. Paid screens are
+therefore limited to withdrawals and onboarding, which are infrequent and large;
+every other call site reads the free cached verdict those screens populate.
+
+`decisionId` is stored on the creator record (`risk_tier`, `risk_decision_id`) and
+returned in withdrawal responses, so any decision can be replayed at
+`https://trycomplir.xyz/log/<decisionId>`.
+
+**Configuration** (see `.env.example`)
+
+```bash
+COMPLIR_URL=https://trycomplir.xyz   # empty string disables screening entirely
+COMPLIR_FAIL_MODE=open               # "open" allows on outage, "closed" blocks
+COMPLIR_CLIENT_ID=inktoll
+# COMPLIR_WEBHOOK_URL=https://api.inktoll.xyz   # receives tier.changed events
+```
+
+With `COMPLIR_URL` empty, every check returns "allowed" and behaviour is identical
+to before the integration.
+
+```bash
+cd server && npx tsx src/complir.test.ts   # 12 tests, HTTP mocked
+```
 
 ---
 
 ## Circle Tool Usage & Tech Stack
 *   **Circle App Kit & Programmable Wallets**: Frictionless Web2 onboarding for Creators with zero seed-phrases. Creators can log in via **Email OTP (Magic Links)** or **Biometric Passkeys (Smart Accounts)** - making Web3 completely invisible.
 *   **Circle Gateway & Unified Balances**: We integrated the Circle Gateway to pool liquidity and hold unified USDC balances. Agents automatically use `depositFor` to deposit base USDC into the Gateway smart contract, enabling instant, cross-chain gasless nanopayments.
-*   **Circle Developer-Controlled Wallets**: Secure, programmatic Web3 identity and custodial capabilities for our backend, handling real-time splits on Arc Testnet (routing 99% to creators and a 1% protocol fee to the Inktoll Treasury) upon withdrawal.
-*   **Smart Contracts on Arc L1**: We deploy payment logic directly on the Arc Testnet, utilizing USDC as the native gas token for sub-second finality.
+*   **Circle Developer-Controlled Wallets**: Secure, programmatic Web3 identity and custodial capabilities for our backend, handling real-time splits on Arc mainnet (routing 99% to creators and a 1% protocol fee to the Inktoll Treasury) upon withdrawal.
+*   **Arc L1 Settlement**: Payments settle on **Arc mainnet (chainId 5042)** through Circle's Gateway contract and native USDC, using USDC as the gas token for sub-second finality. Inktoll deploys no custom contracts of its own: the payment logic is an x402 authorization layer over EIP-3009 `TransferWithAuthorization` signatures, settled by Circle Gateway.
 *   **x402 Protocol**: We implement HTTP 402 "Payment Required" flows tailored for AI agent execution, creating an autonomous M2M content handshake.
 *   **USDC**: The native settlement layer of the protocol, ensuring creators are paid in a universally pegged, stable asset.
 *   **AI & Logic Layer**: LangChain and OpenAI `gpt-4o-mini` drive the agent's autonomous relevance scoring and emergent swarm discovery.
@@ -146,9 +193,16 @@ AGENT_PORT=3002
 OPENAI_API_KEY=your_openai_api_key
 CIRCLE_API_KEY=your_circle_api_key
 
-# Settlement Configuration (Arc Testnet)
-ARC_RPC_URL=https://rpc.testnet.arc.network
+# Settlement Configuration (Arc Mainnet)
+ARC_CHAIN_ID=5042
+ARC_BLOCKCHAIN_NAME=ARC
+ARC_RPC_URL=https://rpc.mainnet.arc.io
 ARC_USDC_ADDRESS=0x3600000000000000000000000000000000000000
+ARC_VERIFYING_CONTRACT=0x77777777Dcc4d5A8B6E418Fd04D8997ef11000eE
+ARC_EXPLORER_URL=https://explorer.arc.io
+CIRCLE_GATEWAY_URL=https://gateway-api.circle.com
+
+# Testnet only: faucet is disabled when ARC_CHAIN_ID is mainnet
 FAUCET_PRIVATE_KEY=your_faucet_private_key_with_usdc
 ```
 

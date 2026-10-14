@@ -40,3 +40,16 @@ Thumbs.db
 # Cloned companion repos
 circle-agent/
 *.sqlite
+# Demo film (video/) — heavy build artefacts, never deployed with the app
+/video/node_modules
+/video/out
+/video/.cache
+/video/public/footage
+/video/public/stills
+/video/public/audio
+
+# Third-party brand marks used by the demo film are fetched, not vendored
+# (see video/scripts/logos.mjs). Inktoll's own marks stay in the repo.
+/video/public/logos/arc.svg
+/video/public/logos/circle.svg
+/video/.env

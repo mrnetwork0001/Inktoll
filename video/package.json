@@ -1,0 +1,39 @@
+{
+  "name": "inktoll-video",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render Inktoll out/inktoll-demo-1080p.mp4 --codec h264 --crf 15 --x264-preset slow --image-format png --pixel-format yuv420p --audio-codec aac --audio-bitrate 320k",
+    "render4k": "remotion render Inktoll out/inktoll-demo-4k-raw.mp4 --scale 2 --codec h264 --crf 14 --x264-preset slow --image-format png --pixel-format yuv420p --audio-codec aac --audio-bitrate 320k",
+    "draft": "remotion render Inktoll out/draft.mp4 --scale 0.5 --crf 28",
+    "poster": "remotion still Poster out/poster.png",
+    "typecheck": "tsc --noEmit",
+    "voices": "node scripts/voices.mjs",
+    "vo": "node scripts/voiceover.mjs",
+    "sfx": "node scripts/sfx.mjs",
+    "music": "node scripts/music.mjs",
+    "timing": "node scripts/timing.mjs",
+    "capture": "node scripts/capture.mjs",
+    "encode": "node scripts/encode.mjs",
+    "stills": "node scripts/stills.mjs",
+    "finish": "node scripts/finish.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.530",
+    "@remotion/google-fonts": "4.0.530",
+    "@remotion/media-utils": "4.0.530",
+    "@remotion/paths": "4.0.530",
+    "@remotion/shapes": "4.0.530",
+    "@remotion/transitions": "4.0.530",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "4.0.530"
+  },
+  "devDependencies": {
+    "@remotion/bundler": "4.0.530",
+    "@remotion/renderer": "4.0.530",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^5.6.0"
+  }
+}

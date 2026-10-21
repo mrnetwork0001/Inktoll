@@ -205,31 +205,37 @@ export async function x402Middleware(req: ExtendedRequest, res: Response, next: 
       }
     }
 
-    const settlement = await submitGatewayPayment(
-      {
-        fromAddress: authData.fromAddress,
-        toAddress: creatorWallet,
-        amount: article.price_usdc,
-        signature: authData.signature,
-        nonce: authData.nonce,
-        deadline: authData.deadline,
-      },
-      rawPayload
-    );
-
+    // Reserve a 'pending' row synchronously, before any await, so a client retry
+    // (fresh nonce) that arrives while this settlement is in flight hits the
+    // existingPayment guard instead of settling a second authorization (#7).
+    // better-sqlite3 is synchronous, so check + insert cannot interleave here.
     const paymentId = crypto.randomUUID();
     db.prepare(`
       INSERT INTO payments (id, article_id, reader_agent_id, amount_usdc, payment_type, tx_hash, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      paymentId,
-      article.id,
-      authData.fromAddress,
-      article.price_usdc,
-      'read',
-      settlement.txHash,
-      settlement.status
-    );
+      VALUES (?, ?, ?, ?, ?, NULL, 'pending')
+    `).run(paymentId, article.id, authData.fromAddress, article.price_usdc, 'read');
+
+    let settlement;
+    try {
+      settlement = await submitGatewayPayment(
+        {
+          fromAddress: authData.fromAddress,
+          toAddress: creatorWallet,
+          amount: article.price_usdc,
+          signature: authData.signature,
+          nonce: authData.nonce,
+          deadline: authData.deadline,
+        },
+        rawPayload
+      );
+    } catch (settleError) {
+      // Release the reservation so the reader can retry after a real failure.
+      db.prepare(`DELETE FROM payments WHERE id = ? AND status = 'pending' AND tx_hash IS NULL`).run(paymentId);
+      throw settleError;
+    }
+
+    db.prepare(`UPDATE payments SET tx_hash = ?, status = ? WHERE id = ?`)
+      .run(settlement.txHash, settlement.status, paymentId);
 
     req.paid = true;
     return next();
